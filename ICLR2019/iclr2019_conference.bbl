@@ -1,0 +1,160 @@
+\begin{thebibliography}{23}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abdolmaleki et~al.(2018)Abdolmaleki, Springenberg, Tassa, Munos,
+  Heess, and Riedmiller]{abdolmaleki2018maximum}
+Abbas Abdolmaleki, Jost~Tobias Springenberg, Yuval Tassa, Remi Munos, Nicolas
+  Heess, and Martin Riedmiller.
+\newblock Maximum a posteriori policy optimisation.
+\newblock In \emph{ICLR}, 2018.
+
+\bibitem[Beck \& Teboulle(2003)Beck and Teboulle]{beck2003mirror}
+Amir Beck and Marc Teboulle.
+\newblock Mirror descent and nonlinear projected subgradient methods for convex
+  optimization.
+\newblock \emph{Operations Research Letters}, 31\penalty0 (3):\penalty0
+  167--175, 2003.
+
+\bibitem[Brockman et~al.(2016)Brockman, Cheung, Pettersson, Schneider,
+  Schulman, Tang, and Zaremba]{brockman2016openai}
+Greg Brockman, Vicki Cheung, Ludwig Pettersson, Jonas Schneider, John Schulman,
+  Jie Tang, and Wojciech Zaremba.
+\newblock Openai gym.
+\newblock \emph{arXiv preprint arXiv:1606.01540}, 2016.
+
+\bibitem[Ding \& Soricut(2017)Ding and Soricut]{ding2017cold}
+Nan Ding and Radu Soricut.
+\newblock Cold-start reinforcement learning with softmax policy gradient.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  2817--2826, 2017.
+
+\bibitem[Haarnoja et~al.(2018)Haarnoja, Zhou, Abbeel, and
+  Levine]{haarnoja2018soft}
+Tuomas Haarnoja, Aurick Zhou, Pieter Abbeel, and Sergey Levine.
+\newblock Soft actor-critic: Off-policy maximum entropy deep reinforcement
+  learning with a stochastic actor.
+\newblock \emph{arXiv preprint arXiv:1801.01290}, 2018.
+
+\bibitem[Hochreiter \& Schmidhuber(1997)Hochreiter and
+  Schmidhuber]{hochreiter1997long}
+Sepp Hochreiter and J{\"u}rgen Schmidhuber.
+\newblock Long short-term memory.
+\newblock \emph{Neural computation}, 9\penalty0 (8):\penalty0 1735--1780, 1997.
+
+\bibitem[Kevin(2012)]{kevin2012machine}
+P~Murphy Kevin.
+\newblock \emph{Machine learning: a probabilistic perspective}.
+\newblock Cambridge, MA, 2012.
+
+\bibitem[Mnih et~al.(2015)Mnih, Kavukcuoglu, Silver, Rusu, Veness, Bellemare,
+  Graves, Riedmiller, Fidjeland, Ostrovski, et~al.]{mnih2015human}
+Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei~A Rusu, Joel Veness,
+  Marc~G Bellemare, Alex Graves, Martin Riedmiller, Andreas~K Fidjeland, Georg
+  Ostrovski, et~al.
+\newblock Human-level control through deep reinforcement learning.
+\newblock \emph{Nature}, 518\penalty0 (7540):\penalty0 529, 2015.
+
+\bibitem[Montgomery \& Levine(2016)Montgomery and Levine]{montgomery2016guided}
+William~H Montgomery and Sergey Levine.
+\newblock Guided policy search via approximate mirror descent.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  4008--4016, 2016.
+
+\bibitem[Nachum et~al.(2017{\natexlab{a}})Nachum, Norouzi, and
+  Schuurmans]{nachum2017improving}
+Ofir Nachum, Mohammad Norouzi, and Dale Schuurmans.
+\newblock Improving policy gradient by exploring under-appreciated rewards.
+\newblock In \emph{ICLR}, 2017{\natexlab{a}}.
+
+\bibitem[Nachum et~al.(2017{\natexlab{b}})Nachum, Norouzi, Xu, and
+  Schuurmans]{nachum2017bridging}
+Ofir Nachum, Mohammad Norouzi, Kelvin Xu, and Dale Schuurmans.
+\newblock Bridging the gap between value and policy based reinforcement
+  learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  2772--2782, 2017{\natexlab{b}}.
+
+\bibitem[Nachum et~al.(2017{\natexlab{c}})Nachum, Norouzi, Xu, and
+  Schuurmans]{nachum2017trust}
+Ofir Nachum, Mohammad Norouzi, Kelvin Xu, and Dale Schuurmans.
+\newblock Trust-pcl: An off-policy trust region method for continuous control.
+\newblock In \emph{ICLR}, 2017{\natexlab{c}}.
+
+\bibitem[Nemirovskii et~al.(1983)Nemirovskii, Yudin, and
+  Dawson]{nemirovskii1983problem}
+Arkadii Nemirovskii, David~Borisovich Yudin, and Edgar~Ronald Dawson.
+\newblock Problem complexity and method efficiency in optimization.
+\newblock 1983.
+
+\bibitem[Norouzi et~al.(2016)Norouzi, Bengio, Jaitly, Schuster, Wu, Schuurmans,
+  et~al.]{norouzi2016reward}
+Mohammad Norouzi, Samy Bengio, Navdeep Jaitly, Mike Schuster, Yonghui Wu, Dale
+  Schuurmans, et~al.
+\newblock Reward augmented maximum likelihood for neural structured prediction.
+\newblock In \emph{Advances In Neural Information Processing Systems}, pp.\
+  1723--1731, 2016.
+
+\bibitem[Owen(2013)]{owen2013monte}
+Art~B. Owen.
+\newblock \emph{Monte Carlo theory, methods and examples}.
+\newblock 2013.
+
+\bibitem[Peters \& Schaal(2007)Peters and Schaal]{peters2007reinforcement}
+Jan Peters and Stefan Schaal.
+\newblock Reinforcement learning by reward-weighted regression for operational
+  space control.
+\newblock In \emph{Proceedings of the 24th international conference on Machine
+  learning}, pp.\  745--750. ACM, 2007.
+
+\bibitem[Peters et~al.(2010)Peters, M{\"u}lling, and Altun]{peters2010relative}
+Jan Peters, Katharina M{\"u}lling, and Yasemin Altun.
+\newblock Relative entropy policy search.
+\newblock In \emph{AAAI}, pp.\  1607--1612. Atlanta, 2010.
+
+\bibitem[Schulman et~al.(2015)Schulman, Levine, Abbeel, Jordan, and
+  Moritz]{schulman2015trust}
+John Schulman, Sergey Levine, Pieter Abbeel, Michael Jordan, and Philipp
+  Moritz.
+\newblock Trust region policy optimization.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  1889--1897, 2015.
+
+\bibitem[Silver et~al.(2016)Silver, Huang, Maddison, Guez, Sifre, Van
+  Den~Driessche, Schrittwieser, Antonoglou, Panneershelvam, Lanctot,
+  et~al.]{silver2016mastering}
+David Silver, Aja Huang, Chris~J Maddison, Arthur Guez, Laurent Sifre, George
+  Van Den~Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda
+  Panneershelvam, Marc Lanctot, et~al.
+\newblock Mastering the game of go with deep neural networks and tree search.
+\newblock \emph{nature}, 529\penalty0 (7587):\penalty0 484--489, 2016.
+
+\bibitem[Thrun(1992)]{thrun1992efficient}
+Sebastian~B Thrun.
+\newblock Efficient exploration in reinforcement learning.
+\newblock \emph{Technical report}, 1992.
+
+\bibitem[Wierstra et~al.(2008)Wierstra, Schaul, Peters, and
+  Schmidhuber]{wierstra2008episodic}
+Daan Wierstra, Tom Schaul, Jan Peters, and Juergen Schmidhuber.
+\newblock Episodic reinforcement learning by logistic reward-weighted
+  regression.
+\newblock In \emph{International Conference on Artificial Neural Networks},
+  pp.\  407--416. Springer, 2008.
+
+\bibitem[Williams(1992)]{williams1992simple}
+Ronald~J Williams.
+\newblock Simple statistical gradient-following algorithms for connectionist
+  reinforcement learning.
+\newblock \emph{Machine Learning}, 8\penalty0 (3-4):\penalty0 229--256, 1992.
+
+\bibitem[Williams \& Peng(1991)Williams and Peng]{williams1991function}
+Ronald~J Williams and Jing Peng.
+\newblock Function optimization using connectionist reinforcement learning
+  algorithms.
+\newblock \emph{Connection Science}, 3\penalty0 (3):\penalty0 241--268, 1991.
+
+\end{thebibliography}

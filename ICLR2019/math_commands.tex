@@ -1,6 +1,20 @@
 %%%%% NEW MATH DEFINITIONS %%%%%
 
 \usepackage{amsmath,amsfonts,bm}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+\usepackage{picins}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
+\newtheorem{defi}{Definition}
+\newtheorem{prop}{Proposition}
+\newtheorem{remk}{Remark}
 
 % Mark sections of captions for referring to divisions of figures
 \newcommand{\figleft}{{\em (Left)}}
@@ -502,6 +516,20 @@
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator*\ep{\mathbb{E}}
+\DeclareMathOperator\oep{\mathbb{E}}
+
+\newcommand*{\refPi}{\bar{\pi}}
+\newcommand*{\optPiRef}{\bar{\pi}_{\tau}^*}
+\newcommand*{\cP}{\mathcal{P}}
+\newcommand*{\cH}{\mathcal{H}}
+%\newcommand{\KL}{D_{\text{KL}}}
+\newcommand{\ENT}{\text{ENT}}
+\newcommand{\SR}{\text{SR}}
+\newcommand{\pithetat}{\pi_{\theta_t}}
+
+\newcommand*{\st}{\text{subject to}}
 
 \DeclareMathOperator{\sign}{sign}
 \DeclareMathOperator{\Tr}{Tr}
