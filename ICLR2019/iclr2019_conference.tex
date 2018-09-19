@@ -6,10 +6,19 @@
 
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{amsthm}
+\newtheorem{remark}{Remark}
 
 \usepackage[capitalize]{cleveref}
 \crefname{prop}{Proposition}{Propositions}
 \crefname{thm}{Theorem}{Theorems}
+
+\usepackage[backgroundcolor = White,textwidth=2cm]{todonotes}
+%\usepackage[disable,backgroundcolor = White,textwidth=\marginparwidth]{todonotes}
+\newcommand{\todoj}[2][]{\todo[color=orange!25,size=\small,#1]{Jincheng: #2}}
+\newcommand{\todoc}[2][]{\todo[color=purple!25,size=\small,#1]{Chenjun: #2}}
+\newcommand{\todor}[2][]{\todo[color=blue!25,size=\small,#1]{Ruitong: #2}}
+\setlength{\marginparwidth}{1.2in}
 
 \title{Policy Mirror Descent with Reversed KL Projection}
 
@@ -116,77 +125,146 @@ See the appendix of \citet{nachum2017improving}.
 
 \section{Reversed Entropy Policy Mirror Descent}
 \label{sec:reversed_emtropy_policy_mirror_descent}
-
 In this section we firstly discuss relative entropy regularization for policy based reinforcement learning and its relationship with mirror descent, paving the path for presenting our proposed Reversed Entropy Policy Mirror Descent (REPMD) algorithm. 
 
+Our algorithm originates from the idea of TRPO where a KL divergence measure is used to stabilize the update of the learned policy. 
+In this section w
+To better understand its behavior in the parameter space, we further proves that such objective function can be re-formulated as a lift-and-project procedure, connecting TRPO to the method of relative entropy policy search.
+Potential poor local optima of such 
+
+\if0
 \subsection{Policy Mirror Descent}
 \label{sec:pmd}
 We first present a basic policy optimization algorithm based on the idea of Mirror Descent (MD). MD has been widely used in the literature of online learning and constrained optimization problems \citep{nemirovskii1983problem,beck2003mirror}. In particular, given a \emph{reference policy} $\refPi$, let 
 \begin{equation*}
-	\ENT(\pi_\theta; \tau, \refPi) = { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
+\ENT(\pi_\theta; \tau, \refPi) = { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
 \end{equation*}
 
 The MD update for policy optimization problem is 
 \begin{equation}
-\label{eq:max_expected_reward_plus_relative_entropy}
-	\pi_{\theta_{t+1}} = \argmax\limits_{\pi_\theta \in \Pi}  \ENT(\pi_\theta; \tau, \pithetat), 
+%\label{eq:max_expected_reward_plus_relative_entropy}
+\pi_{\theta_{t+1}} = \argmax\limits_{\pi_\theta \in \Pi}  \ENT(\pi_\theta; \tau, \pithetat), 
 \end{equation}
 which combines the expected reward \cref{max_expected_reward} with a relative entropy regularizer. Similar ideas have also been explored in \citet{peters2007reinforcement,wierstra2008episodic,peters2010relative,schulman2015trust,montgomery2016guided,nachum2017trust,haarnoja2018soft,abdolmaleki2018maximum}. The following \cref{prop:mirrordescent_projection} suggests an efficient implementation of the mirror descent algorithm.
-
-\begin{prop}
-\label{prop:mirrordescent_projection}
-Given a \emph{reference policy} $\refPi$, define $\bar{\pi}_\tau^*(\rho) =  \frac{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ r(\rho^{\prime}) / \tau \right\} } }$, then
-\begin{equation*}
-	\argmax\limits_{\pi_\theta \in \Pi}{\ENT(\pi_\theta; \tau, \refPi)}= \argmin\limits_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*) } ,
-\end{equation*}
-\end{prop}
-%\vspace{-0.2in}
-\begin{proof}
-$-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) = - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} = \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi}$. Note the fact that $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
-\end{proof}
 Based on \cref{prop:mirrordescent_projection}, policy mirror descent (PMD) updates the policy $\pi_{\theta_{t+1}}$ by
 \begin{equation}
 \label{eq:pmd}
 \begin{split}
-	&\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
-	\text{where}\ \ \bar{\pi}_{\tau}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \pi_{\theta_t}) } }.
+&\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
+\text{where}\ \ \bar{\pi}_{\tau}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \pi_{\theta_t}) } }.
 \end{split}
 \end{equation}
-One can show that Mirror descent asymptotically converges to the optimal policy when $\Pi$ is a convex set \citep{nemirovskii1983problem,beck2003mirror}. However, in practice, the policy $\pi_\theta$ is often parameterized by a complex non-linear function, such as a neural network, which does not satisfy the convex constraint set assumption. The next proposition shows that despite of the non-convexity of $\Pi$, the MD update can still improve the expected reward monotonically.
+\fi
+
+\subsection{Revisiting Trust Region Policy Optimization (TRPO)}
+Recall that TRPO\footnote{Here we present its regularized version, which is equivalent to constraint version that is presented in \citet{schulman2015trust}. } learns the policy by maximizing the expected reward with a relative entropy regularizer.
+In particular, given a \emph{reference policy} $\refPi$ (usually the current policy), let 
+\begin{equation*}
+\ENT(\pi_\theta; \tau, \refPi) = { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
+\end{equation*}
+TRPO learns $\pi_{\theta_{t+1}} $ by 
+\begin{equation}
+\label{eq:max_expected_reward_plus_relative_entropy}
+\pi_{\theta_{t+1}} = \argmax\limits_{\pi_\theta \in \Pi}  \ENT(\pi_\theta; \tau, \pithetat), 
+\end{equation}
+which combines the expected reward \cref{max_expected_reward} with a relative entropy regularizer. 
+%Similar ideas have also been explored in \citet{peters2007reinforcement,wierstra2008episodic,peters2010relative,schulman2015trust,montgomery2016guided,nachum2017trust,haarnoja2018soft,abdolmaleki2018maximum}. 
+A gradient method with line search is suggested to solve the optimization problem. 
+To better understand its behavior in the parameter space, we instead reformulate the problem into the following lift-and-project procedure. \cref{prop:mirrordescent_projection} shows that the different formulations are equivalent.
+\begin{equation}
+\label{eq:pmd}
+\begin{split}
+&\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
+\text{where}\ \ \bar{\pi}_{\tau}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) } }.
+\end{split}
+\end{equation}
+\begin{prop}
+\label{prop:mirrordescent_projection}
+Given a \emph{reference policy} $\refPi$,  $\bar{\pi}_\tau^*(\rho)$ in \cref{eq:pmd} satisfies
+\begin{equation}
+\label{eq:pitaustar}
+\bar{\pi}_\tau^*(\rho) =  \frac{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ r(\rho^{\prime}) / \tau \right\} } }.
+\end{equation}
+Moreover, the solutions to \cref{eq:max_expected_reward_plus_relative_entropy} are the same as the ones to \cref{eq:pmd}.
+\end{prop}
+
+\begin{proof}
+It is straightforward to prove \cref{eq:pitaustar}.
+To prove the second part, it remains to prove
+\begin{equation*}
+\argmax\limits_{\pi_\theta \in \Pi}{\ENT(\pi_\theta; \tau, \refPi)}= \argmin\limits_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*) } ,
+\end{equation*}
+Note that $-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) = - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} = \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi}$. Note the fact that $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
+\end{proof}
+\begin{remark}
+	The lift-and-project procedure in \cref{eq:pmd} is not completely new in the literature. In fact, it has also been proposed in ******. We postpone the detailed discussion to Section ****.
+\end{remark}
+
+One can show that Mirror descent asymptotically converges to the optimal policy when $\Pi$ is a convex set \citep{nemirovskii1983problem,beck2003mirror}. However, in practice, the policy $\pi_\theta$ is often parameterized by a complex non-convex function, such as a neural network, which does not satisfy the convex constraint set assumption. 
+The next proposition shows that despite of the non-convexity of $\Pi$, TRPO has some desirable properties.
 \begin{prop}
 \label{prop:monoto_policymirrordescent}
-Assume that $\pi_{\theta_{t}}$ is the update sequence of the policy mirror descent algorithm, then 
-\begin{equation*}
+Given the projection step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved optimally, for arbitrary parametrization of $\pi$, TRPO satisfies the following properties.
+\begin{enumerate}
+	\item The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
+	Assume that $\pi_{\theta_{t}}$ is the update sequence, then 
+	 \begin{equation*}
 	\oep_{\rho \sim \pi_{\theta_{t+1}}}{r(\rho)} - \oep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \ge 0.
-\end{equation*}
+	\end{equation*}
+	\item The globally optimal policy $\pi^*$ in parameter space is included in the set of fixed points of TRPO.
+\end{enumerate}
 \end{prop}
 \begin{proof}
-Note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. By expanding the KL divergence and rearranging terms, we have $ \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) - \sum_{\rho}{ \pi_{\theta_{t+1}}(\rho) r(\rho) } \leq - \sum_{\rho}{ \pi_{\theta_{t}}(\rho) r(\rho) }$, which gives $\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \geq \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \geq 0$.
+{\bf (Monotonic Improvement Guarantee)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. By expanding the KL divergence and rearranging terms, we have $ \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) - \sum_{\rho}{ \pi_{\theta_{t+1}}(\rho) r(\rho) } \leq - \sum_{\rho}{ \pi_{\theta_{t}}(\rho) r(\rho) }$, which gives $\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \geq \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \geq 0$.
+
+{\bf (Fixed point)}
 \end{proof}
+\begin{remark}
+	The monotonic improvement guarantee has been derived in \citep{schulman2015trust}. Here we give a rather direct proof based on our lift-and-project formulation.
+\end{remark}
 
-Although PMD enjoys this beneficial property, it is also well known that minimizing the KL divergence $\KL(\pi_\theta \| \bar{\pi}_\tau^*) $ is \emph{mode seeking} \citep{kevin2012machine}, which can cause mode collapse during the learning process. Once the policy $\bar{\pi}_\tau^*$ drops some of the modes, learning could be trapped into sub-optimal policies. Moreover, PMD is also prone to converging to local optima:
-Note that the learning in \cref{eq:pmd} may converge to the policy $\pithetat$ that is a local maximizer of $\ep_{\rho \sim \pi} r(\rho)$. 
-Since $\KL(\pi \| \pithetat) = 0$ for such policy, the learning algorithm has no incentive for further exploration, and thus will become trapped at a local optimum.
-To overcome these drawbacks, we propose two modifications for the PMD algorithm, leading to our new algorithm.
+Despite of its stable and reliable performance, TRPO is also observed to be trapped in some poor local optima in practice. 
+Indeed, while the relative entropy regularizer helps in preventing large policy update, it also limits its exploration.
+Minimizing the KL divergence $\KL(\pi_\theta \| \bar{\pi}_\tau^*) $ is known to be \emph{mode seeking} \citep{kevin2012machine}, which can cause mode collapse during the learning process. Once the policy $\bar{\pi}_\tau^*$ drops some of the modes, learning could be trapped into sub-optimal policies.
+At this point, the relative entropy regularizer will NOT encourage TRPO for further exploration.
 
-\subsection{Reversed Entropy Policy Mirror Descent}
+Another problem is that \cref{prop:monoto_policymirrordescent} relies on the condition that the projection step is globally optimally solved.
+However, given that $\pi_\theta$ is non-convex in its parameter $\theta$, this condition mostly CANNOT be satisfied in practice.
+To overcome these drawbacks, we propose two modifications for TRPO, leading to our new algorithm.
+
+\subsection{Reversed Entropy Policy Mirror Descent \todor[]{Again, new name}}
 \label{sec:repmd}
-The new algorithm, called Reversed Entropy Policy Mirror Descent (REPMD), instead solves the following optimization problem to update the policy $\pi_{\theta_{t+1}}$:
-\begin{equation}
-\label{eq:repmd}
-\begin{split}
-	&\argmin\limits_{\pi_\theta \in \Pi}{\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) }, \\
-	\text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \pi_{\theta_t}) + \tau^{\prime} \cH(\pi)} }.
-\end{split}
-\end{equation}
-First, an additional entropy regularizer, controlled by a separate parameter $\tau^{\prime}\geq 0$, is added to the objective, which encourages additional exploration as in MENT. Second, we employ the reversed \emph{mean seeking} direction of KL divergence $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$ to update the policy. The idea of optimizing this direction of KL divergence has proven to be effective for structured prediction and reinforcement learning in previous work, such as reward augmented maximum likelihood \citep{norouzi2016reward} and UREX \citep{nachum2017improving}.
+\if0 
+First, an additional entropy regularizer, controlled by a separate parameter $\tau^{\prime}\geq 0$, is added to the objective, which encourages additional exploration as in MENT.
 
 A similar monotonic improvement result to \cref{prop:monoto_policymirrordescent} can also be proved for REPMD but only on the $\SR(\pi_\theta) $, as shown in \cref{thm:monotonically_increasing_sr_property}, where we let
 \begin{equation*}
-	\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}
+\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}
 \end{equation*}
 denote the softmax approximated expected reward of $\pi_\theta$.
-%\todor[]{Why it is a sum over $\rho$ rather than expectation?}
+\fi
+The first modification is to add an entropy regularizer, controlled by a separate parameter $\tau^{\prime}\geq 0$, to the lift step to encourage the exploration of the algorithm. 
+Second, we employ the reversed \emph{mean seeking} direction of KL divergence $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$ to update the policy.
+The new algorithm, called ****, solves the following optimization problem to update the policy $\pi_{\theta_{t+1}}$:
+\begin{equation}
+\label{eq:repmd}
+\begin{split}
+&\argmin\limits_{\pi_\theta \in \Pi}{\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) }, \\
+\text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \pi_{\theta_t}) + \tau^{\prime} \cH(\pi)} }.
+\end{split}
+\end{equation}
+
+The idea of optimizing this direction of KL divergence has proven to be effective for structured prediction and reinforcement learning in previous work, such as reward augmented maximum likelihood \citep{norouzi2016reward} and UREX \citep{nachum2017improving}.
+More importantly, as shown in \cref{prop:solvableprojection}, reversing the direction of the KL divergence makes the projection step solvable even for a one-layer-softmax neural network $\pi$, thus guarantees the desirable properties in practice.
+\begin{prop}
+	
+	Assuem $\pi_\theta(s) = \softmax(\phi_s^{\top}\theta)$. Given a reference policy $\refPi$, the projection step $\min\limits_{\theta \in \mathbb{R}^d}{\KL(\refPi \| \pi_\theta)}$ is convex in $\theta$.
+\end{prop}
+\label{prop:solvableprojection}
+Similar monotonic improvement guarantee can be proved for **** but only on a surrogate reward $\SR(\pi_\theta) $, as shown in \cref{thm:monotonically_increasing_sr_property}, where
+\begin{equation*}
+\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
+\end{equation*}
 \begin{thm}
 \label{thm:monotonically_increasing_sr_property}
 Assume that $\pi_{\theta_{t}}$ is the update sequence of the reversed entropy policy mirror descent algorithm, then
@@ -396,6 +474,15 @@ Results on ReversedAddition are reported in Figure (\ref{fig:ablation}). It clea
 \section{Related Work}
 \label{sec:related_work}
 
+\begin{itemize}
+	\item Mirror Descent: Value based; Linear approximation, with a mirror descent type regularization on the parameter \citep{liu2015finite,thomas2013projected,mahadevan2012sparse}. 
+	\item guided policy search via approximate mirror descent: Used as an objective function to align the learned policy with local "teacher" policies. \citep{montgomery2016guided}
+	\item Trust region: Similar idea; Result also holds in ; Then two stage view with reversed projection \cite{schulman2015trust}
+	\item Guided AC for continuous control: two-stage optimization; constraint form; Maximizing past trajectory reward. Gaussian policy for $\pi$ and second order approximation for $Q$ function. We directly estimate its gradient based on samples. \citep{tangkaratt2017guide}
+	\item relative entropy policy search: constraint version; Use KL divergence on join distribution; Linear approximation for value function or in RKHS. No entropy, no multiple projection. \citep{peters2010relative,van2015learning}
+\end{itemize}
+
+
 As mentioned in \cref{sec:pmd}, several existing methods are similar with the policy mirror descent (PMD) framework, by either considering the relative entropy regularizer in policy search/optimization, or using KL divergence as the loss function to optimize the policy. These related works include reward-weighted regression \citep{peters2007reinforcement,wierstra2008episodic}, relative entropy policy search \citep{peters2010relative}, trust region policy optimization \citep{schulman2015trust}, approximate mirror descent policy search \citep{montgomery2016guided}, maximum a posterior policy optimization \citep{abdolmaleki2018maximum}, and soft actor-critic \citep{haarnoja2018soft}. The proposed reversed entropy policy mirror descent (REPMD) method employs a modified version of PMD framework. First, the objective function of PMD is combined with entropy regularizer to enhance further exploration. Second, the projection step applies the \emph{mean seeking} direction of KL divergence instead of the \emph{mean seeking} one used PMD. As shown in both theoretical and practical justification, these two novelties play a very important role in REPMD. 
 
 The Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which includes both entropy and relative entropy regularizer \citep{nachum2017trust}. However, the policy update strategy is different: while REPMD uses KL projection, Trust PCL inherits the same idea from PCL that minimizes path inconsistency error between value and policy for any trajectories \citep{nachum2017bridging}. Although policy optimization by minimizing path inconsistency error can efficiently utilize off-policy data, it is not justified that this method can guarantee policy improvement during learning. On the other hand, the proposed REPMD method can monotonically increase the softmax approximated expected reward, as shown in \cref{sec:repmd}.
@@ -415,127 +502,6 @@ In this paper, we have proposed the reversed entropy policy mirror descent (REPM
 \bibliographystyle{iclr2019_conference}
 
 \newpage
-\section{Stochastic Transition Setting}
-
-In \cref{sec:notations_and_settings}, we assume that the state transition function is deterministic for simplicity. For completeness, we consider the general stochastic transition setting here.
-
-\subsection{Notations and Settings}
-
-Recall in \cref{sec:notations_and_settings}, the policy probability of trajectory $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$ is denoted as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$. We define transition probability of $\rho$ as $f(\rho) \triangleq \prod_{t=1}^{T-1}{ f(s_{s+1} | s_t, a_t)}$. The total probability of $\rho$ under policy $\pi$ and transition $f$ is then $p_{\pi, f}(\rho) \triangleq \pi(\rho) f(\rho) = \prod_{t=1}^{T-1}{ \pi(a_t | s_t) f(s_{s+1} | s_t, a_t)}$. We use $\Delta_{f} \triangleq \{ \pi | \sum_{\rho}{ p_{\pi, f}(\rho) } = \sum_{\rho}{\pi(\rho) f(\rho)} = 1, \pi(\rho) \ge 0, f(\rho) > 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. It is obvious that $p_{\pi, f}(\rho) = \pi(\rho)$ and $\Delta_f = \Delta$ under deterministic transition setting, i.e., $f(\rho) = 1, \forall \rho$.
-
-\subsection{REPMD Optimization Problem}
-
-The proposed REPMD algorithm solves \cref{eq:repmd} in the deterministic transition setting. In the stochastic setting, the corresponding problem is,
-\begin{equation}
-\label{eq:repmd_stochastic}
-\begin{split}
-	&\argmin\limits_{\pi_\theta \in \Pi}{\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) }, \\
-	\text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* & =  \argmax\limits_{\pi \in \Delta_f}{ \ep\limits_{\rho \sim p_{\pi, f}}{ \left[ r(\rho) - \tau^{\prime} \log{\pi(\rho)} \right] } - \tau \KL(p_{\pi, f} \| p_{\pi_{\theta_t}, f} ) },
-\end{split}
-\end{equation}
-which also recovers \cref{eq:repmd} as a special case when $f(\rho) = 1, \forall \rho$.
-
-Like \cref{eq:repmd}, $\bar{\pi}_{\tau,\tau^{\prime}}^*$ in \cref{eq:repmd_stochastic} also has a closed form expression,
-\begin{lem}
-\label{lem:opt_pi_ref_stochastic}
-The unconstrained optimal policy of \cref{eq:repmd_stochastic} has the following closed form expression:
-\begin{equation*}
-	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) f(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
-\end{equation*}
-\end{lem}
-\begin{proof}
-Rewrite the maximization problem in \cref{eq:repmd_stochastic} as (take $\pi_{\theta_t}$ as the reference policy $\refPi$),
-\begin{equation*}
-\begin{split}
-	\textmax\limits_{\pi}&{ \sum\limits_{\rho}{ \pi(\rho) f(\rho) \left[ r(\rho)  - \left( \tau + \tau^{\prime} \right) \log{\pi(\rho)} + \tau \log{\bar{\pi}(\rho)} \right]} } \\
-	\st &\sum\limits_{\rho}{ \pi(\rho) f(\rho)} = 1.
-\end{split}
-\end{equation*}
-The KKT condition of the above problem is,
-\begin{equation*}
-\begin{split}
-	f(\rho) \left[ r(\rho) - \left( \tau + \tau^{\prime} \right) \log{\pi(\rho)} + \tau \log{\bar{\pi}(\rho)} +  \lambda - \left( \tau + \tau^{\prime} \right) \right] &= 0, \ \forall \rho \\
-	\sum\limits_{\rho}{ \pi(\rho) f(\rho)} &= 1.
-\end{split}
-\end{equation*}
-Using $f(\rho) > 0, \forall \rho$ and solving the KKT condition, we obtain the expression of $\bar{\pi}_{\tau,\tau^{\prime}}^*$.
-\end{proof}
-
-Lemma \ref{lem:opt_pi_ref_stochastic} recovers Lemma \ref{lem:opt_pi_ref} as a special case when $f(\rho) = 1, \forall \rho$.
-
-\subsection{Theoretical Analysis}
-
-In stochastic transition setting, we define the follow softmax approximated expected reward of $\pi_\theta$
-\begin{equation*}
-	\SR_f(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }},
-\end{equation*}
-which recovers $\SR(\pi_\theta)$ when $f(\rho) = 1, \forall \rho$. The monotonic improvement property is for $\SR_f(\pi_\theta)$.
-
-\begin{thm}
-\label{thm:monotonically_increasing_sr_property_stochastic}
-Assume that $\pi_{\theta_{t}}$ is the update sequence of the REPMD algorithm in \cref{eq:repmd_stochastic}, then
-\begin{equation*}
-	\SR_f(\pi_{\theta_{t+1}}) - \SR_f(\pithetat)\ge 0.
-\end{equation*}
-\end{thm}
-\begin{proof}
-	Using $\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pi_{\theta_{t+1}}, f}) = \min_{\pi_\theta \in \Pi}{ \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) } \le \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pithetat, f})$ and Jensen's inequality,
-	\begin{equation*}
-	\begin{split}
-	&\SR_f(\pi_{\theta_{t+1}}) - \SR_f(\pithetat) = (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
-	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
-	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
-	\ge& (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
-	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } \\
-	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \frac{ \pi_{\theta_{t+1}}(\rho) f(\rho) }{ \pithetat(\rho) f(\rho)} } } \\
-	=& \tau \left[ \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pithetat, f}) - \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pi_{\theta_{t+1}}, f}) \right] \ge 0. \qedhere
-	\end{split}
-	\end{equation*}
-\end{proof}
-
-$\SR_f(\pi_\theta)$ also recovers corresponding performance measures in the stochastic transition setting.
-\begin{prop}
-\label{prop:sr_stochastic}
-$\SR_f(\pi_\theta)$ satisfies the following properties:
-\begin{enumerate}[label=(\roman*)]
-	\item  $\SR_f(\pi_\theta) \to \max_{\rho}{r(\rho)}$, as $\tau \to 0, \tau^{\prime} \to 0$.
-	\item $\SR_f(\pi_\theta) \to \ep\limits_{\rho \sim p_{\pi_\theta, f}}{r(\rho)}$, as $\tau \to \infty, \tau^{\prime} \to 0$. 
-\end{enumerate}	
-\end{prop}
-\begin{proof}
-To prove (i), note that as $\tau \to 0$, $\SR_f(\pi_\theta) \to \tau^{\prime} \log{ \sum_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) }{ \tau^{\prime} } \right\} }}$. Taking limit on $\tau'$ gives the hardmax value $\max_{\rho}{r(\rho)}$ as $\tau^{\prime} \to 0$.
-	
-To prove (ii), we have 
-\begin{align*}
-	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } \\
-	=& \lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} } } } \\
-	=& \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } = \ep\limits_{\rho \sim p_{\pi_\theta, f}}{r(\rho)} -  \tau^{\prime} \cdot \ep\limits_{\rho \sim p_{\pi_\theta, f}}{  \log{\pi_\theta(\rho)} }
-\end{align*}
-As $\tau^{\prime} \to 0$, $\SR_f(\pi_\theta) \to \ep_{\rho \sim p_{\pi_\theta, f}}{r(\rho)}$.
-\end{proof}
-
-\subsection{Learning}
-
-The REPMD learning process is intact under the stochastic transition setting. Similar with \cref{eq:importance_sampling_kl}, we can estimate the KL divergence in the projection step of \cref{eq:repmd_stochastic} by drawing $K$ \textit{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from $p_{\refPi, f}$, i.e., the mixture of $\refPi$ and $f$, which is exactly the process of sampling from $\refPi$ and interacting with the environment,
-\begin{equation}
-\label{eq:importance_sampling_kl_stochastic}
-\begin{split}
-	\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) &= \ep_{\rho \sim p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} } \left[ \log \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) - \log \pi_\theta(\rho) \right] \\
-	&= \ep_{\rho\sim p_{\refPi, f}} \frac{\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho)}{\refPi(\rho)} \left[ \log \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) - \log \pi_\theta(\rho) \right].
-\end{split}
-\end{equation}
-
-We can then approximate the gradient of $\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} )$ by averaging these $K$ samples according to \cref{eq:importance_sampling_kl_stochastic}. 
-
-\begin{thm}
-\label{thm:repmdgradientestimate_stochastic}
-Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}$. Given $K$ \emph{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, we have the following unbiased gradient estimator,
-\begin{equation}
-	\nabla_{\theta} \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) \approx -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} },
-\end{equation}
-\end{thm}
-\begin{proof}
-See Theorem \ref{thm:repmdgradientestimate}.
-\end{proof}
-
+\appendix 
+\include{appendix}
 \end{document}
