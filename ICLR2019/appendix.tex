@@ -1,3 +1,16 @@
+\section{Proof of \cref{thm:monotonically_increasing_sr_property}}
+\begin{proof}
+	Using $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}}) = \min_{\pi_\theta \in \Pi}{ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat)$ and Jensen's inequality,
+	\begin{equation*}
+	\begin{split}
+	&\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat) = (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
+	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
+	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
+	\ge& (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
+	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } = \tau \left[ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat) - \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}})\right] \ge 0. \qedhere
+	\end{split}
+	\end{equation*}
+\end{proof}
 
 \section{Stochastic Transition Setting}
 
