@@ -1,0 +1,42 @@
+Policy optimization has been widely used across reinforcement learning (RL) settings. Given a set of parametrized policy functions $\pi_\theta \in \Pi$, policy optimization aims to search the optimal policy $\pi_\theta^*$ that achieves the highest expected reward,
+\begin{equation}
+\label{max_expected_reward}
+\begin{split}
+\pi_\theta^* \in \argmax_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{r(\rho)} },
+\end{split}
+\end{equation}
+
+\if0
+
+However, directly optimizing the expected reward can lead to a lack of exploration, and such learning algorithms usually converge to a sub-optimal policy.
+Often, entropy regularization is proposed to mitigate the lack of exploration, leading to the following objective function,
+\begin{equation}
+\label{eq:max_expected_reward_plus_entropy}
+\begin{split}
+	\max\limits_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{  r(\rho) } + \tau \mathcal{H}(\pi_\theta) } = 
+	\max\limits_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{ \left[ r(\rho) - \tau \log{\pi_\theta(\rho)} \right] } }.
+\end{split}
+\end{equation}
+where $\tau$ is a non-negative temperature parameter to control the degree of exploration. Using sampled trajectories to solve the above maximum entropy exploration (MENT) problem \cref{eq:max_expected_reward_plus_entropy} is a classic policy gradient method, well known as REINFORCE \citep{williams1992simple,williams1991function}.
+
+Although MENT assigns non-zero probability to every action, hence allowing it to be explored by $\pi_\theta$ in principle, such exploration is inherently \textit{undirected}, i.e., ``exploration is ensured only by randomness'' \citep{thrun1992efficient}. 
+Recently, \citet{nachum2017improving} proposed the under-appreciated reward exploration method (UREX) that provides extra guidance on the exploration probability, as follows:
+\begin{equation}
+\label{eq:urex_objective}
+\begin{split}
+	\max\limits_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\tau^* \| \pi_\theta) } },
+\end{split}
+\end{equation}
+where $\pi_\tau^*(\rho) \triangleq \frac{\exp\left\{ r(\rho) / \tau \right\}}{ \sum_{\rho'}{ \exp\left\{ r(\rho') / \tau \right\} } }$ is the optimal policy of \cref{eq:max_expected_reward_plus_entropy} without the policy constraint $\Pi$. With $\KL(\pi_\tau^* \| \pi_\theta)$ as its regularizer, UREX tries to give larger probability values over high reward sampled trajectories to prevent $\pi_\theta$ from being too far away with $\pi_\tau^*$. Despite its efficiency in exploration, UREX suffers from two fundamental problems. On the one hand, it is not clear what the fixed point of UREX actually represents, as shown in \cref{prop:urex_fixedpoint}. On the other hand, there is no theoretical justification that UREX can monotonically increase the performance, which is favorable for any policy update methods. 
+\begin{prop}
+\label{prop:urex_fixedpoint}
+The fixed point of UREX in \cref{eq:urex_objective} has the form
+\begin{equation*}
+	\pi_\theta(\rho) = \frac{\tau \pi_\tau^*(\rho)}{\alpha - r(\rho)},
+\end{equation*}
+where $\alpha$ is a constant such that $\sum_{\rho}{ \pi_\theta(\rho)} = 1$ and $ \max_{\rho}{ r(\rho) } + \tau \ge \alpha \ge  \max\{\min_{\rho}{ r(\rho) } + \tau, \max_{\rho}{ r(\rho) } \}$.
+\end{prop}
+\begin{proof}
+See the appendix of \citet{nachum2017improving}.
+\end{proof}
+\fi 
