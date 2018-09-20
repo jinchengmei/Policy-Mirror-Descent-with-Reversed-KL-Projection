@@ -7,7 +7,7 @@
 \usepackage{hyperref}
 \usepackage{url}
 \usepackage{amsthm}
-\newtheorem{remark}{Remark}
+%\newtheorem{remark}{Remark}
 
 \usepackage[capitalize]{cleveref}
 \crefname{prop}{Proposition}{Propositions}
@@ -18,7 +18,7 @@
 \newcommand{\todoj}[2][]{\todo[color=orange!25,size=\small,#1]{Jincheng: #2}}
 \newcommand{\todoc}[2][]{\todo[color=purple!25,size=\small,#1]{Chenjun: #2}}
 \newcommand{\todor}[2][]{\todo[color=blue!25,size=\small,#1]{Ruitong: #2}}
-\setlength{\marginparwidth}{1.2in}
+%\setlength{\marginparwidth}{2in}
 
 \title{Policy Mirror Descent with Reversed KL Projection}
 
@@ -81,6 +81,7 @@ The rest of the paper is organized as follows. After introducing exploration of 
 
 We consider finite horizon reinforcement learning settings with finite state and action spaces. The behavior of an agent is modelled by a policy $\pi(a|s)$, which estimates a probability distribution over a finite set of actions given an observed state. At each time step $t$, the agent takes an action $a_t$ by sampling from $\pi(a_t | s_t)$. The environment then returns a reward $r_t = r(s_t, a_t)$ and the next state $s_{t+1} = f(s_t, a_t)$, where $f$ is the transition function and it is not revealed to the agent. Given a trajectory, a sequence of states and actions $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$, the policy probability and the total reward of $\rho$ are defined as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$ and $r(\rho) = \sum_{t=1}^{T-1} r(s_t, a_t)$. We use $\Delta \triangleq \{ \pi | \sum_{\rho}{\pi(\rho)} = 1, \pi(\rho) \ge 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. For simplicity we also assume that the state transition function is deterministic, while our results can be easily extended to the general setting with random transition functions.
 
+\if0
 \section{Exploration in Policy Optimization}
 \label{sec:exploration_in_policy_optimization}
 
@@ -122,6 +123,7 @@ where $\alpha$ is a constant such that $\sum_{\rho}{ \pi_\theta(\rho)} = 1$ and 
 \begin{proof}
 See the appendix of \citet{nachum2017improving}.
 \end{proof}
+\fi 
 
 \section{Reversed Entropy Policy Mirror Descent}
 \label{sec:reversed_emtropy_policy_mirror_descent}
@@ -173,21 +175,21 @@ TRPO learns $\pi_{\theta_{t+1}} $ by
 %\end{equation}
 %which combines the expected reward \cref{max_expected_reward} with a relative entropy regularizer. 
 %Similar ideas have also been explored in \citet{peters2007reinforcement,wierstra2008episodic,peters2010relative,schulman2015trust,montgomery2016guided,nachum2017trust,haarnoja2018soft,abdolmaleki2018maximum}. 
-A gradient method with line search is suggested to solve the optimization problem. 
-To better understand its behavior in the parameter space, we instead reformulate the problem into the following lift-and-project procedure.
+A gradient method with line search is proposed to solve the above optimization problem in \citet{schulman2015trust}. 
+To better understand its behavior in the parameter space, in this paper we instead reformulate the problem into the following lift-and-project procedure.
 \begin{equation}
 \label{eq:pmd}
 \begin{split}
-\text{(Project Step)} \quad &\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
-\text{(Lift Step)}  \quad & \text{where}\ \ \bar{\pi}_{\tau}^* =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) } }. 
+\text{\bf (Project Step)} \quad &\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
+\text{\bf (Lift Step)}  \quad & \text{where}\ \ \bar{\pi}_{\tau}^* =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) } }. 
 \end{split}
 \end{equation}
-While the lift step is non-convex in $\pi$, we can actually solve the problem analytically. In fact, by simple calculations,
+\cref{prop:mirrordescent_projection} shows that the two different formulations are in fact equivalent.
+Note that although the lift step is non-convex in $\pi$, we can actually solve the problem analytically. In fact, by simple calculations, we have 
 \begin{equation}
 \label{eq:pitaustar}
 \bar{\pi}_\tau^*(\rho) =  \frac{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ r(\rho^{\prime}) / \tau \right\} } }.
 \end{equation}
-\cref{prop:mirrordescent_projection} shows that the two different formulations are in fact equivalent.
 \begin{prop}
 \label{prop:mirrordescent_projection}
 Given a \emph{reference policy} $\refPi$,
@@ -200,22 +202,23 @@ Given a \emph{reference policy} $\refPi$,
 \begin{proof}
 Note that $-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) = - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} = \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi}$. Note the fact that $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
 \end{proof}
-\begin{remark}
+\begin{remk}
 	The lift-and-project procedure in \cref{eq:pmd} is not completely new in the literature. In fact, it has also been proposed in ******. We postpone the detailed discussion to Section ****.
-\end{remark}
+\end{remk}
 
-One can show that Mirror descent asymptotically converges to the optimal policy when $\Pi$ is a convex set \citep{nemirovskii1983problem,beck2003mirror}. However, in practice, the policy $\pi_\theta$ is often parameterized by a complex non-convex function, such as a neural network, which does not satisfy the convex constraint set assumption. 
-The next proposition shows that despite of the non-convexity of $\Pi$, TRPO has some desirable properties.
+The lift-and-project reformulation suggests an alternative way in solving \cref{eq:max_expected_reward_plus_relative_entropy}: Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$, then perform multiple steps of gradient descent on the project step to compute $\pi_{\theta_{t+1}}$. One can show that the above lift-and-project procedure asymptotically converges to the optimal policy when $\Pi$ is a convex set \citep{nemirovskii1983problem,beck2003mirror}. However, in practice, the policy $\pi_\theta$ is often parameterized by a complex non-convex function, such as a neural network, which violates the convex constraint set assumption. 
+The next proposition shows that despite of the non-convexity of $\Pi$, TRPO still has some desirable properties.
 \begin{prop}
 \label{prop:monoto_policymirrordescent}
 Given the projection step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved optimally, for arbitrary parametrization of $\pi$, TRPO satisfies the following properties.
 \begin{enumerate}
-	\item The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
+	\item {\bf (Monotonic Improvement Guarantee)} 
+	%The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
 	Assume that $\pi_{\theta_{t}}$ is the update sequence, then 
 	 \begin{equation*}
 	\oep_{\rho \sim \pi_{\theta_{t+1}}}{r(\rho)} - \oep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \ge 0.
 	\end{equation*}
-	\item The globally optimal policy $\pi^*$ in parameter space is included in the set of fixed points of TRPO.
+	\item {\bf (Global optimum inclusion)} The globally optimal policy $\pi^*$ in parameter space is included in the set of fixed points of TRPO.
 \end{enumerate}
 \end{prop}
 \begin{proof}
@@ -223,20 +226,19 @@ Given the projection step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \
 
 {\bf (Fixed point)}
 \end{proof}
-\begin{remark}
-	The monotonic improvement guarantee has been derived in \citep{schulman2015trust}. Here we give a rather direct proof based on our lift-and-project formulation.
-\end{remark}
+\begin{remk}
+	The monotonic improvement guarantee has been derived in \citep{schulman2015trust}. Here we give a simpler and direct proof based on our lift-and-project formulation.
+\end{remk}
 
-Despite of its stable and reliable performance, TRPO is also observed to be trapped in some poor local optima in practice. 
-Indeed, while the relative entropy regularizer helps in preventing large policy update, it also limits its exploration.
-Minimizing the KL divergence $\KL(\pi_\theta \| \bar{\pi}_\tau^*) $ is known to be \emph{mode seeking} \citep{kevin2012machine}, which can cause mode collapse during the learning process. Once the policy $\bar{\pi}_\tau^*$ drops some of the modes, learning could be trapped into sub-optimal policies.
+Despite of its stable and reliable performance, in practice TRPO is also observed to get trapped in some poor local optima. 
+Indeed, while the relative entropy regularizer helps in preventing large policy update, it may also limit the exploration of TRPO.
+Moreover, minimizing the KL divergence $\KL(\pi_\theta \| \bar{\pi}_\tau^*) $ is known to be \emph{mode seeking} \citep{kevin2012machine}, which can cause mode collapse during the learning process. Once the policy $\bar{\pi}_\tau^*$ drops some of the modes, learning could be trapped into sub-optimal policies.
 At this point, the relative entropy regularizer will NOT encourage TRPO for further exploration.
 
-Another problem is that \cref{prop:monoto_policymirrordescent} relies on the condition that the projection step is globally optimally solved.
-However, given that $\pi_\theta$ is non-convex in its parameter $\theta$, this condition mostly CANNOT be satisfied in practice.
-To overcome these drawbacks, we propose two modifications for TRPO, leading to our new algorithm.
+Another problem about TRPO is that \cref{prop:monoto_policymirrordescent} relies on the condition that the projection step can be globally optimally solved.
+However, oftentimes in practice this is not true when $\pi_\theta$ is non-convex in $\theta$, which hinders the applicability of \cref{prop:monoto_policymirrordescent}.
 
-\subsection{Reversed Entropy Policy Mirror Descent \todor[]{Again, new name}}
+\subsection{Reversed Entropy Policy Mirror Descent \todor[]{New name}}
 \label{sec:repmd}
 \if0 
 First, an additional entropy regularizer, controlled by a separate parameter $\tau^{\prime}\geq 0$, is added to the objective, which encourages additional exploration as in MENT.
@@ -247,25 +249,27 @@ A similar monotonic improvement result to \cref{prop:monoto_policymirrordescent}
 \end{equation*}
 denote the softmax approximated expected reward of $\pi_\theta$.
 \fi
-The first modification is to add an entropy regularizer, controlled by a separate parameter $\tau^{\prime}\geq 0$, to the lift step to encourage the exploration of the algorithm. 
+In this section, we propose two modifications to TRPO to overcome its aforementioned drawback.
+The first modification is an additional entropy regularizer to the lift step, controlled by a separate parameter $\tau^{\prime}\geq 0$, to encourage the exploration of the algorithm. 
 Second, we employ the reversed \emph{mean seeking} direction of KL divergence $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$ to update the policy.
 The new algorithm, called ****, solves the following optimization problem to update the policy $\pi_{\theta_{t+1}}$:
 \begin{equation}
 \label{eq:repmd}
 \begin{split}
-&\argmin\limits_{\pi_\theta \in \Pi}{\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) }, \\
-\text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \pi_{\theta_t}) + \tau^{\prime} \cH(\pi)} }.
+\text{\bf (Project Step)} \quad  &\argmin\limits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }, \\
+\text{\bf (Lift Step)} \quad  & \text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^*  =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \pi_{\theta_t}) + \bm{\tau^{\prime} \cH(\pi)} }}.
 \end{split}
 \end{equation}
-
-The idea of optimizing this direction of KL divergence has proven to be effective for structured prediction and reinforcement learning in previous work, such as reward augmented maximum likelihood \citep{norouzi2016reward} and UREX \citep{nachum2017improving}.
-More importantly, as shown in \cref{prop:solvableprojection}, reversing the direction of the KL divergence makes the projection step solvable even for a one-layer-softmax neural network $\pi$, thus guarantees the desirable properties in practice.
+%, leading to our new algorithm.
+The idea of optimizing the reverse direction of KL divergence has proven to be effective for structured prediction and reinforcement learning in previous work, such as reward augmented maximum likelihood \citep{norouzi2016reward} and UREX \citep{nachum2017improving}.
+Its \emph{mean seeking} behavior would further encourage the exploration of the algorithm.
+More importantly, as shown in \cref{prop:solvableprojection}, reversing the direction of the KL divergence makes the projection step solvable even for the one-layer-softmax neural network $\pi$, thus guarantees the desirable properties in practice.
 \begin{prop}
-	
+	\label{prop:solvableprojection}
 	Assuem $\pi_\theta(s) = \softmax(\phi_s^{\top}\theta)$. Given a reference policy $\refPi$, the projection step $\min\limits_{\theta \in \mathbb{R}^d}{\KL(\refPi \| \pi_\theta)}$ is convex in $\theta$.
 \end{prop}
-\label{prop:solvableprojection}
-Similar monotonic improvement guarantee can be proved for **** but only on a surrogate reward $\SR(\pi_\theta) $, as shown in \cref{thm:monotonically_increasing_sr_property}.
+
+We now prove a similar monotonic improvement guarantee for **** on a surrogate reward $\SR(\pi_\theta) $, as shown in \cref{thm:monotonically_increasing_sr_property}.
 \begin{thm}
 \label{thm:monotonically_increasing_sr_property}
 Assume that $\pi_{\theta_{t}}$ is the update sequence of the reversed entropy policy mirror descent algorithm, then
@@ -278,8 +282,11 @@ where
 \SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
 \end{equation}
 \end{thm}
-Theorem \ref{thm:monotonically_increasing_sr_property} implies that the fixed points of REPMD have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. 
-Although $\text{SR}(\pi_\theta)$ is different than the expected reward $\ep_{\rho \sim \pi_\theta}{r(\rho)}$,  we argue that $\SR(\pi_\theta)$ is still a reasonable performance measure. In fact, by properly adjusting the two temperature parameters $\tau$ and $\tau^{\prime}$, $\SR(\pi_\theta)$ recovers several existing performance measures, as shown in \cref{prop:sr}.
+
+\subsection{Behavior of $\SR(\pi)$}
+Theorem \ref{thm:monotonically_increasing_sr_property} guarantees the monotonic improvement on $\text{SR}(\pi)$, thus implies that the fixed points of REPMD have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. 
+Although $\text{SR}(\pi_\theta)$ is different than the expected reward $\ep_{\rho \sim \pi_\theta}{r(\rho)}$,  in this section we present some theoretical and empirical evidences that $\SR(\pi_\theta)$ is still a reasonable surrogate that provides good guidance to the learning. 
+In fact, by properly adjusting the two temperature parameters $\tau$ and $\tau^{\prime}$, $\SR(\pi_\theta)$ recovers several existing performance measures, as shown in \cref{prop:sr}.
 \begin{prop}
 \label{prop:sr}
 $\SR(\pi_\theta)$ satisfies the following properties:
@@ -288,60 +295,61 @@ $\SR(\pi_\theta)$ satisfies the following properties:
 	\item $\SR(\pi_\theta) \to \ep_{\rho \sim \pi_\theta}{r(\rho)}$, as $\tau \to \infty, \tau^{\prime} \to 0$. 
 \end{enumerate}	
 \end{prop}
-\begin{proof}
-To prove (i), note that as $\tau \to 0$, $\SR(\pi_\theta) \to \tau^{\prime} \log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) }{ \tau^{\prime} } \right\} }}$, the standard softmax value. Taking limit on $\tau'$ gives the hardmax value $\max_{\rho}{r(\rho)}$ as $\tau^{\prime} \to 0$.
-	
-To prove (ii), we have 
-\begin{align*}
-	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } = {\scalebox{.95} {$\lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} } } }$ } }\\
-	&= \sum_{\rho}{ \pi_\theta(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } = \ep_{\rho \sim \pi_\theta}{r(\rho)} + \tau^{\prime} \mathcal{H}(\pi_\theta)
-\end{align*}
-As $\tau^{\prime} \to 0$, $\SR(\pi_\theta) \to \ep_{\rho \sim \pi_\theta}{r(\rho)}$.
-\end{proof}
-
-Note that $\text{SR}(\pi_\theta)$ also resembles ``softmax value function'' that appeared in value based RL \citep{nachum2017bridging,haarnoja2018soft,ding2017cold}. The standard soft value can be recovered by $\text{SR}(\pi_\theta)$ as a special case when $\tau = 0$ or $\tau'=0$. 
+\begin{remk}
+	Note that $\text{SR}(\pi_\theta)$ also resembles ``softmax value function'' that appeared in value based RL \citep{nachum2017bridging,haarnoja2018soft,ding2017cold}. The standard soft value can be recovered by $\text{SR}(\pi_\theta)$ as a special case when $\tau = 0$ or $\tau'=0$. \todor[]{But \cref{prop:sr} tells that $SR(\pi)$ converges to $max_\rho$ when $\tau$ and $\tau^\prime$ are 0?}
+\end{remk}
 
 According to \cref{prop:sr}, one should gradually decrease $\tau^{\prime}$ to reduce the level of exploration as sufficient reward landscape information has been collected during the learning process. Now we can make different choices for $\tau$, depending on the policy constraint set $\Pi$.
 
 \begin{wrapfigure}{r}{0.56\textwidth}
-\begin{minipage}{0.56\textwidth}
-\begin{algorithm}[H]
-\caption{\label{alg:repmd}  The REPMD algorithm}
-\begin{algorithmic}[1]
-  \INPUT $\tau, \tau', K$
-  \OUTPUT  Policy $\pi_\theta$
-  \STATE Random initialized $\pi_{\theta_1}$;
-  \FOR { $t=1,2,\ldots, T$ }
-  \STATE Set $\refPi = \pithetat$;
-  \REPEAT 
-  \STATE Sample a mini-batch of $K$ trajectories from $\refPi$;
-  \STATE Compute the gradient according to \cref{eq:gradient_estimator};
-  \STATE Update $\pi_{\theta_{t+1}}$ by the gradient;
-  \UNTIL converged or reach max\_iter;
-  \ENDFOR
-  \STATE Return $\pi_{\theta_T}$.
-\end{algorithmic}
-\end{algorithm}
-\end{minipage}
+	\begin{minipage}{0.56\textwidth}
+		\begin{algorithm}[H]
+			\caption{\label{alg:repmd}  The REPMD algorithm}
+			\begin{algorithmic}[1]
+				\INPUT $\tau, \tau', K$
+				\OUTPUT  Policy $\pi_\theta$
+				\STATE Random initialized $\pi_{\theta_1}$;
+				\FOR { $t=1,2,\ldots, T$ }
+				\STATE Set $\refPi = \pithetat$;
+				\REPEAT 
+				\STATE Sample a mini-batch of $K$ trajectories from $\refPi$;
+				\STATE Compute the gradient according to \cref{eq:gradient_estimator};
+				\STATE Update $\pi_{\theta_{t+1}}$ by the gradient;
+				\UNTIL converged or reach max\_iter;
+				\ENDFOR
+				\STATE Return $\pi_{\theta_T}$.
+			\end{algorithmic}
+		\end{algorithm}
+	\end{minipage}
 \end{wrapfigure}
 
-\begin{remk}
-\label{small_tau_choices}
+%\begin{remk}
+%\label{small_tau_choices}
+Given $\tau^{\prime} \to 0$ and the reward landscape has been sufficiently explored,
+the constructed unconstrained policy $\bar{\pi}_{\tau,\tau^{\prime}}^* \to \pi^*$ as $\tau \to 0$, where $\pi^*$ is the global deterministic optimal policy. 
+Therefore, in the project step $\pi_\theta$ is obtained by directly projecting $\pi^*$ into $\Pi$. When the policy constraint $\Pi$ has nice properties, such as convexity, that support good behavior of KL projection, $\pi_\theta$ may achieve good performance.
+However, in practice, $\Pi$ is typically non-convex. In such cases, setting $\tau \to 0$ might not work very well, since directly projecting $\pi^*$ into $\Pi$ does not always lead to a $\pi_\theta$ with large expected reward.
+
+On the other hand, as $\tau \to \infty$ the stationary point set of $\SR(\pi_\theta)$ will approach the stationary point set of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
+There exists an ideal sequence of $\tau$ values and $\tau \to \infty$ that make $\pi_\theta$ finally converge to $\pi_\theta^* \in \argmax_{\pi_\theta}{ \sum_{\rho}{\pi_\theta(\rho) r(\rho)} }$, i.e., the optimal policy in $\Pi$ with highest expected reward, recovering the target of policy optimization \cref{max_expected_reward}. \todor[]{Why?}
+The following simulation results suggest that $\SR(\pi)$ could be a good guidance for maximizing the true expected reward.
+A principled way to find such an ideal sequence of $\tau$ is under investigation.
+
+\if0
 Using very small $\tau$ value, i.e., $\tau \to 0$, given $\tau^{\prime} \to 0$ and the reward landscape has been sufficiently explored, the constructed unconstrained policy $\bar{\pi}_{\tau,\tau^{\prime}}^* \to \pi^*$, where $\pi^*$ is the global deterministic optimal policy. Solving the projection $\pi_\theta \leftarrow \argmin_{\pi_\theta \in \Pi}{\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta}) \approx \argmin_{\pi_\theta \in \Pi}{\KL(\pi^* \| \pi_\theta})$, we actually obtain $\pi_\theta$ policy by directly projecting $\pi^*$ into $\Pi$. When the policy constraint $\Pi$ has additional nice properties, such as convexity, that support good behavior of KL projection, this should be a good choice.
-\end{remk}
-  
-However, in practice, $\Pi$ is typically nonconvex, even when $\pi_\theta$ is parameterized by a linear function approximator, let alone more complex function approximations like a neural network. In such cases, the small $\tau$ value suggested in Remark \ref{small_tau_choices} might not work very well, since directly projecting $\pi^*$ into $\Pi$ might not always lead to a $\pi_\theta$ with large expected reward.
+%\end{remk}
+However, in practice, $\Pi$ is typically non-convex, even when $\pi_\theta$ is parameterized by a linear function approximator, let alone more complex function approximations like a neural network. In such cases, the small $\tau$ value suggested in Remark \ref{small_tau_choices} might not work very well, since directly projecting $\pi^*$ into $\Pi$ might not always lead to a $\pi_\theta$ with large expected reward.
 
 \begin{remk}
 \label{large_tau_choices}
 	Given $\tau^{\prime} \to 0$ and a sufficiently explored reward landscape, as $\tau \to \infty$, the stationary point set of $\SR(\pi_\theta)$ will approach the stationary point set of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
 \end{remk}
-
+ 
 Remark \ref{large_tau_choices} indicates that during learning, $\pi_\theta$ may get stuck around some local maximum of $\SR(\pi_\theta)$, and increasing the $\tau$ value will lead to a different contour of $\SR(\pi_\theta)$, which might help $\pi_\theta$ escape to alternative local maxima. There exists an ideal sequence of $\tau$ values and $\tau \to \infty$ that make $\pi_\theta$ finally converge to $\pi_\theta^* \in \argmax_{\pi_\theta}{ \sum_{\rho}{\pi_\theta(\rho) r(\rho)} }$, i.e., the optimal policy in $\Pi$ with highest expected reward, recovering the target of policy optimization \cref{max_expected_reward}. A principled way to find such an ideal sequence of $\tau$ is under investigation.
-
-\subsection{Learning}
-
-We discuss some implementation details of REPMD. The full algorithm is presented in \cref{alg:repmd}.
+ \fi
+ \todor[]{Add the simulation result for true loss and $\SR(\pi)$ with different value of $\tau$.}
+\subsection{Implementation Details}
+We discuss some implementation details of *****. The full algorithm is presented in \cref{alg:repmd}.
 First note that the \emph{unconstrained optimal policy} $\bar{\pi}_{\tau,\tau^{\prime}}^*$ in (\ref{eq:repmd}) has a closed form expression.
 \begin{lem}
 \label{lem:opt_pi_ref}
