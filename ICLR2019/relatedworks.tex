@@ -1,32 +1,49 @@
-\begin{itemize}
+%\begin{itemize}
 	%\item Mirror Descent: Value based; Linear approximation, with a mirror descent type regularization on the parameter \citep{liu2015finite,thomas2013projected,mahadevan2012sparse}. 
 	%\item guided policy search via approximate mirror descent: Used as an objective function to align the learned policy with local "teacher" policies. \citep{montgomery2016guided}
 %	\item Trust region: Similar idea; Result also holds in ; Then two stage view with reversed projection \cite{schulman2015trust}
-	\item Guided AC for continuous control: two-stage optimization; constraint form; Maximizing past trajectory reward. Gaussian policy for $\pi$ and second order approximation for $Q$ function. We directly estimate its gradient based on samples. \citep{tangkaratt2017guide}
+	%\item Guided AC for continuous control: two-stage optimization; constraint form; Maximizing past trajectory reward. Gaussian policy for $\pi$ and second order approximation for $Q$ function. We directly estimate its gradient based on samples. \citep{tangkaratt2017guide}
 	%\item relative entropy policy search: constraint version; Use KL divergence on join distribution; Linear approximation for value function or in RKHS. No entropy, no multiple projection. \citep{peters2010relative,van2015learning}
-\end{itemize}
+%\end{itemize}
 
+The lift-and-project formulation differs our method from most of the policy search methods. 
+%On the one hand, such formulation provides an easier way in analyzing the behavior of the algorithm in parameter space. For example, the monotonical improvement guarantee can be proved in a fairly direct and simple way in this paper, even for some particular non-convex $\pi_\theta$. 
+%On the other hand, such formulation suggests to perform multiple steps of gradient descent on the project step with the current policy fixed as the reference policy. As shown in \cref{sec:experiments}, multiple steps of gradient descent leads to a significant improvement in performances compared to single step of gradient descent.
+Guide Actor-Critic (GAC) also use such lift-and-project formulation \citet{tangkaratt2017guide}. In fact, GAC has the same objective in the lift step. 
+However, GAC only considers the Gaussian policies with second order approximation for $Q$ functions.
+%, so that as it tends to solve the constraint optimization problem in closed form and to simplify the computation in the project step.  
+Instead, our method is built on a Monte Carlo estimate of the gradient, which can be applied to general policy parametrizations. For the project step, GAC also uses the mode seeking direction of the KL divergence, different from the mean seeking direction used in our method.  
+Although we may or may not be able to reformulate other policy search methods into a lift-and-project procedure following the same idea in \cref{subsec:revisitTRPO},
+they would still differs from ****, as we use different directions of KL divergence for the lift step and the project step. 
+%The benefit of this, as discussed in \cref{subsec:repmd} has two folds: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can still be globally optimally solved for one-layer networks which is non-convex.
 
-
-
-
-%Using the KL divergence as a "distance" measure 
- %in the literature of guided policy search, but in a fundamentally different way \citep{montgomery2016guided}. 
-
-Several existing methods are similar to our proposed algorithms,
+In terms of the optimization objective, several existing methods are also similar to our algorithm,
 %with the policy mirror descent (PMD) framework, 
-by either considering the relative entropy regularizer in policy search/optimization, or using KL divergence as the loss function to optimize the policy. 
-As mentioned in \cref{subsec:revisitTRPO}, 
-our work is built on a lift-and-project reformulation of the TRPO objective \citep{schulman2015trust}. 
-To address the potential drawbacks of TRPO, we further proposed two modifications on it. 
-The literature of relative entropy policy search also uses similar KL divergence regularizer \citep{peters2010relative,van2015learning} but mostly on the joint distributions of state and action rather than the policies. 
-Approximate mirror descent policy search \citep{montgomery2016guided} uses the KL divergence to align the simple local policies with the global policy, which is fundamentally different from all the other works mentioned heres.
-Using KL divergence, or more general Bregman divergence, as a regularizer has also been explored  in \citet{liu2015finite,thomas2013projected,mahadevan2012sparse}. 
-However, such regularization is applied to the parameters of the  linear approximated value functions. In this paper, the KL divergence is applied to the policy space as a "distance" measure for polices. 
+by either considering the (relative) entropy regularizer in policy search/optimization, or using KL divergence as the objective to optimize the policy. 
+As mentioned in \cref{subsec:revisitTRPO}, our algorithm ensembles
+the policy gradient descent method in maximizing expected reward with an entropy regularizer \citep{williams1991function,fox2015taming,nachum2017bridging}.
+Using KL divergence, or Bregman divergence, type fo regularization has also been explored  in \citet{liu2015finite,thomas2013projected,mahadevan2012sparse}, but in a different way. 
+In particular, they apply such regularization to the parameters of the  linear approximated value functions, while in this paper, the KL divergence is applied to the policy space as a "distance" measure for polices. 
+The literature of relative entropy policy search also uses similar KL divergence regularizer \citep{peters2010relative,van2015learning} but on the joint distributions of state and action rather than the policies. 
+Approximate mirror descent policy search \citep{montgomery2016guided} uses the KL divergence to align the simple local policies with the global policy, which is fundamentally different from our methods (and also other ones mentioned here).
+Instead of the KL divergence, Reward-Weighted Regression (RWR) uses a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$ as its objective, which is then approximated similar to a cross entropy loss \citep{peters2007reinforcement,wierstra2008episodic}.
+
+TRPO also has a similar formulation to \cref{eq:max_expected_reward_plus_relative_entropy} in a constraint version \citep{schulman2015trust}. 
+However, \cref{eq:max_expected_reward_plus_relative_entropy} uses a different direction of the KL divergence. 
+The monotonical improvement guarantee
+only exists for an impractical formulation of TRPO \footnote{For the version that monotonical improvement guarantee holds, TRPO needs to use $\KL^{\max} $ rather than the stanard KL divergence.}. 
+%We also prove the monotonical improvement guarantee for the exact formulation, while such guarantee in TRPO only exists for an impractical formulation\footnote{For the version that monotonical improvement guarantee holds, TRPO needs to use $\KL^{\max} $ rather than the stanard KL divergence.}. 
+Based on our lift-and-project reformulation, we were also able to prove the monotonical improvement guarantee in a fairly simple and direct way.
+Our method also includes additional modifications to address its potential drawbacks. As shown in \ref{sec:experiments}, such modifications improve its performance significantly.
+UREX uses the same mean seeking KL divergence for regularization, which encourages exploration but also makes the optimization more difficult. As shown in \ref{sec:experiments}, UREX is significantly less efficient than our method. 
+
+Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which includes both entropy and relative entropy regularizer \citep{nachum2017trust}. However, the policy update strategy is different: while REPMD uses KL projection, Trust PCL inherits the same idea from PCL that minimizes path inconsistency error between value and policy for any trajectories \citep{nachum2017bridging}. Although policy optimization by minimizing path inconsistency error can efficiently utilize off-policy data, it loses the desirable monotonical improvement guarantee.
+
+%it is not justified that this method can guarantee policy improvement during learning. On the other hand, the proposed REPMD method can monotonically increase the softmax approximated expected reward, as shown in \cref{sec:repmd}.
 
 
-These related works include reward-weighted regression \citep{peters2007reinforcement,wierstra2008episodic}, maximum a posterior policy optimization \citep{abdolmaleki2018maximum}, and soft actor-critic \citep{haarnoja2018soft}. 
+These related works include maximum a posterior policy optimization \citep{abdolmaleki2018maximum}, and soft actor-critic \citep{haarnoja2018soft}. 
 
-The proposed reversed entropy policy mirror descent (REPMD) method employs a modified version of PMD framework. First, the objective function of PMD is combined with entropy regularizer to enhance further exploration. Second, the projection step applies the \emph{mean seeking} direction of KL divergence instead of the \emph{mean seeking} one used PMD. As shown in both theoretical and practical justification, these two novelties play a very important role in REPMD. 
+%The proposed reversed entropy policy mirror descent (REPMD) method employs a modified version of PMD framework. First, the objective function of PMD is combined with entropy regularizer to enhance further exploration. Second, the projection step applies the \emph{mean seeking} direction of KL divergence instead of the \emph{mean seeking} one used PMD. As shown in both theoretical and practical justification, these two novelties play a very important role in REPMD. 
 
-The Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which includes both entropy and relative entropy regularizer \citep{nachum2017trust}. However, the policy update strategy is different: while REPMD uses KL projection, Trust PCL inherits the same idea from PCL that minimizes path inconsistency error between value and policy for any trajectories \citep{nachum2017bridging}. Although policy optimization by minimizing path inconsistency error can efficiently utilize off-policy data, it is not justified that this method can guarantee policy improvement during learning. On the other hand, the proposed REPMD method can monotonically increase the softmax approximated expected reward, as shown in \cref{sec:repmd}.
+
