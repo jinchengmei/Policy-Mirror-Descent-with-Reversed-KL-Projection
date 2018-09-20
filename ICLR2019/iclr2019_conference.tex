@@ -158,42 +158,46 @@ Based on \cref{prop:mirrordescent_projection}, policy mirror descent (PMD) updat
 
 \subsection{Revisiting Trust Region Policy Optimization (TRPO)}
 Recall that TRPO\footnote{Here we present its regularized version, which is equivalent to constraint version that is presented in \citet{schulman2015trust}. } learns the policy by maximizing the expected reward with a relative entropy regularizer.
-In particular, given a \emph{reference policy} $\refPi$ (usually the current policy), let 
-\begin{equation*}
-\ENT(\pi_\theta; \tau, \refPi) = { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
-\end{equation*}
+In particular, given a \emph{reference policy} $\refPi$ (usually the current policy), 
 TRPO learns $\pi_{\theta_{t+1}} $ by 
+%let 
 \begin{equation}
+%\ENT(\pi_\theta; \tau, \refPi) = 
 \label{eq:max_expected_reward_plus_relative_entropy}
-\pi_{\theta_{t+1}} = \argmax\limits_{\pi_\theta \in \Pi}  \ENT(\pi_\theta; \tau, \pithetat), 
+\pi_{\theta_{t+1}} = \argmax\limits_{\pi_\theta \in \Pi} { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
 \end{equation}
-which combines the expected reward \cref{max_expected_reward} with a relative entropy regularizer. 
+
+%\begin{equation}
+%\label{eq:max_expected_reward_plus_relative_entropy}
+%\pi_{\theta_{t+1}} = \argmax\limits_{\pi_\theta \in \Pi}  \ENT(\pi_\theta; \tau, \pithetat). 
+%\end{equation}
+%which combines the expected reward \cref{max_expected_reward} with a relative entropy regularizer. 
 %Similar ideas have also been explored in \citet{peters2007reinforcement,wierstra2008episodic,peters2010relative,schulman2015trust,montgomery2016guided,nachum2017trust,haarnoja2018soft,abdolmaleki2018maximum}. 
 A gradient method with line search is suggested to solve the optimization problem. 
-To better understand its behavior in the parameter space, we instead reformulate the problem into the following lift-and-project procedure. \cref{prop:mirrordescent_projection} shows that the different formulations are equivalent.
+To better understand its behavior in the parameter space, we instead reformulate the problem into the following lift-and-project procedure.
 \begin{equation}
 \label{eq:pmd}
 \begin{split}
-&\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
-\text{where}\ \ \bar{\pi}_{\tau}^* & =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) } }.
+\text{(Project Step)} \quad &\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
+\text{(Lift Step)}  \quad & \text{where}\ \ \bar{\pi}_{\tau}^* =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) } }. 
 \end{split}
 \end{equation}
-\begin{prop}
-\label{prop:mirrordescent_projection}
-Given a \emph{reference policy} $\refPi$,  $\bar{\pi}_\tau^*(\rho)$ in \cref{eq:pmd} satisfies
+While the lift step is non-convex in $\pi$, we can actually solve the problem analytically. In fact, by simple calculations,
 \begin{equation}
 \label{eq:pitaustar}
 \bar{\pi}_\tau^*(\rho) =  \frac{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ r(\rho^{\prime}) / \tau \right\} } }.
 \end{equation}
-Moreover, the solutions to \cref{eq:max_expected_reward_plus_relative_entropy} are the same as the ones to \cref{eq:pmd}.
+\cref{prop:mirrordescent_projection} shows that the two different formulations are in fact equivalent.
+\begin{prop}
+\label{prop:mirrordescent_projection}
+Given a \emph{reference policy} $\refPi$,
+\[
+ \argmax\limits_{\pi_\theta \in \Pi} { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } } 
+ = \argmin\limits_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*) }.
+\]
 \end{prop}
 
 \begin{proof}
-It is straightforward to prove \cref{eq:pitaustar}.
-To prove the second part, it remains to prove
-\begin{equation*}
-\argmax\limits_{\pi_\theta \in \Pi}{\ENT(\pi_\theta; \tau, \refPi)}= \argmin\limits_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*) } ,
-\end{equation*}
 Note that $-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) = - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} = \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi}$. Note the fact that $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
 \end{proof}
 \begin{remark}
