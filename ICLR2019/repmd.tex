@@ -29,6 +29,7 @@ Based on \cref{prop:mirrordescent_projection}, policy mirror descent (PMD) updat
 \fi
 
 \subsection{Revisiting Trust Region Policy Optimization (TRPO)}
+\label{subsec:revisitTRPO}
 Recall that TRPO\footnote{Here we present its regularized version, which is equivalent to constraint version that is presented in \citet{schulman2015trust}. } learns the policy by maximizing the expected reward with a relative entropy regularizer.
 In particular, given a \emph{reference policy} $\refPi$ (usually the current policy), 
 TRPO learns $\pi_{\theta_{t+1}} $ by 
@@ -71,8 +72,12 @@ Given a \emph{reference policy} $\refPi$,
 \begin{remk}
 	The lift-and-project procedure in \cref{eq:pmd} is not completely new in the literature. In fact, it has also been proposed in ******. We postpone the detailed discussion to Section ****.
 \end{remk}
-
-The lift-and-project reformulation suggests an alternative way in solving \cref{eq:max_expected_reward_plus_relative_entropy}: Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$, then perform multiple steps of gradient descent on the project step to compute $\pi_{\theta_{t+1}}$\footnote{A general gradient descent method can be interpreted as performing one step gradient descent for the project step.}. One can show that the above lift-and-project procedure asymptotically converges to the optimal policy when $\Pi$ is a convex set \citep{nemirovskii1983problem,beck2003mirror}. However, in practice, the policy $\pi_\theta$ is often parameterized by a complex non-convex function, such as a neural network, which violates the convex constraint set assumption. 
+\begin{remk}
+The lift-and-project reformulation suggests an alternative way in solving \cref{eq:max_expected_reward_plus_relative_entropy}: Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$, then perform multiple steps of gradient descent on the project step to update $\pi_{\theta_{t+1}}$. \footnote{To estimate this gradient, one would need to use the self-normalized importance sampling \cite{owen2013monte}. We omit the implementation details since it is not the main algorithm of the paper.}
+Note that vanilla gradient descent methods for TRPO can be interpreted as performing only one step gradient descent for the project step. \todor[]{Is it correct?} 
+\end{remk}
+One can show that the above lift-and-project procedure asymptotically converges to the optimal policy when $\Pi$ is a convex set \citep{nemirovskii1983problem,beck2003mirror}. 
+However, in practice, the policy $\pi_\theta$ is often parameterized by a complex non-convex function, such as a neural network, which violates the convex constraint set assumption. 
 The next proposition shows that despite of the non-convexity of $\Pi$, TRPO still has some desirable properties.
 \begin{prop}
 \label{prop:monoto_policymirrordescent}
@@ -93,7 +98,7 @@ Given the projection step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \
 	The monotonic improvement guarantee has been derived in \citep{schulman2015trust}. We give a simpler and direct proof based on our lift-and-project formulation in \cref{appsec:monoto_policymirrordescent} .
 \end{remk}
 
-Despite of its stable and reliable performance, in practice TRPO is also observed to get trapped in some poor local optima. 
+Despite of its stable and reliable performance, in practice TRPO is observed to get trapped in some poor local optima. 
 Indeed, while the relative entropy regularizer helps in preventing large policy update, it may also limit the exploration of TRPO.
 Moreover, minimizing the KL divergence $\KL(\pi_\theta \| \bar{\pi}_\tau^*) $ is known to be \emph{mode seeking} \citep{kevin2012machine}, which can cause mode collapse during the learning process. Once the policy $\bar{\pi}_\tau^*$ drops some of the modes, learning could be trapped into sub-optimal policies.
 At this point, the relative entropy regularizer will NOT encourage TRPO for further exploration.
@@ -102,7 +107,7 @@ Another problem about TRPO is that \cref{prop:monoto_policymirrordescent} relies
 However, oftentimes in practice this is not true when $\pi_\theta$ is non-convex in $\theta$, which hinders the applicability of \cref{prop:monoto_policymirrordescent}.
 
 \subsection{Reversed Entropy Policy Mirror Descent \todor[]{New name}}
-\label{sec:repmd}
+\label{subsec:repmd}
 \if0 
 First, an additional entropy regularizer, controlled by a separate parameter $\tau^{\prime}\geq 0$, is added to the objective, which encourages additional exploration as in MENT.
 
@@ -112,7 +117,7 @@ A similar monotonic improvement result to \cref{prop:monoto_policymirrordescent}
 \end{equation*}
 denote the softmax approximated expected reward of $\pi_\theta$.
 \fi
-In this section, we propose two modifications to TRPO to overcome its aforementioned drawback.
+In this section, we propose two modifications to the lift-and-project procedure to overcome its aforementioned drawbacks.
 The first modification is an additional entropy regularizer to the lift step, controlled by a separate parameter $\tau^{\prime}\geq 0$, to encourage the exploration of the algorithm. 
 Second, we employ the reversed \emph{mean seeking} direction of KL divergence $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$ to update the policy.
 The new algorithm, called ****, solves the following optimization problem to update the policy $\pi_{\theta_{t+1}}$:
@@ -144,10 +149,14 @@ where
 \label{eq:SR}
 \SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
 \end{equation}
+Therefore, 
+%Theorem \ref{thm:monotonically_increasing_sr_property} guarantees the monotonic improvement on $\text{SR}(\pi)$, thus implies that 
+the fixed points of REPMD have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. \todor[]{Why?}
+
 \end{thm}
-Theorem \ref{thm:monotonically_increasing_sr_property} guarantees the monotonic improvement on $\text{SR}(\pi)$, thus implies that the fixed points of REPMD have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. \todor[]{Why?}
 
 \subsection{Behavior of $\SR(\pi)$}
+\label{subsec:sr}
 Although $\text{SR}(\pi_\theta)$ is different than the expected reward $\ep_{\rho \sim \pi_\theta}{r(\rho)}$,  in this section we present some theoretical and empirical evidences that $\SR(\pi_\theta)$ is a reasonable surrogate that may provide good guidance to the learning. 
 In fact, by properly adjusting the two temperature parameters $\tau$ and $\tau^{\prime}$, $\SR(\pi_\theta)$ recovers several existing performance measures, as shown in \cref{prop:sr}.
 \begin{prop}
@@ -191,7 +200,7 @@ According to \cref{prop:sr}, one should gradually decrease $\tau^{\prime}$ to re
 Given $\tau^{\prime} \to 0$ and the reward landscape has been sufficiently explored,
 the constructed unconstrained policy $\bar{\pi}_{\tau,\tau^{\prime}}^* \to \pi^*$ as $\tau \to 0$, where $\pi^*$ is the global deterministic optimal policy. 
 Therefore, in the project step $\pi_\theta$ is obtained by directly projecting $\pi^*$ into $\Pi$. When the policy constraint $\Pi$ has nice properties, such as convexity, that support good behavior of KL projection, $\pi_\theta$ may achieve good performance.
-However, in practice, $\Pi$ is typically non-convex. In such cases, setting $\tau \to 0$ might not work very well, since directly projecting $\pi^*$ into $\Pi$ does not always lead to a $\pi_\theta$ with large expected reward.
+However, in practice, $\Pi$ is typically non-convex. Setting $\tau \to 0$ might not work very well, since directly projecting $\pi^*$ into $\Pi$ does not always lead to a $\pi_\theta$ with large expected reward.
 
 On the other hand, as $\tau \to \infty$ the stationary point set of $\SR(\pi_\theta)$ will approach the stationary point set of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
 There exists an ideal sequence of $\tau$ values and $\tau \to \infty$ that make $\pi_\theta$ finally converge to $\pi_\theta^* \in \argmax_{\pi_\theta}{ \sum_{\rho}{\pi_\theta(\rho) r(\rho)} }$, i.e., the optimal policy in $\Pi$ with highest expected reward, recovering the target of policy optimization \cref{max_expected_reward}. \todor[]{Why?}
@@ -211,22 +220,21 @@ However, in practice, $\Pi$ is typically non-convex, even when $\pi_\theta$ is p
 Remark \ref{large_tau_choices} indicates that during learning, $\pi_\theta$ may get stuck around some local maximum of $\SR(\pi_\theta)$, and increasing the $\tau$ value will lead to a different contour of $\SR(\pi_\theta)$, which might help $\pi_\theta$ escape to alternative local maxima. There exists an ideal sequence of $\tau$ values and $\tau \to \infty$ that make $\pi_\theta$ finally converge to $\pi_\theta^* \in \argmax_{\pi_\theta}{ \sum_{\rho}{\pi_\theta(\rho) r(\rho)} }$, i.e., the optimal policy in $\Pi$ with highest expected reward, recovering the target of policy optimization \cref{max_expected_reward}. A principled way to find such an ideal sequence of $\tau$ is under investigation.
  \fi
  \todor[]{Add the simulation result for true loss and $\SR(\pi)$ with different value of $\tau$.}
+ 
 \subsection{Implementation Details}
-We discuss some implementation details of *****. The full algorithm is presented in \cref{alg:repmd}.
+\label{subsec:implementation}
+We now discuss the implementation details of *****. The full algorithm is presented in \cref{alg:repmd}.
 Similarly by simple calculation, we have the analytical solution for the lift step of ****:
 \begin{equation*}
 \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
 \end{equation*}
 %First note that the \emph{unconstrained optimal policy} $\bar{\pi}_{\tau,\tau^{\prime}}^*$ in (\ref{eq:repmd}) has a closed form expression.
 The project step in \cref{eq:repmd}, $\min\limits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ to estimate its gradient.
-Following the idea of UREX \citep{nachum2017improving}, we approximate the KL divergence using self-normalized importance sampling \citep{owen2013monte},
-\begin{equation}
-\label{eq:importance_sampling_kl}
-\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* } \left[ \log \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) - \log \pi_\theta(\rho) \right] = \ep_{\rho\sim \refPi} \frac{\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho)}{\refPi(\rho)} \left[ \log \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) - \log \pi_\theta(\rho) \right].
-\end{equation}
-
-We can draw $K$ \textit{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, and then approximate the gradient of $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$ by averaging these $K$ samples according to \cref{eq:importance_sampling_kl}. 
-
+To see that, note that 
+\begin{equation*}
+\argmin\limits_{\pi_\theta \in \Pi}\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \argmin\limits_{\pi_\theta \in \Pi} \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* }  - \log \pi_\theta(\rho).
+\end{equation*}
+The next theorem shows that sampling from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ can be done using self-normalized importance sampling \citep{owen2013monte}, following the idea of UREX \citep{nachum2017improving}.
 \begin{thm}
 \label{thm:repmdgradientestimate}
 Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}$. Given $K$ \emph{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, we have the following unbiased gradient estimator,
@@ -239,12 +247,5 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 %	\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}.
 %	\] 
 \end{thm}
-\begin{proof}
-According to \cref{eq:importance_sampling_kl} we have,
-\begin{equation}
-\begin{split}
-	&\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) \approx -\frac{1}{K}\sum_{k=1}^K \frac{\bar{\pi}_{\tau,\tau^{\prime}}^* (\rho_k)}{\refPi(\rho_k)} \nabla_{\theta} \log \pi_\theta(\rho_k) \\ 
-	\approx & -\frac{1}{K}\sum_{k=1}^K \frac{\exp \{\omega_k\}} {\frac{1}{K} \sum_{j=1}^K \exp \{\omega_j\}} \nabla_{\theta} \log \pi_\theta(\rho_k) =  -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} } \qedhere.
-\end{split}
-\end{equation}
-\end{proof}
+
+\subsection{Cooperate with Value Function}
