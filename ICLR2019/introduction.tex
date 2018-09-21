@@ -13,6 +13,14 @@ On the other hand, such formulation suggests to perform multiple steps of gradie
 %The benefit of this, as discussed in \cref{subsec:repmd} has two folds: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can still be globally optimally solved for one-layer networks which is non-convex.
 We assume discount factor to be 1. Assume deterministic state transition function (WLOG). 
 
+
+Policy optimization has been widely used across reinforcement learning (RL) settings. Given a set of parametrized policy functions $\pi_\theta \in \Pi$, policy optimization aims to search the optimal policy $\pi_\theta^*$ that achieves the highest expected reward,
+\begin{equation}
+\label{max_expected_reward}
+\begin{split}
+\pi_\theta^* \in \argmax_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{r(\rho)} },
+\end{split}
+\end{equation}
 \subsection{Notations and Settings}
 \label{subsec:notations_and_settings}
 
