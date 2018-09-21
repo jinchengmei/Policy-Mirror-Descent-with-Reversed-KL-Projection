@@ -249,3 +249,78 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 \end{thm}
 
 \subsection{Cooperate with Value Function}
+
+\newcommand{\parV}{V_{\phi}}
+\newcommand{\parTargetV}{V_{\bar{\phi}}}
+\newcommand{\parQ}{Q_{\psi}}
+\newcommand{\parPi}{\pi_{\theta}}
+\newcommand{\parQone}{Q_{\psi_1}}
+\newcommand{\parQtwo}{Q_{\psi_2}}
+
+
+We first alter our definitions of policy and value functions to include the KL and entropy regularization. Given a reference policy $\refPi(a|s)$, we consider the entropy regularized maximum reward objective, \todoc[]{add the trust-pcl reference here or just discuss it in related work?}
+\begin{equation*}
+\gO_{\text{RELENT}}(\pi, s) = \E_{a\sim \pi} \left[ r(s,a) + \gO_{\text{RELENT}}(\pi, s')  + \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) \right] \\
+\label{relent-obj}
+\end{equation*}
+Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{RELENT}}(\pi, s) $ denote the optimal policy. The soft optimal state value can be defined by $\bar{V}_{\tau,\tau^{\prime}}^*(s) = \gO_{\text{RELENT}}(\bar{\pi}_{\tau,\tau^{\prime}}^*, s)$. According to Lemma \ref{lem:opt_pi_ref_stochastic}, both $\bar{\pi}_{\tau,\tau^{\prime}}^*(\cdot | s)$ and $\bar{V}_{\tau,\tau^{\prime}}^*(s)$ have closed form solution that,
+\begin{equation}
+\begin{split}
+& \bar{V}_{\tau,\tau^{\prime}}^*(s) = (\tau + \tau') \log \sum_a \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) + \tau \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \\
+& \bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) = \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) + \tau \log \bar{\pi}(a|s) - \bar{V}_{\tau,\tau^{\prime}}^*(s)}{\tau + \tau'} \right\}
+\end{split}
+\label{soft-v-and-pi}
+\end{equation}
+where $\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) = r(s,a) + \gamma \bar{V}_{\tau,\tau^{\prime}}^*(s')$ is the soft-Q function.
+
+\subsubsection{Learning}
+We propose to train a soft state value function $\parV$ parameterized by $\phi$, a soft Q-function $\parQ$ parameterized by $\psi$, and a policy $\parPi$ parameterized by $\theta$, based on the idea of (\ref{eq:repmd}). We now derive the update rules for these parameters. 
+
+The soft state value function approximates the soft optimal state value $\bar{V}_{\tau,\tau^{\prime}}^*$. Note that we can re-express $\bar{V}_{\tau,\tau^{\prime}}^*$ by 
+\begin{align*}
+\bar{V}_{\tau,\tau^{\prime}}^*(s) = & (\tau + \tau') \log \sum_a \pi(a|s) \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \\ 
+= & (\tau + \tau') \log \E _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
+\end{align*}
+This suggests a Monte-Carlo estimation of $\bar{V}_{\tau,\tau^{\prime}}^*(s)$: by sampling an action according to the reference policy $\refPi$, we have $\bar{V}_{\tau,\tau^{\prime}}^*(s) \approx  \bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s) $. Then the soft state value function is trained to minimize the mean squared error,
+\begin{equation*}
+\gO_{\text{RMAC}} (\phi) = \E_{s\sim \gD} \left[ \frac{1}{2} \left( \parV(s) -  \left[ \parQ(s,a ) - \tau' \log \bar{\pi}(a|s) \right] \right)^2 \right]
+\end{equation*}
+where $\gD$ is a reply buffer. Furthermore, to increase the stability of the training, we include a target state value network $\parTargetV$, where $\bar{\phi}$ is an exponentially moving average of the value network weights $\phi$. One may note that there is no need in principle to include a separate state value function approximation, since it can be computed directly given a soft-Q function and reference policy according to (\ref{soft-v-and-pi}). However, including a separate function approximation for the state value can stabilize training as suggested in \citep{haarnoja2018soft}. The soft Q-function parameters $\psi$ can be trained to minimize the soft Bellman error using the target state value network,
+\begin{equation*}
+\gO_{\text{RMAC}} (\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parTargetV(s') \right] \right)^2 \right]
+\end{equation*}
+Our approach also use two soft-Q functions in order to mitigate the overestimation problem caused by value function approximation. Specifically, we apply two soft-Q function approximations, $\parQone(s,a)$ and $\parQtwo(s,a)$, and train them independently.  The minimum of the two Q-functions will be used whenever the soft-Q value is needed. 
+
+Finally, the policy parameters is updated by doing the project step in (\ref{eq:repmd}) with stochastic gradient descent,
+\begin{align*}
+\gO_{\text{RMAC}} (\theta) = \E_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\} \middle\Vert \parPi(\cdot |s) \right) \right]
+\end{align*}
+%\begin{align*}
+%\gO_{\text{RMAC}} (\theta) = \E_{s \sim \gD} \left[ \KL \left( \frac{\refPi(a|s) \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s)}{\tau+\tau'} \right\}}{\exp \left\{ \frac{\parV(s)}{\tau+\tau'} \right\}}  \middle\Vert \parPi \right) \right]
+%\end{align*}
+where we approximate $\bar{\pi}_{\tau,\tau^{\prime}}^*$ with the soft-Q and state value function approximations. The gradient of this objective can be computed by importance sampling, 
+\begin{align*}
+\nabla_\theta \gO_{\text{RMAC}} (\theta) =& \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
+= & \nabla_\theta \E_{s \sim \gD} \left[ \E_{a\sim \refPi}\left[  \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right]   \right] 
+\end{align*}
+The complete algorithm is described in Algorithm \ref{}.
+
+%\begin{align*}
+%\gO_{\text{RMAC}} (\theta) = & \E_{s \sim \gD} \left[ \KL \left( \bar{\pi}_{\tau,\tau^{\prime}}^*(\cdot \vert s)  \Vert \pi_\theta(\cdot \vert s) \right) \right] \\
+%= & \E_{s \sim \gD} \left[ \E_{a\sim \refPi} \left[ \frac{\bar{\pi}_{\tau,\tau^{\prime}}^* (a|s)}{\refPi(a|s)} \left( \log  \bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) - \log \pi_\theta (a|s) \right) \right] \right] \\
+%= & \E_{s \sim \gD} \left[ \E_{a\sim \refPi} \left[ \frac{\refPi(a|s) \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s)}{\tau+\tau'} \right\}}{\exp \left\{ \frac{\parV(s)}{\tau+\tau'} \right\}} \left( \log  \bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) - \log \pi_\theta (a|s) \right) \right] \right]
+%\end{align*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
