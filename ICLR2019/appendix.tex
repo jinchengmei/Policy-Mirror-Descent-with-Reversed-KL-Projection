@@ -24,6 +24,15 @@
 \end{proof}
 
 \section{Proof of \cref{prop:solvableprojection}}
+\begin{proof}
+	Note that $\pi_{\theta} = \frac{\exp\left\{\Phi^\top\theta\right\}}{{\mathbf{1}^\top \exp\left\{\Phi^\top\theta\right\} }}$, where $\Phi$ is the feature matrix and $\theta$ is the policy parameter.
+	Simply compute the Hessian matrix of the objective,
+	 \[\frac{d^2 \text{KL}(\refPi \| \pi_{\theta})}{d \theta^2} = \Phi^\top (\Delta(\pi_\theta) - \pi_\theta \pi_\theta^\top) \Phi \succeq 0.
+	 \]
+	 Thus $\KL(q \| \pi_{\theta})$ is convex in $\theta$.
+\end{proof}
+
+
 \section{Proof of \cref{prop:sr}}
 \begin{proof}
 	To prove (i), note that as $\tau \to 0$, $\SR(\pi_\theta) \to \tau^{\prime} \log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) }{ \tau^{\prime} } \right\} }}$, the standard softmax value. Taking limit on $\tau'$ gives the hardmax value $\max_{\rho}{r(\rho)}$ as $\tau^{\prime} \to 0$.

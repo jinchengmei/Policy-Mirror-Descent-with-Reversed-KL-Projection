@@ -1,8 +1,14 @@
 %In this section we firstly discuss relative entropy regularization for policy based reinforcement learning and its relationship with mirror descent, paving the path for presenting our proposed Reversed Entropy Policy Mirror Descent (REPMD) algorithm. 
-Our algorithm originates from the idea of TRPO where a KL divergence measure is used to stabilize the update of the learned policy. 
-In this section w
-To better understand its behavior in the parameter space, we further proves that such objective function can be re-formulated as a lift-and-project procedure, connecting TRPO to the method of relative entropy policy search.
-Potential poor local optima of such 
+Our algorithm is derived from the basic idea of maximizing an entropy-regularized expected reward. Such objective has also been considered in a vast literature including \citet{williams1991function,fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement}, among others.
+As mentioned in \cref{sec:intro}, we focus on analyzing its learning properties in the \emph{non-convex} setting in the parameter space.
+In particular, we follow the idea of Mirror Descent to reformulate our 
+%originates from the idea of TRPO where a KL divergence measure is used to stabilize the update of the learned policy. 
+%To better understand its behavior in the parameter space, we further proves that such 
+objective function into a lift-and-project procedure, and discuss its good properties and potential deficiencies based on such reformulation \cref{subsec:revisitTRPO}.
+We then propose our method to mitigate these deficiencies, called ****.
+We further develop performance guarantees for our algorithm in the non-convex setting \cref{subsec:repmd}.
+Our algorithm is developed purely policy-based. 
+We then briefly discussed how our method can cooperate with value function approximation, and present its actor-critic version in \cref{subsec:repmd_value}.
 
 \if0
 \subsection{Policy Mirror Descent}
@@ -168,7 +174,7 @@ $\SR(\pi_\theta)$ satisfies the following properties:
 \end{enumerate}	
 \end{prop}
 \begin{remk}
-	Note that $\text{SR}(\pi_\theta)$ also resembles ``softmax value function'' that appeared in value based RL \citep{nachum2017bridging,haarnoja2018soft,ding2017cold}. The standard soft value can be recovered by $\text{SR}(\pi_\theta)$ as a special case when $\tau = 0$ or $\tau'=0$. \todor[]{But \cref{prop:sr} tells that $SR(\pi)$ converges to $max_\rho$ when $\tau$ and $\tau^\prime$ are 0?}
+	Note that $\text{SR}(\pi_\theta)$ also resembles ``softmax value function'' that appeared in value based RL \citep{nachum2017bridging,haarnoja2018soft,ding2017cold}. The standard soft value can be recovered by $\text{SR}(\pi_\theta)$ as a special case when $\tau = 0$ or $\tau'=0$. \todor[]{But \cref{prop:sr} says that $SR(\pi)$ converges to $max_\rho$ when $\tau$ and $\tau^\prime$ are 0?}
 \end{remk}
 
 According to \cref{prop:sr}, one should gradually decrease $\tau^{\prime}$ to reduce the level of exploration as sufficient reward landscape information has been collected during the learning process. Now we can make different choices for $\tau$, depending on the policy constraint set $\Pi$.
@@ -221,13 +227,14 @@ Remark \ref{large_tau_choices} indicates that during learning, $\pi_\theta$ may 
  \fi
  \todor[]{Add the simulation result for true loss and $\SR(\pi)$ with different value of $\tau$.}
  
-\subsection{Implementation Details}
-\label{subsec:implementation}
+\subsection{Learning}
+\label{subsec:learning}
 We now discuss the implementation details of *****. The full algorithm is presented in \cref{alg:repmd}.
 Similarly by simple calculation, we have the analytical solution for the lift step of ****:
-\begin{equation*}
+\begin{equation}
+\label{eq:pitautauprime}
 \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
-\end{equation*}
+\end{equation}
 %First note that the \emph{unconstrained optimal policy} $\bar{\pi}_{\tau,\tau^{\prime}}^*$ in (\ref{eq:repmd}) has a closed form expression.
 The project step in \cref{eq:repmd}, $\min\limits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ to estimate its gradient.
 To see that, note that 
@@ -248,8 +255,8 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 %	\] 
 \end{thm}
 
-\subsection{Cooperate with Value Function}
-
+\subsection{Cooperate with Value Function Approximation}
+\label{subsec:repmd_value}
 \newcommand{\parV}{V_{\phi}}
 \newcommand{\parTargetV}{V_{\bar{\phi}}}
 \newcommand{\parQ}{Q_{\psi}}
@@ -257,13 +264,28 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 \newcommand{\parQone}{Q_{\psi_1}}
 \newcommand{\parQtwo}{Q_{\psi_2}}
 
-
-We first alter our definitions of policy and value functions to include the KL and entropy regularization. Given a reference policy $\refPi(a|s)$, we consider the entropy regularized maximum reward objective, \todoc[]{add the trust-pcl reference here or just discuss it in related work?}
-\begin{equation*}
-\gO_{\text{RELENT}}(\pi, s) = \E_{a\sim \pi} \left[ r(s,a) + \gO_{\text{RELENT}}(\pi, s')  + \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) \right] \\
-\label{relent-obj}
-\end{equation*}
-Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{RELENT}}(\pi, s) $ denote the optimal policy. The soft optimal state value can be defined by $\bar{V}_{\tau,\tau^{\prime}}^*(s) = \gO_{\text{RELENT}}(\bar{\pi}_{\tau,\tau^{\prime}}^*, s)$. According to Lemma \ref{lem:opt_pi_ref_stochastic}, both $\bar{\pi}_{\tau,\tau^{\prime}}^*(\cdot | s)$ and $\bar{V}_{\tau,\tau^{\prime}}^*(s)$ have closed form solution that,
+We consider an infinite trajectory $\rho$ while keeping the discounted factor $\gamma=1$ for simplicity. All the results have no difficulty to extend to a  general value of $\gamma$. Given a reference policy $\refPi$ and an initial state $s$, recall that the objective in the lift step is 
+\[
+\gO_{\text{RELENT}}(\pi, s) =   \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi)}, 
+\]
+where $\rho=  (s_1 = s, a_1, s_2, a_2, \ldots)$.
+ To cooperate with value function approximation, we will need to derive the temporal consistency for this objective. 
+ It can be verified that 
+ \[
+ \gO_{\text{RELENT}}(\pi, s) = \E_{a\sim \pi(\cdot \vert s)} \left[ r(s,a) + \gO_{\text{RELENT}}(\pi, s')  + \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) \right]. 
+ \]
+%We first alter our definitions of policy and value functions to include the KL and entropy regularization. Given a reference policy $\refPi(a|s)$, we consider the entropy regularized maximum reward objective, \todoc[]{add the trust-pcl reference here or just discuss it in related work?}
+%\begin{equation*}
+%\gO_{\text{RELENT}}(\pi, s) = \E_{a\sim \pi} \left[ r(s,a) + \gO_{\text{RELENT}}(\pi, s')  + \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) \right] \\
+%\label{relent-obj}
+%\end{equation*}
+Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{RELENT}}(\pi, s) $ denote the optimal policy on state $s$. By \cref{eq:pitautauprime}, 
+\[
+\bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) = \frac{1}{Z} \exp \left\{ \frac{\left[ r(s,a) + \gO_{\text{RELENT}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s'), s') \right] + \tau \log \bar{\pi}(a|s) }{\tau + \tau'} \right\}.
+\]
+Further denote the soft optimal state value function $\gO_{\text{RELENT}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s), s)$ by $\bar{V}_{\tau,\tau^{\prime}}^*(s)$. 
+ 
+ The soft optimal state value can be defined by $\bar{V}_{\tau,\tau^{\prime}}^*(s) = \gO_{\text{RELENT}}(\bar{\pi}_{\tau,\tau^{\prime}}^*, s)$. According to \cref{eq:pitautauprime}, both $\bar{\pi}_{\tau,\tau^{\prime}}^*(\cdot | s)$ and $\bar{V}_{\tau,\tau^{\prime}}^*(s)$ have closed form solution that,
 \begin{equation}
 \begin{split}
 & \bar{V}_{\tau,\tau^{\prime}}^*(s) = (\tau + \tau') \log \sum_a \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) + \tau \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \\
