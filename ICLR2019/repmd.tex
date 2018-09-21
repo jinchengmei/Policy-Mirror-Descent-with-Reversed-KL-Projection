@@ -281,7 +281,7 @@ The soft state value function approximates the soft optimal state value $\bar{V}
 \bar{V}_{\tau,\tau^{\prime}}^*(s) = & (\tau + \tau') \log \sum_a \pi(a|s) \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \\ 
 = & (\tau + \tau') \log \E _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
 \end{align*}
-This suggests a Monte-Carlo estimation of $\bar{V}_{\tau,\tau^{\prime}}^*(s)$: by sampling an action according to the reference policy $\refPi$, we have $\bar{V}_{\tau,\tau^{\prime}}^*(s) \approx  \bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s) $. Then the soft state value function is trained to minimize the mean squared error,
+This suggests a Monte-Carlo estimation of $\bar{V}_{\tau,\tau^{\prime}}^*(s)$: by sampling an action $a$ according to the reference policy $\refPi$, we have $\bar{V}_{\tau,\tau^{\prime}}^*(s) \approx  \bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s) $. Then the soft state value function is trained to minimize the mean squared error,
 \begin{equation*}
 \gO_{\text{RMAC}} (\phi) = \E_{s\sim \gD} \left[ \frac{1}{2} \left( \parV(s) -  \left[ \parQ(s,a ) - \tau' \log \bar{\pi}(a|s) \right] \right)^2 \right]
 \end{equation*}
@@ -289,7 +289,7 @@ where $\gD$ is a reply buffer. Furthermore, to increase the stability of the tra
 \begin{equation*}
 \gO_{\text{RMAC}} (\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parTargetV(s') \right] \right)^2 \right]
 \end{equation*}
-Our approach also use two soft-Q functions in order to mitigate the overestimation problem caused by value function approximation. Specifically, we apply two soft-Q function approximations, $\parQone(s,a)$ and $\parQtwo(s,a)$, and train them independently.  The minimum of the two Q-functions will be used whenever the soft-Q value is needed. 
+Our approach also use two soft-Q functions in order to mitigate the overestimation problem caused by value function approximation \citep{haarnoja2018soft,fujimoto2018addressing}. Specifically, we apply two soft-Q function approximations, $\parQone(s,a)$ and $\parQtwo(s,a)$, and train them independently.  The minimum of the two Q-functions will be used whenever the soft-Q value is needed. 
 
 Finally, the policy parameters is updated by doing the project step in (\ref{eq:repmd}) with stochastic gradient descent,
 \begin{align*}
