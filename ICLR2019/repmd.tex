@@ -1,4 +1,12 @@
 %In this section we firstly discuss relative entropy regularization for policy based reinforcement learning and its relationship with mirror descent, paving the path for presenting our proposed Reversed Entropy Policy Mirror Descent (REPMD) algorithm. 
+In this section, we first present our algorithm PMD.
+As mentioned in \cref{sec:intro}, we focus on analyzing its properties in the \emph{non-convex} setting.
+Two additional modifications are then proposed in \cref{subsec:repmd}, leading to our main algorithm REPMD.
+Compared to PMD, REPMD takes an extra entropy regularizer and uses the mean seeking direction of KL divergence for the project step.
+The benefit of this is twofold: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can now be globally optimally solved for a one-layer-softmax network, which is \emph{non-convex} in its parameter.
+Lastly, although our algorithm is developed purely policy-based, it can be easily extended to cooperate with value function approximation. 
+We briefly discussed the actor-critic version of our method in \cref{subsec:repmd_value}.
+\if0
 Our first algorithm, Policy Mirror Descent (PMD), is derived from the basic idea of maximizing the relative entropy-regularized expected reward. Such objective has also been used in various reinforcement learning algorithms including \citet{williams1991function,fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement}, among others.
 As mentioned in \cref{sec:intro}, we focus on analyzing its learning properties in the \emph{non-convex} setting in parameter space.
 Our first step in \cref{subsec:revisitTRPO} is to reformulate the 
@@ -9,8 +17,6 @@ As we will see in \cref{subsec:repmd,subsec:sr}, REPMD enjoys some performance g
 Lastly, although our algorithm is presented purely policy-based, it can be easily extended to cooperate with value function approximation. 
 We briefly discussed the actor-critic version of our method in \cref{subsec:repmd_value}.
 
-
-\if0
 \subsection{Policy Mirror Descent}
 \label{sec:pmd}
 We first present a basic policy optimization algorithm based on the idea of Mirror Descent (MD). MD has been widely used in the literature of online learning and constrained optimization problems \citep{nemirovskii1983problem,beck2003mirror}. In particular, given a \emph{reference policy} $\refPi$, let 
@@ -168,7 +174,7 @@ Given the project step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta )$ c
 %the fixed points of REPMD have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. \todor[]{Why?}
 \end{thm}
 
-More importantly, as shown in \cref{prop:solvableprojection}, 
+Furthermore, as shown in \cref{prop:solvableprojection}, 
 for the one-layer-softmax neural network $\pi$, the condition in \cref{thm:monotonically_increasing_sr_property}, that $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta )$ can be solved globally optimally, can now be satisfied in practice.
 %reversing the direction of the KL divergence makes the projection step solvable even for the one-layer-softmax neural network $\pi$, thus guarantees the desirable properties in practice.
 \begin{prop}
@@ -177,7 +183,7 @@ for the one-layer-softmax neural network $\pi$, the condition in \cref{thm:monot
 \end{prop}
 
 
-\subsection{Behavior of $\SR(\pi)$}
+\subsubsection{Behavior of $\SR(\pi)$}
 \label{subsec:sr}
 Although $\text{SR}(\pi_\theta)$ is different from the expected reward $\ep_{\rho \sim \pi_\theta}{r(\rho)}$,  in this section we present some theoretical and empirical evidences that $\SR(\pi_\theta)$ is a reasonable surrogate that may provide good guidance to the learning. 
 In fact, by properly adjusting the two temperature parameters $\tau$ and $\tau^{\prime}$, $\SR(\pi_\theta)$ recovers several existing performance measures, as shown in \cref{prop:sr}.
@@ -190,10 +196,9 @@ $\SR(\pi_\theta)$ satisfies the following properties:
 \end{enumerate}	
 \end{prop}
 \begin{remk}
-	Note that $\text{SR}(\pi_\theta)$ also resembles ``softmax value function'' that appeared in value based RL \citep{nachum2017bridging,haarnoja2018soft,ding2017cold}. The standard soft value can be recovered by $\text{SR}(\pi_\theta)$ as a special case when $\tau = 0$ or $\tau'=0$. \todor[]{But \cref{prop:sr} says that $SR(\pi)$ converges to $max_\rho$ when $\tau$ and $\tau^\prime$ are 0?}
+	Note that $\text{SR}(\pi_\theta)$ also resembles ``softmax value function'' that appeared in value based RL \citep{nachum2017bridging,haarnoja2018soft,ding2017cold}. The standard soft value can be recovered by $\text{SR}(\pi_\theta)$ as a special case when $\tau = 0$ or $\tau'=0$. 
+	%\todor[]{But \cref{prop:sr} says that $SR(\pi)$ converges to $max_\rho$ when $\tau$ and $\tau^\prime$ are 0?}
 \end{remk}
-
-According to \cref{prop:sr}, one should gradually decrease $\tau^{\prime}$ to reduce the level of exploration as sufficient reward landscape information has been collected during the learning process. Now we can make different choices for $\tau$, depending on the policy constraint set $\Pi$.
 
 \begin{wrapfigure}{r}{0.56\textwidth}
 	\begin{minipage}{0.56\textwidth}
@@ -217,6 +222,7 @@ According to \cref{prop:sr}, one should gradually decrease $\tau^{\prime}$ to re
 	\end{minipage}
 \end{wrapfigure}
 
+According to \cref{prop:sr}, one should gradually decrease $\tau^{\prime}$ to reduce the level of exploration as sufficient reward landscape information has been collected during the learning process. Now we can make different choices for $\tau$, depending on the policy constraint set $\Pi$.
 %\begin{remk}
 %\label{small_tau_choices}
 Given $\tau^{\prime} \to 0$ and the reward landscape has been sufficiently explored,
@@ -294,10 +300,11 @@ where $\rho=  (s_1 = s, a_1, s_2, a_2, \ldots)$.
 %\gO_{\text{RELENT}}(\pi, s) = \E_{a\sim \pi} \left[ r(s,a) + \gO_{\text{RELENT}}(\pi, s')  + \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) \right] \\
 %\label{relent-obj}
 %\end{equation*}
-Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{REPMD}}(\pi, s) $ denote the optimal policy on state $s$. By \cref{eq:pitautauprime}, 
-\[
-\bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) = \frac{1}{Z} \exp \left\{ \frac{\left[ r(s,a) + \gO_{\text{REPMD}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s'), s') \right] + \tau \log \bar{\pi}(a|s) }{\tau + \tau'} \right\}.
-\]
+Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{REPMD}}(\pi, s) $ denote the optimal policy on state $s$. 
+%By \cref{eq:pitautauprime}, 
+%\[
+%\bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) = \frac{1}{Z} \exp \left\{ \frac{\left[ r(s,a) + \gO_{\text{REPMD}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s'), s') \right] + \tau \log \bar{\pi}(a|s) }{\tau + \tau'} \right\}.
+%\]
 Further denote the soft optimal state value function $\gO_{\text{REPMD}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s), s)$ by $\bar{V}_{\tau,\tau^{\prime}}^*(s)$, and let  $\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) = r(s,a) + \gamma \bar{V}_{\tau,\tau^{\prime}}^*(s')$ be the soft-Q function.
  It can be verified that 
 \begin{equation}
@@ -310,7 +317,7 @@ Further denote the soft optimal state value function $\gO_{\text{REPMD}}(\bar{\p
  
 % The soft optimal state value can be defined by $\bar{V}_{\tau,\tau^{\prime}}^*(s) = \gO_{\text{RELENT}}(\bar{\pi}_{\tau,\tau^{\prime}}^*, s)$. According to \cref{eq:pitautauprime}, both $\bar{\pi}_{\tau,\tau^{\prime}}^*(\cdot | s)$ and $\bar{V}_{\tau,\tau^{\prime}}^*(s)$ have closed form solution that,
 
-\subsubsection{Learning}
+%\subsubsection{Learning}
 We propose to train a soft state value function $\parV$ parameterized by $\phi$, a soft Q-function $\parQ$ parameterized by $\psi$, and a policy $\parPi$ parameterized by $\theta$, based on \cref{eq:repmd}. We now derive the update rules for these parameters. 
 
 The soft state value function approximates the soft optimal state value $\bar{V}_{\tau,\tau^{\prime}}^*$. Note that we can re-express $\bar{V}_{\tau,\tau^{\prime}}^*$ by 
@@ -343,14 +350,14 @@ L(\theta) = \E_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) +
 %\gO_{\text{RMAC}} (\theta) = \E_{s \sim \gD} \left[ \KL \left( \frac{\refPi(a|s) \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s)}{\tau+\tau'} \right\}}{\exp \left\{ \frac{\parV(s)}{\tau+\tau'} \right\}}  \middle\Vert \parPi \right) \right]
 %\end{align*}
 where we approximate $\bar{\pi}_{\tau,\tau^{\prime}}^*$ with the soft-Q and state value function approximations. 
-The gradient of this objective can be computed by importance sampling, 
-\begin{align*}
-\nabla_\theta \gO_{\text{RMAC}} (\theta) =& \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
-= & \nabla_\theta \E_{s \sim \gD} \left[ \E_{a\sim \refPi}\left[  \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right]   \right] 
-\end{align*}
+%The gradient of this objective can be computed by importance sampling, 
+%\begin{align*}
+%\nabla_\theta \gO_{\text{RMAC}} (\theta) =& \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
+%= & \nabla_\theta \E_{s \sim \gD} \left[ \E_{a\sim \refPi}\left[  \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right]   \right] 
+%\end{align*}
 
 Our approach also use two soft-Q functions in order to mitigate the overestimation problem caused by value function approximation \citep{haarnoja2018soft,fujimoto2018addressing}. Specifically, we apply two soft-Q function approximations, $\parQone(s,a)$ and $\parQtwo(s,a)$, and train them independently.  The minimum of the two Q-functions will be used whenever the soft-Q value is needed. 
-The complete algorithm is described in Algorithm \ref{}.
+%The complete algorithm is described in Algorithm \ref{}.
 
 %\begin{align*}
 %\gO_{\text{RMAC}} (\theta) = & \E_{s \sim \gD} \left[ \KL \left( \bar{\pi}_{\tau,\tau^{\prime}}^*(\cdot \vert s)  \Vert \pi_\theta(\cdot \vert s) \right) \right] \\

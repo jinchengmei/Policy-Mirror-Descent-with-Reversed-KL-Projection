@@ -1,27 +1,79 @@
-Model-free deep reinforcement learning (RL) has recently been demonstrated to successfully solve a wide range of difficult sequential decision making problems \citep{schulman2015trust,mnih2015human,silver2016mastering}, it also significantly introduces additional complications in understanding the behavior of the model. 
+Model-free deep reinforcement learning (RL) has recently been demonstrated its successes in solving a wide range of difficult sequential decision making problems \citep{schulman2015trust,mnih2015human,silver2016mastering}.
+Among various deep RL methods one of the core ideas is the policy optimization, which presents the policy search problem as an optimization problem \citep{williams1991function,williams1992simple,sutton1998reinforcement}.
+ %, where it aims to find a policy $\pi$ that maximizes the expected reward. 
+Policy optimization updates the model by the so-called policy gradient methods, where the policy is modelled by neural networks. 
 
-In practice, policy based Deep RL is different than a traditional optimization problem, in the sense that the argument to be optimized, i.e. the policy, is also used to collect training data from the environment. This interaction may lead to lack of exploration, since the learner's policy may get stuck in a local optimum and fail to collect high reward trajectories, preventing any learning from useful signals.  An on-line learning algorithm should have the ability to explore the policy space properly and efficiently, to avoid getting trapped in a locally optima, while discovering the globally optimal policy quickly.
+While the great expressive power of neural networks in deep RL helps in modelling complicated policies, it also introduces the instability and the data inefficiency to the learning algorithms. 
+Usually training a deep RL model would require an extensive hyperparameter tuning and a huge, if not impractical, number of sampled trajectories. 
+Different from a traditional optimization problem, policy optimization needs to collect its training data from the environment based on its policy, the argument also to be optimized on.
+Such interaction may make the performance of the algorithm very sensitive to the policy, thus results in the need of an extensive hyperparameter tuning.
+It may also create many local optima, where a lack-of-exploration policy would fail to collect high-reward training data which in turns prevents any further improvement of the policy from useful signals.
+Therefore,  a good learning algorithm should have the ability to improve the policy stably, and explore the policy space properly and efficiently to avoid getting trapped in a poor local optimum and discover a good policy quickly.
+
+
+ %
+Many improvements to policy optimization have been proposed in the literature, in both the stability and the data efficiency of the algorithm \citep{peters2010relative,van2015learning,fox2015taming,schulman2015trust,montgomery2016guided,nachum2017bridging,nachum2017trust,tangkaratt2017guide,abdolmaleki2018maximum,haarnoja2018soft}. 
+However, a clear gap between their great success in practice and their theoretical analyses remains.
+%Despite of its success in practice,  theoretical analyses of these methods have been far limited.
+In particular, existing theoretical results typically assume a fairly simple setting, which either ignores the parametrization of the model or only considers linear models. However, it is hard to justify that such assumptions would still hold when using complex approximators with finite representation capacity (restricted by the parameter space constraint), e.g. neural network models.
+Such discrepancy between theory and practice has become a hurdle to the wider application of model-free policy gradient methods. 
+
+In this paper, we focus on a more realistic setting where the policy is parametrized as a \emph{non-convex} function in its parameter space. 
+We start with the entropy-regularized expected reward as our objective \citep{williams1991function,fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement}. 
+%While such objective has already been studied in the literature \citep{williams1991function,fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement}, our analyses focus on the \emph{non-convex} setting.
+We first reformulate this objective as a lift-and-project procedure following the idea of Mirror Descent.
+On the one hand, such reformulation makes it easier to analyze the algorithm in the parameter space.
+Based on such reformulation, a monotonic improvement guarantee in performance can be proved with a fairly simple proof, even in the non-convex setting.
+We also studies its fixed points properties.
+On the other hand, such formulation suggests to perform multiple steps of gradient descent on the project step, which leads to our first algorithm, Policy Mirror Descent (PMD). 
+ PMD first lifts the policy in the entire policy-simplex, ignoring the constraint induced by its parametrization, then solving a project step by multiple steps of gradient descent to update the policy in the parameter space. 
+
+We then propose additional modifications to mitigate the potential deficiencies of PMD.
+Our main algorithm, Reversed Entropy PMD (REPMD),  takes both the entropy and the relative entropy regularizers, and uses a mean seeking direction of KL divergence for projection.
+Similar guarantees can also be proved for REPMD but only on a surrogate reward $\SR(\pi)$ rather than the expected reward. 
+We further study the properties of $\SR(\pi)$ and provide theoretical and empirical evidences that $\SR$ could serve as a good guidance for learning the policy.
+Lastly, we also show how our algorithm can be extended to cooperate with value function approximation, and present its  actor-critic version. 
+
+
+%Typically the theory assumes a fairly simple setting where either learning happens in the policy space, i.e. the space of all the probability distributions, or the approximator is linear so that the optimization problem is convex. 
+\if0
+Our first algorithm, Policy Mirror Descent (PMD), is derived from the basic idea of maximizing the relative entropy-regularized expected reward. Such objective has also been used in various reinforcement learning algorithms including \citet{williams1991function,fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement}, among others.
+As mentioned in \cref{sec:intro}, we focus on analyzing its learning properties in the \emph{non-convex} setting in parameter space.
+Our first step in \cref{subsec:revisitTRPO} is to reformulate the 
+objective as a lift-and-project procedure following the idea of Mirror Descent. 
+We discuss the properties and potential deficiencies of PMD based on such reformulation.
+Additional modifications are then proposed  to mitigate these deficiencies in \cref{subsec:repmd}, leading to a new algorithm called Reversed Entropy Policy Mirror Descent (REPMD).
+As we will see in \cref{subsec:repmd,subsec:sr}, REPMD enjoys some performance guarantees even in the non-convex setting, e.g. when $\pi_\theta$ is an one-layer-softmax neural network. 
+Lastly, although our algorithm is presented purely policy-based, it can be easily extended to cooperate with value function approximation. 
+We briefly discussed the actor-critic version of our method in \cref{subsec:repmd_value}.
+
+
+
+
+%In practice, policy based Deep RL is different than a traditional optimization problem, in the sense that the argument to be optimized, i.e. the policy, is also used to collect training data from the environment. 
+%Such interaction may lead to lack of exploration, since the learner's policy may get stuck in a local optimum and fail to collect high reward trajectories, preventing any learning from useful signals.  An on-line learning algorithm should have the ability to explore the policy space properly and efficiently, to avoid getting trapped in a locally optima, while discovering the globally optimal policy quickly.
+ %Policy optimization has been widely used across reinforcement learning (RL) settings. 
 
 In this paper, we propose a method with a better exploration strategy, such that (a) it retains the exploration efficiency of existing methods; (b) it monotonically increases its chance of exploring trajectories generated by the optimal policies, or evolving closer to the optimal policies. Our proposed method Reversed Entropy Policy Mirror Descent (REPMD), takes both the entropy and relative entropy regularizers. Unlike common policy gradient based methods, REPMD is in a two-stage manner.  REPMD first updates the policy in the entire policy-simplex, ignoring the constraint induced by its parametrization, then a projection step is performed to update the policy in the parametrized policy space. Such a two-stage update guarantees REPMD to increase performance monotonically. The proposed REPMD method is then justified from both theoretical and empirical perspectives.
 
+
 The rest of the paper is organized as follows. After introducing exploration of RL in \cref{sec:exploration_in_policy_optimization}, we propose the REPMD method in \cref{sec:reversed_emtropy_policy_mirror_descent}. We provide the analysis for the monotonically increasing performance property of REPMD in \cref{sec:reversed_emtropy_policy_mirror_descent}, and conduct experiments to validate our algorithm in \cref{sec:experiments}. Some related work is discussed in \cref{sec:related_work}, and the conclusion and directions for future work are presented in \cref{sec:conclusion_and_future_work}.
-
-The lift-and-project formulation differs our method from most of the policy search methods. 
-On the one hand, such formulation provides an easier way in analyzing the behavior of the algorithm in parameter space. For example, the monotonical improvement guarantee can be proved in a fairly direct and simple way in this paper, even for some particular non-convex $\pi_\theta$. 
-On the other hand, such formulation suggests to perform multiple steps of gradient descent on the project step with the current policy fixed as the reference policy. As shown in \cref{sec:experiments}, multiple steps of gradient descent leads to a significant improvement in performances compared to single step of gradient descent.
-
-%The benefit of this, as discussed in \cref{subsec:repmd} has two folds: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can still be globally optimally solved for one-layer networks which is non-convex.
-We assume discount factor to be 1. Assume deterministic state transition function (WLOG). 
-
-
-Policy optimization has been widely used across reinforcement learning (RL) settings. Given a set of parametrized policy functions $\pi_\theta \in \Pi$, policy optimization aims to search the optimal policy $\pi_\theta^*$ that achieves the highest expected reward,
+\fi
+\subsection{Notations and Problem Setting}
+\label{subsec:notations_and_settings}
+For simplicity, we only consider finite horizon reinforcement learning settings with finite state and action spaces. 
+The behavior of an agent is modelled by a policy $\pi(a|s)$, which estimates a probability distribution over a finite set of actions given an observed state. 
+At each time step $t$, the agent takes an action $a_t$ by sampling from $\pi(a_t | s_t)$. The environment then returns a reward $r_t = r(s_t, a_t)$ and the next state $s_{t+1} = f(s_t, a_t)$, where $f$ is the transition function not revealed to the agent.
+Given a trajectory, a sequence of states and actions $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$, the policy probability and the total reward of $\rho$ are defined as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$ and $r(\rho) = \sum_{t=1}^{T-1} r(s_t, a_t)$. 
+Given a set of parametrized policy functions $\pi_\theta \in \Pi$, policy optimization aims to search the optimal policy $\pi_\theta^*$ by maximizing the expected reward,
 \begin{equation}
 \label{max_expected_reward}
 \begin{split}
 \pi_\theta^* \in \argmax_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{r(\rho)} },
 \end{split}
 \end{equation}
-\subsection{Notations and Settings}
-\label{subsec:notations_and_settings}
 
-We consider finite horizon reinforcement learning settings with finite state and action spaces. The behavior of an agent is modelled by a policy $\pi(a|s)$, which estimates a probability distribution over a finite set of actions given an observed state. At each time step $t$, the agent takes an action $a_t$ by sampling from $\pi(a_t | s_t)$. The environment then returns a reward $r_t = r(s_t, a_t)$ and the next state $s_{t+1} = f(s_t, a_t)$, where $f$ is the transition function and it is not revealed to the agent. Given a trajectory, a sequence of states and actions $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$, the policy probability and the total reward of $\rho$ are defined as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$ and $r(\rho) = \sum_{t=1}^{T-1} r(s_t, a_t)$. We use $\Delta \triangleq \{ \pi | \sum_{\rho}{\pi(\rho)} = 1, \pi(\rho) \ge 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. For simplicity we also assume that the state transition function is deterministic, while our results can be easily extended to the general setting with random transition functions.
+We use $\Delta \triangleq \{ \pi | \sum_{\rho}{\pi(\rho)} = 1, \pi(\rho) \ge 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. 
+Without loss of generality, we also assume that the state transition function is deterministic, and the discount factor $\gamma = 1$.
+The same simplification is also assumed in \citet{nachum2017improving}. 
+Results for stochastic state transition function are presented in ******.

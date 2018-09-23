@@ -37,8 +37,8 @@ In particular, they apply such regularization to the parameters of the  linear a
 The literature of relative entropy policy search also uses similar KL divergence regularizer \citep{peters2010relative,van2015learning} but on the joint distributions of state and action in the purpose of . 
 Instead of the KL divergence, Reward-Weighted Regression (RWR) uses a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$ as its objective, which is then approximated similar to a cross entropy loss \citep{peters2007reinforcement,wierstra2008episodic}.
 
-TRPO also has a similar formulation to \cref{eq:max_expected_reward_plus_relative_entropy} in a constraint version \citep{schulman2015trust}. 
-However, \cref{eq:max_expected_reward_plus_relative_entropy} uses a different direction of the KL divergence. 
+TRPO also has a similar formulation to \cref{eq:max_expected_reward_plus_relative_entropy} in a constraint version, with a mean seeking KL divergence \citep{schulman2015trust}. 
+%However, \cref{eq:max_expected_reward_plus_relative_entropy} uses a different direction of the KL divergence. 
 The monotonical improvement guarantee
 only exists for an impractical formulation of TRPO \footnote{For the version that monotonical improvement guarantee holds, TRPO needs to use $\KL^{\max} $ rather than the stanard KL divergence.}. 
 %We also prove the monotonical improvement guarantee for the exact formulation, while such guarantee in TRPO only exists for an impractical formulation\footnote{For the version that monotonical improvement guarantee holds, TRPO needs to use $\KL^{\max} $ rather than the stanard KL divergence.}. 
@@ -51,7 +51,7 @@ Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which inc
 %it is not justified that this method can guarantee policy improvement during learning. On the other hand, the proposed REPMD method can monotonically increase the softmax approximated expected reward, as shown in \cref{sec:repmd}.
 
 
-These related works include maximum a posterior policy optimization \citep{abdolmaleki2018maximum}, and soft actor-critic \citep{haarnoja2018soft}. 
+%These related works include maximum a posterior policy optimization \citep{abdolmaleki2018maximum}, and soft actor-critic \citep{haarnoja2018soft}. 
 
 %The proposed reversed entropy policy mirror descent (REPMD) method employs a modified version of PMD framework. First, the objective function of PMD is combined with entropy regularizer to enhance further exploration. Second, the projection step applies the \emph{mean seeking} direction of KL divergence instead of the \emph{mean seeking} one used PMD. As shown in both theoretical and practical justification, these two novelties play a very important role in REPMD. 
 
