@@ -2,8 +2,6 @@
 In this section, we first present our algorithm PMD.
 As mentioned in \cref{sec:intro}, we focus on analyzing its properties in the \emph{non-convex} setting.
 Two additional modifications are then proposed in \cref{subsec:repmd}, leading to our main algorithm REPMD.
-Compared to PMD, REPMD takes an extra entropy regularizer and uses the mean seeking direction of KL divergence for the project step.
-The benefit of this is twofold: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can now be globally optimally solved for a one-layer-softmax network, which is \emph{non-convex} in its parameter.
 Lastly, although our algorithm is developed purely policy-based, it can be easily extended to cooperate with value function approximation. 
 We briefly discussed the actor-critic version of our method in \cref{subsec:repmd_value}.
 \if0

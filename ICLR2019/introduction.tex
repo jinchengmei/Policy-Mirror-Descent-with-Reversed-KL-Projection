@@ -1,18 +1,17 @@
 Model-free deep reinforcement learning (RL) has recently been demonstrated its successes in solving a wide range of difficult sequential decision making problems \citep{schulman2015trust,mnih2015human,silver2016mastering}.
-Among various deep RL methods one of the core ideas is the policy optimization, which presents the policy search problem as an optimization problem \citep{williams1991function,williams1992simple,sutton1998reinforcement}.
+Among various deep RL methods one of the core ideas is the policy optimization, which presents the policy search problem as an optimization problem, e.g. the so-called policy gradient methods \citep{williams1991function,williams1992simple,sutton1998reinforcement}.
  %, where it aims to find a policy $\pi$ that maximizes the expected reward. 
-Policy optimization updates the model by the so-called policy gradient methods, where the policy is modelled by neural networks. 
-
-While the great expressive power of neural networks in deep RL helps in modelling complicated policies, it also introduces the instability and the data inefficiency to the learning algorithms. 
-Usually training a deep RL model would require an extensive hyperparameter tuning and a huge, if not impractical, number of sampled trajectories. 
+%Policy optimization updates the model by the so-called policy gradient methods, where the policy is modelled by neural networks. 
+%While the great expressive power of neural networks in deep RL helps in modelling complicated policies, it also introduces the instability and the data inefficiency to the learning algorithms. 
 Different from a traditional optimization problem, policy optimization needs to collect its training data from the environment based on its policy, the argument also to be optimized on.
-Such interaction may make the performance of the algorithm very sensitive to the policy, thus results in the need of an extensive hyperparameter tuning.
+Such interaction may make the performance of the algorithm very sensitive to the policy, which results in the need of an extensive hyperparameter tuning.
 It may also create many local optima, where a lack-of-exploration policy would fail to collect high-reward training data which in turns prevents any further improvement of the policy from useful signals.
-Therefore,  a good learning algorithm should have the ability to improve the policy stably, and explore the policy space properly and efficiently to avoid getting trapped in a poor local optimum and discover a good policy quickly.
+Indeed, training a RL model usually requires an extensive hyperparameter tuning and a huge, if not impractical, number of sampled trajectories. 
+It has been a popular topic how to design an algorithm that has
+%A good learning algorithm should have 
+the ability to improve the policy steadily, and explore the policy space properly and efficiently, so that it can avoid getting trapped in a poor local optimum and discover a good policy quickly.
 
-
- %
-Many improvements to policy optimization have been proposed in the literature, in both the stability and the data efficiency of the algorithm \citep{peters2010relative,van2015learning,fox2015taming,schulman2015trust,montgomery2016guided,nachum2017bridging,nachum2017trust,tangkaratt2017guide,abdolmaleki2018maximum,haarnoja2018soft}. 
+Many improvements to policy optimization have been proposed in the literature, to both the stability and the data efficiency of the algorithm \citep{peters2010relative,van2015learning,fox2015taming,schulman2015trust,montgomery2016guided,nachum2017bridging,nachum2017trust,tangkaratt2017guide,abdolmaleki2018maximum,haarnoja2018soft}. 
 However, a clear gap between their great success in practice and their theoretical analyses remains.
 %Despite of its success in practice,  theoretical analyses of these methods have been far limited.
 In particular, existing theoretical results typically assume a fairly simple setting, which either ignores the parametrization of the model or only considers linear models. However, it is hard to justify that such assumptions would still hold when using complex approximators with finite representation capacity (restricted by the parameter space constraint), e.g. neural network models.
@@ -30,6 +29,7 @@ On the other hand, such formulation suggests to perform multiple steps of gradie
 
 We then propose additional modifications to mitigate the potential deficiencies of PMD.
 Our main algorithm, Reversed Entropy PMD (REPMD),  takes both the entropy and the relative entropy regularizers, and uses a mean seeking direction of KL divergence for projection.
+The benefit of this is twofold: (1) Using the mean seeking KL divergence in the project step, as well as the additional entropy regularizer, helps avoids some poor local optima; (2) The problem can now be globally optimally solved in some specific \emph{non-convex} cases, e.g. one-layer-softmax networks.
 Similar guarantees can also be proved for REPMD but only on a surrogate reward $\SR(\pi)$ rather than the expected reward. 
 We further study the properties of $\SR(\pi)$ and provide theoretical and empirical evidences that $\SR$ could serve as a good guidance for learning the policy.
 Lastly, we also show how our algorithm can be extended to cooperate with value function approximation, and present its  actor-critic version. 
