@@ -1,4 +1,4 @@
-\begin{thebibliography}{23}
+\begin{thebibliography}{32}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -32,6 +32,23 @@ Nan Ding and Radu Soricut.
 \newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
   2817--2826, 2017.
 
+\bibitem[Fox et~al.(2015)Fox, Pakman, and Tishby]{fox2015taming}
+Roy Fox, Ari Pakman, and Naftali Tishby.
+\newblock Taming the noise in reinforcement learning via soft updates.
+\newblock \emph{arXiv preprint arXiv:1512.08562}, 2015.
+
+\bibitem[Fujimoto et~al.(2018)Fujimoto, van Hoof, and
+  Meger]{fujimoto2018addressing}
+Scott Fujimoto, Herke van Hoof, and Dave Meger.
+\newblock Addressing function approximation error in actor-critic methods.
+\newblock \emph{arXiv preprint arXiv:1802.09477}, 2018.
+
+\bibitem[Haarnoja et~al.(2017)Haarnoja, Tang, Abbeel, and
+  Levine]{haarnoja2017reinforcement}
+Tuomas Haarnoja, Haoran Tang, Pieter Abbeel, and Sergey Levine.
+\newblock Reinforcement learning with deep energy-based policies.
+\newblock \emph{arXiv preprint arXiv:1702.08165}, 2017.
+
 \bibitem[Haarnoja et~al.(2018)Haarnoja, Zhou, Abbeel, and
   Levine]{haarnoja2018soft}
 Tuomas Haarnoja, Aurick Zhou, Pieter Abbeel, and Sergey Levine.
@@ -49,6 +66,17 @@ Sepp Hochreiter and J{\"u}rgen Schmidhuber.
 P~Murphy Kevin.
 \newblock \emph{Machine learning: a probabilistic perspective}.
 \newblock Cambridge, MA, 2012.
+
+\bibitem[Liu et~al.(2015)Liu, Liu, Ghavamzadeh, Mahadevan, and
+  Petrik]{liu2015finite}
+Bo~Liu, Ji~Liu, Mohammad Ghavamzadeh, Sridhar Mahadevan, and Marek Petrik.
+\newblock Finite-sample analysis of proximal gradient td algorithms.
+\newblock In \emph{UAI}, pp.\  504--513. Citeseer, 2015.
+
+\bibitem[Mahadevan \& Liu(2012)Mahadevan and Liu]{mahadevan2012sparse}
+Sridhar Mahadevan and Bo~Liu.
+\newblock Sparse q-learning with mirror descent.
+\newblock \emph{arXiv preprint arXiv:1210.4893}, 2012.
 
 \bibitem[Mnih et~al.(2015)Mnih, Kavukcuoglu, Silver, Rusu, Veness, Bellemare,
   Graves, Riedmiller, Fidjeland, Ostrovski, et~al.]{mnih2015human}
@@ -123,6 +151,12 @@ John Schulman, Sergey Levine, Pieter Abbeel, Michael Jordan, and Philipp
 \newblock In \emph{International Conference on Machine Learning}, pp.\
   1889--1897, 2015.
 
+\bibitem[Schulman et~al.(2017)Schulman, Chen, and
+  Abbeel]{schulman2017equivalence}
+John Schulman, Xi~Chen, and Pieter Abbeel.
+\newblock Equivalence between policy gradients and soft q-learning.
+\newblock \emph{arXiv preprint arXiv:1704.06440}, 2017.
+
 \bibitem[Silver et~al.(2016)Silver, Huang, Maddison, Guez, Sifre, Van
   Den~Driessche, Schrittwieser, Antonoglou, Panneershelvam, Lanctot,
   et~al.]{silver2016mastering}
@@ -132,10 +166,30 @@ David Silver, Aja Huang, Chris~J Maddison, Arthur Guez, Laurent Sifre, George
 \newblock Mastering the game of go with deep neural networks and tree search.
 \newblock \emph{nature}, 529\penalty0 (7587):\penalty0 484--489, 2016.
 
-\bibitem[Thrun(1992)]{thrun1992efficient}
-Sebastian~B Thrun.
-\newblock Efficient exploration in reinforcement learning.
-\newblock \emph{Technical report}, 1992.
+\bibitem[Sutton et~al.(1998)Sutton, Barto, et~al.]{sutton1998reinforcement}
+Richard~S Sutton, Andrew~G Barto, et~al.
+\newblock \emph{Reinforcement learning: An introduction}.
+\newblock MIT press, 1998.
+
+\bibitem[Tangkaratt et~al.(2017)Tangkaratt, Abdolmaleki, and
+  Sugiyama]{tangkaratt2017guide}
+Voot Tangkaratt, Abbas Abdolmaleki, and Masashi Sugiyama.
+\newblock Guide actor-critic for continuous control.
+\newblock \emph{arXiv preprint arXiv:1705.07606}, 2017.
+
+\bibitem[Thomas et~al.(2013)Thomas, Dabney, Giguere, and
+  Mahadevan]{thomas2013projected}
+Philip~S Thomas, William~C Dabney, Stephen Giguere, and Sridhar Mahadevan.
+\newblock Projected natural actor-critic.
+\newblock In \emph{Advances in neural information processing systems}, pp.\
+  2337--2345, 2013.
+
+\bibitem[Van~Hoof et~al.(2015)Van~Hoof, Peters, and Neumann]{van2015learning}
+Herke Van~Hoof, Jan Peters, and Gerhard Neumann.
+\newblock Learning of non-parametric control policies with high-dimensional
+  state features.
+\newblock In \emph{Artificial Intelligence and Statistics}, pp.\  995--1003,
+  2015.
 
 \bibitem[Wierstra et~al.(2008)Wierstra, Schaul, Peters, and
   Schmidhuber]{wierstra2008episodic}

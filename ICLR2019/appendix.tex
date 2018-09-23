@@ -31,7 +31,7 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 \begin{proof}
 	Note that $\pi_{\theta} = \frac{\exp\left\{\Phi^\top\theta\right\}}{{\mathbf{1}^\top \exp\left\{\Phi^\top\theta\right\} }}$, where $\Phi$ is the feature matrix and $\theta$ is the policy parameter.
 	Simply compute the Hessian matrix of the objective,
-	 \[\frac{d^2 \text{KL}(\refPi \| \pi_{\theta})}{d \theta^2} = \Phi^\top (\Delta(\pi_\theta) - \pi_\theta \pi_\theta^\top) \Phi \succeq 0.
+	 \[\frac{d^2 \KL(\refPi \| \pi_{\theta})}{d \theta^2} = \Phi (\Delta(\pi_\theta) - \pi_\theta \pi_\theta^\top) \Phi^\top \succeq 0.
 	 \]
 	 Thus $\KL(q \| \pi_{\theta})$ is convex in $\theta$.
 \end{proof}
