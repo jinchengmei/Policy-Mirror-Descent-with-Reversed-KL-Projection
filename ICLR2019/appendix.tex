@@ -34,7 +34,7 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 		\left. \frac{d \KL( \pi_{\theta} \| \bar{\pi}_\tau^*) }{d \theta}  \right\vert _{\theta = \theta_t} &= 0 \\
 		\iff \left. \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log{ \bar{\pi}_\tau^*(\rho) } + 1 \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0 \\
 		\iff \left. \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log\left\{ \frac{ \pi_{\theta_t}(\rho) \exp\left\{r(\rho) / \tau\right\}}{ \sum\limits_{\rho^\prime}{\pi_{\theta_t}(\rho^\prime) \exp\left\{r(\rho^\prime) / \tau\right\} } } \right\} + 1 \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0 \\
-		\text{(by Lift Step in \cref{eq:pmd})}& \\
+		\text{(by Lift Step in \cref{eq:fixed_point_of_PMD_iter})}& \\
 		\iff \left. \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log\left\{\pi_{\theta_t}(\rho) \exp\left\{r(\rho) / \tau\right\} \right\} + c \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0,
 	\end{split}
 	\end{equation}
@@ -49,7 +49,7 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 		\iff \left. \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log\left\{\pi_{\theta_t}(\rho) \exp\left\{r(\rho) / \tau\right\} \right\} \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0.
 	\end{split}
 	\end{equation}
-	Comparing \cref{eq:equivalence_stationary_fixed_point} with \cref{eq:stationary_point_of_expected_reward}, we have fixed point condition of PMD is the same as the definition of the stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$.
+	Comparing \cref{eq:equivalence_stationary_fixed_point} with \cref{eq:stationary_point_of_expected_reward}, we have the fixed point condition of PMD is the same as the definition of the stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$.
 \end{proof}
 
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
@@ -71,16 +71,28 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 	\begin{split}
 		\frac{d \SR(\pi_{\theta})}{d \theta} &= 0 \\
 		\iff (\tau + \tau^\prime) \cdot \frac{ \sum\limits_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } \cdot \frac{\tau}{ \tau + \tau^\prime} \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} }{  \sum_{\rho^\prime}{ \exp\left\{ \frac{r(\rho^\prime) + \tau \log{\pi_\theta(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } &= 0 \\
-		\iff - \sum\limits_{\rho}{ \frac{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_\theta(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_\theta(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \qquad (\tau > 0) \\
-		\iff - \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \qquad \text{by \cref{eq:pitautauprime} } \\
-		\iff \frac{d \KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta}) }{d \theta} &= 0.
+		\iff - \sum\limits_{\rho}{ \frac{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_\theta(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_\theta(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0. \qquad (\tau > 0)
 	\end{split}
 	\end{equation}
-	Notice that in \cref{eq:stationary_point_of_sr}, $\bar{\pi}_{\tau,\tau^{\prime}}^*$ is constructed from $\pi_\theta$, and the same $\pi_\theta$ also makes the gradient of $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta})$ equal to zero. Now in \cref{eq:repmd}, we have,
-	\begin{equation*}
-		\pi_\theta \xrightarrow{\text{Lift Step}} \bar{\pi}_{\tau,\tau^{\prime}}^* \xrightarrow{\text{Project Step}} \pi_\theta,
-	\end{equation*}•
-	which means $\pi_{\theta}$ is a fixed point of REPMD iteration \cref{eq:repmd}.
+	On the other hand, the fixed point of REPMD indicates at some iteration $t$,
+	\begin{equation}
+	\label{eq:fixed_point_of_REPMD_iter}
+	\begin{split}
+		&\pi_{\theta_t} = \pi_{\theta_{t+1}}, \\
+		\text{where } &\pi_{\theta_t} \xrightarrow{\text{Lift Step}} \bar{\pi}_{\tau,\tau^{\prime}}^* \xrightarrow{\text{Project Step}} \pi_{\theta_{t+1}} \text{ in \cref{eq:repmd}},
+	\end{split}
+	\end{equation}
+	which means $\pi_{\theta_t}$ is the solution of the Project Step,
+	\begin{equation}
+	\label{eq:solution_of_project_step_repmd}
+	\begin{split}
+		\left. \frac{d \KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta}) }{d \theta} \right\vert_{\theta = \theta_t} &= 0 \\
+		\iff - \left. \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0 \\
+		\iff - \left. \sum\limits_{\rho}{ \frac{ \pi_{\theta_t}(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_{\theta_t}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_{\theta_t}(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_{\theta_t}(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0 \\
+		\text{(by Lift Step in \cref{eq:fixed_point_of_REPMD_iter})} &
+	\end{split}
+	\end{equation}
+	Comparing \cref{eq:solution_of_project_step_repmd} with \cref{eq:stationary_point_of_sr}, we have the fixed point condition of REPMD is the same as the definition of the stationary point of $\SR(\pi_{\theta})$.
 \end{proof}
 
 \subsection{Proof of \cref{prop:solvableprojection}}
