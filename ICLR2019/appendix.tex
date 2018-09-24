@@ -113,6 +113,7 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 \end{proof}
 
 \subsection{Proof of \cref{thm:repmdgradientestimate}}
+\label{subsec:proof_of_repmdgradientestimate}
 \begin{proof}
 	Note that
 	\begin{equation*}
@@ -135,11 +136,11 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 
 \section{Stochastic Transition Setting}
 \label{sec:stochasticsetting}
-In \cref{sec:notations_and_settings}, we assume that the state transition function is deterministic for simplicity. For completeness, we consider the general stochastic transition setting here.
+In \cref{subsec:notations_and_settings}, we assume that the state transition function is deterministic for simplicity. For completeness, we consider the general stochastic transition setting here.
 
 \subsection{Notations and Settings}
 
-Recall in \cref{sec:notations_and_settings}, the policy probability of trajectory $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$ is denoted as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$. We define transition probability of $\rho$ as $f(\rho) \triangleq \prod_{t=1}^{T-1}{ f(s_{s+1} | s_t, a_t)}$. The total probability of $\rho$ under policy $\pi$ and transition $f$ is then $p_{\pi, f}(\rho) \triangleq \pi(\rho) f(\rho) = \prod_{t=1}^{T-1}{ \pi(a_t | s_t) f(s_{s+1} | s_t, a_t)}$. We use $\Delta_{f} \triangleq \{ \pi | \sum_{\rho}{ p_{\pi, f}(\rho) } = \sum_{\rho}{\pi(\rho) f(\rho)} = 1, \pi(\rho) \ge 0, f(\rho) > 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. It is obvious that $p_{\pi, f}(\rho) = \pi(\rho)$ and $\Delta_f = \Delta$ under deterministic transition setting, i.e., $f(\rho) = 1, \forall \rho$.
+Recall in \cref{subsec:notations_and_settings}, the policy probability of trajectory $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$ is denoted as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$. We define transition probability of $\rho$ as $f(\rho) \triangleq \prod_{t=1}^{T-1}{ f(s_{s+1} | s_t, a_t)}$. The total probability of $\rho$ under policy $\pi$ and transition $f$ is then $p_{\pi, f}(\rho) \triangleq \pi(\rho) f(\rho) = \prod_{t=1}^{T-1}{ \pi(a_t | s_t) f(s_{s+1} | s_t, a_t)}$. We use $\Delta_{f} \triangleq \{ \pi | \sum_{\rho}{ p_{\pi, f}(\rho) } = \sum_{\rho}{\pi(\rho) f(\rho)} = 1, \pi(\rho) \ge 0, f(\rho) > 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. It is obvious that $p_{\pi, f}(\rho) = \pi(\rho)$ and $\Delta_f = \Delta$ under deterministic transition setting, i.e., $f(\rho) = 1, \forall \rho$.
 
 \subsection{REPMD Optimization Problem}
 
@@ -253,5 +254,5 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 \end{equation}
 \end{thm}
 \begin{proof}
-See Theorem \ref{thm:repmdgradientestimate}.
+See \cref{subsec:proof_of_repmdgradientestimate} for the proof of Theorem \ref{thm:repmdgradientestimate}.
 \end{proof}
