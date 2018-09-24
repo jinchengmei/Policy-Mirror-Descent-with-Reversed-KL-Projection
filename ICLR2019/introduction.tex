@@ -4,7 +4,7 @@ Among various deep RL methods one of the core ideas is the policy optimization, 
 %Policy optimization updates the model by the so-called policy gradient methods, where the policy is modelled by neural networks. 
 %While the great expressive power of neural networks in deep RL helps in modelling complicated policies, it also introduces the instability and the data inefficiency to the learning algorithms. 
 Different from a traditional optimization problem, policy optimization needs to collect its training data from the environment based on its policy, the argument also to be optimized on.
-Such interaction may make the performance of the algorithm very sensitive to the policy, which results in the need of an extensive hyperparameter tuning.
+Such interaction may make the performance of the algorithm very sensitive to the policy with high variance, which results in the need of an extensive hyperparameter tuning.
 It may also create many local optima, where a lack-of-exploration policy would fail to collect high-reward training data which in turns prevents any further improvement of the policy from useful signals.
 Indeed, training a RL model usually requires an extensive hyperparameter tuning and a huge, if not impractical, number of sampled trajectories. 
 It has been a popular topic how to design an algorithm that has
