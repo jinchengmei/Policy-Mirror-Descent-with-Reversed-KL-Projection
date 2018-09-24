@@ -165,7 +165,7 @@ Given the project step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta )$ c
 	\label{eq:SR}
 	\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
 	\end{equation}
-	\item {\bf (Global optimum inclusion)} Every stationary point of the expected reward $\text{SR}(\pi_\theta)$, including the globally optimal policy $\pi_{\theta^*}$,  is a fixed point of REPMD. \todor[]{Double check}
+	\item {\bf (Global optimum inclusion)} Every stationary point of the expected reward $\text{SR}(\pi_\theta)$, including the globally optimal policy $\pi_{\theta^*}$,  is a fixed point of REPMD. \todor[]{Double check} \todoj[]{Add proof in A.3}
 	%The globally optimal policy $\pi^*$ in parameter space is included in the set of fixed points of TRPO.
 \end{enumerate}
 %Theorem \ref{thm:monotonically_increasing_sr_property} guarantees the monotonic improvement on $\text{SR}(\pi)$, thus implies that 

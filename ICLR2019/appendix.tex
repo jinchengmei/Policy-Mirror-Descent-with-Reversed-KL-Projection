@@ -36,22 +36,39 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 	Notice that in \cref{eq:stationary_point_of_expected_reward_cont}, $\bar{\pi}_\tau^*$ is constructed from $\pi_\theta$, and the same $\pi_\theta$ also makes the gradient of $\KL( \pi_{\theta} \| \bar{\pi}_\tau^*)$ equal to zero. Now in \cref{eq:pmd}, we have,
 	\begin{equation*}
 		\pi_\theta \xrightarrow{\text{Lift Step}} \bar{\pi}_\tau^* \xrightarrow{\text{Project Step}} \pi_\theta,
-	\end{equation*}•
+	\end{equation*}
 	which means $\pi_{\theta}$ is a fixed point of PMD iteration \cref{eq:pmd}.
 \end{proof}
 
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
 \begin{proof}
-	Using $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}}) = \min_{\pi_\theta \in \Pi}{ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat)$ and Jensen's inequality,
+	{\bf (Monotonic Improvement Guarantee)} Using $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}}) = \min_{\pi_\theta \in \Pi}{ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat)$ and Jensen's inequality,
 	\begin{equation*}
 	\begin{split}
 	&\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat) = (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
 	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
 	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
 	\ge& (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
-	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } = \tau \left[ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat) - \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}})\right] \ge 0. \qedhere
+	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } = \tau \left[ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat) - \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}})\right] \ge 0.
 	\end{split}
 	\end{equation*}
+	
+	{\bf (Global optimum inclusion)} The stationary point of $\SR(\pi_{\theta})$ is the $\pi_\theta$ which satisfies,
+	\begin{equation}
+	\label{eq:stationary_point_of_sr}
+	\begin{split}
+		\frac{d \SR(\pi_{\theta})}{d \theta} &= 0 \\
+		\iff (\tau + \tau^\prime) \cdot \frac{ \sum\limits_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } \cdot \frac{\tau}{ \tau + \tau^\prime} \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} }{  \sum_{\rho^\prime}{ \exp\left\{ \frac{r(\rho^\prime) + \tau \log{\pi_\theta(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } &= 0 \\
+		\iff - \sum\limits_{\rho}{ \frac{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_\theta(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_\theta(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \qquad (\tau > 0) \\
+		\iff - \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \qquad \text{by \cref{eq:pitautauprime} } \\
+		\iff \frac{d \KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta}) }{d \theta} &= 0.
+	\end{split}
+	\end{equation}
+	Notice that in \cref{eq:stationary_point_of_sr}, $\bar{\pi}_{\tau,\tau^{\prime}}^*$ is constructed from $\pi_\theta$, and the same $\pi_\theta$ also makes the gradient of $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta})$ equal to zero. Now in \cref{eq:repmd}, we have,
+	\begin{equation*}
+		\pi_\theta \xrightarrow{\text{Lift Step}} \bar{\pi}_{\tau,\tau^{\prime}}^* \xrightarrow{\text{Project Step}} \pi_\theta,
+	\end{equation*}•
+	which means $\pi_{\theta}$ is a fixed point of REPMD iteration \cref{eq:repmd}.
 \end{proof}
 
 \subsection{Proof of \cref{prop:solvableprojection}}
