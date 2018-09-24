@@ -1,5 +1,5 @@
 
-We present our experimental results in this section. REPMD is compared with standard policy based reinforcement learning algorithms on several different test domains.
+We evaluate REPMD and **** on a number of benchmark tasks. We first introduce the tasks used for testing REPMD and *****, then present the experiment results. Implementation details are provided in Appendix. 
 
 \subsection{Tasks}
 \label{subsec:tasks}
@@ -10,19 +10,20 @@ A simple synthetic multi-armed bandit problem is firstly used as an initial test
 %We develop a simple synthetic multi-armed bandit problem as an initial testbed. 
 The problem has 10,000 distinct actions. The reward of each action $i$ is initialized by $r_i = s_i^{8}$, where $s_i$ is randomly sampled from a uniform distribution over $[0,1)$. We represent each action $i$ with a feature vector $\phi_i\in \mathbb{R}^{20}$, randomly sampled from a standard normal distribution. Let $\Phi=[\phi_1,\dots,\phi_{10,000}]$ denote the feature matrix. The policy is parameterized by a weight vector $\theta\in  \mathbb{R}^{20}$ and  defined by $\text{softmax}(\Phi^{\top}\theta)$. Note that we only learn the $\theta$ parameter, the features $\Phi$ are fixed during training. 
 
+We further test our method on five algorithmic tasks from the OpenAI gym library, in rough order of difficulty: Copy, DuplicatedInput, RepeatCopy, Reverse, and ReversedAddition \citep{brockman2016openai}. In each problem, the agent operates on a tape of characters or digits. At each time step, the agent read one character or digit, and then decide to either move the read pointer one step in any direction of the tape, or write a character or digit to output. The total reward of each sampled trajectory is only observed at the end. The details of the tasks are provided in the Appendix.
+
+Lastly, we test ***** using standard continuous-control benchmarks from OpenAI Gym utilizing the Mujoco environment \citep{brockman2016openai,todorov2012mujoco}, including Hopper, Walker2d, HalfCheetah, Ant and Humanoid. 
+
 %\subsubsection{Algorithmic Tasks}
 
-We further test our method on five algorithmic tasks from the OpenAI gym library, in rough order of difficulty: Copy, DuplicatedInput, RepeatCopy, Reverse, and ReversedAddition \citep{brockman2016openai}. In each problem, the agent operates on a tape of characters or digits. At each time step, the agent read one character or digit, and then decide to either move the read pointer one step in any direction of the tape, or write a character or digit to output. The total reward of each sampled trajectory is only observed at the end. The goal for each task is:
-\begin{itemize}
-\item \textbf{Copy:} Copy a sequence of characters to output. 
-\item \textbf{DuplicatedInput:} Duplicate a sequence of characters.
-\item \textbf{RepeatCopy:} Copy a sequence of characters, reverse it, then forward the sequence again. 
-\item \textbf{Reverse:} Reverse a sequence of characters.
-\item \textbf{ReversedAddition:} Observe two numbers in base 3 in little-endian order on a $2\times n$ grid tape. The agent should add the two numbers together. 
-\end{itemize}
-
-Lastly, we test our method with value function approximation on the Mujuco library.
-\todor[]{Add a description of the Mujuco tasks}
+%We further test our method on five algorithmic tasks from the OpenAI gym library, in rough order of difficulty: Copy, DuplicatedInput, RepeatCopy, Reverse, and ReversedAddition \citep{brockman2016openai}. In each problem, the agent operates on a tape of characters or digits. At each time step, the agent read one character or digit, and then decide to either move the read pointer one step in any direction of the tape, or write a character or digit to output. The total reward of each sampled trajectory is only observed at the end. The goal for each task is:
+%\begin{itemize}
+%\item \textbf{Copy:} Copy a sequence of characters to output. 
+%\item \textbf{DuplicatedInput:} Duplicate a sequence of characters.
+%\item \textbf{RepeatCopy:} Copy a sequence of characters, reverse it, then forward the sequence again. 
+%\item \textbf{Reverse:} Reverse a sequence of characters.
+%\item \textbf{ReversedAddition:} Observe two numbers in base 3 in little-endian order on a $2\times n$ grid tape. The agent should add the two numbers together. 
+%\end{itemize}
 
 
 %\subsection{Baselines}
@@ -51,9 +52,58 @@ For the synthetic bandit problem, we explore the following main hyper-parameters
 
 For the algorithmic tasks, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to (\ref{eq:gradient_estimator}), which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. The following main hyper-parameters are explored: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; relative entropy regularizer of REPMD $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; entropy regularizer of REPMD $\tau'\in \{0, 0.01, 0.005, 0.001\}$; gradient clipped norm for training LSTM $c\in \{1, 10, 40, 100\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stopping condition of SGD in REPMD. Parameters of UREX are set according to the ones reported in \citet{nachum2017improving}. Implementations of all algorithm are based on the open source code by the author of UREX \footnote{\url{https://github.com/tensorflow/models/tree/master/research/pcl_rl}}.
 
+\begin{figure*}[t]
+\begin{minipage}{0.33\linewidth}
+\centering
+\includegraphics[width=2in]{./mujoco-results/Walker2d-v2-AVE.pdf}
+%\caption{Error rate}
+%\label{a}
+\centerline{(a) Walker2d}
+\end{minipage}%
+\begin{minipage}{0.33\linewidth}
+\centering
+\includegraphics[width=2in]{./mujoco-results/Hopper-v2-AVE.pdf}
+%\caption{Error rate}
+%\label{a}
+\centerline{(b) Hopper}
+\end{minipage}%
+\begin{minipage}{0.33\linewidth}
+\centering
+\includegraphics[width=2in]{./mujoco-results/Halfcheetah-v2-AVE.pdf}
+%\caption{Error rate}
+%\label{a}
+\centerline{(c) Halfcheetah}
+\end{minipage}%
+
+\begin{minipage}{0.5\linewidth}
+\raggedleft
+%\centering
+\includegraphics[width=2in]{./mujoco-results/Ant-v2-AVE.pdf}
+%\caption{Error rate}
+%\label{a}
+\centerline{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \       (e) Ant }
+\end{minipage}%
+\begin{minipage}{0.5\linewidth}
+%\centering
+\includegraphics[width=2in]{./mujoco-results/Humanoid-v2-AVE.pdf}
+%\caption{Error rate}
+%\label{a}
+\centerline{(f) Humanoid}
+\end{minipage}%
+
+\caption{Learning curves on continuous control benchmarks. }
+\label{fig:result_mujoco}
+\end{figure*}
+
 \subsection{Comparative Evaluation}
 
+\subsubsection{Experiments of REPMD}
 For the synthetic bandit problem, we compare REPMD against REINFORCE with entropy regularization (MENT) \citep{williams1992simple} and under-appreciated reward exploration (UREX) \citep{nachum2017improving}. For the algorithmic tasks, we compare REPMD only against UREX, since UREX has been shown to outperform MENT in these cases \citep{nachum2017improving}. The results are reported in Figure (\ref{fig:results}). It is clear that REPMD substantially outperforms the competitors on all of these benchmark tasks. REPMD is able to consistently achieve the highest score and learn substantially faster than UREX. We also find the performance of UREX is very unstable. On the difficult tasks, including RepeatCopy, Reverse and ReversedAddition, UREX can only successfully find appropriate solutions a few times out of 5 runs for each random seed, which brings the overall scores down. This observation creates the gap between our presented results with the ones reported in the paper\footnote{The results reported in \citet{nachum2017improving} averages over 5 runs of random restart, while our results are averaged over 25 random training runs (5 runs $\times$ 5 random seed for neural network initialization). }. Note that the performance of REPMD is sill significantly better than UREX even compared with the results reported in \citet{nachum2017improving}. 
+
+\subsubsection{Experiments of *****}
+
+For continuous control tasks, we compare ***** to deep deterministic policy gradient (DDPG) \citep{}, an efficient off-policy deep
+RL methods, twin delayed deep deterministic policy gradient algorithm (TD3), a recent extension to DDPG by applying the double Q-learning trick to address over-estimation problem when function approximation is used, and Soft-Actor-Critic (SAC), a recent state-of-the-art off-policy algorithm on a number of continuous control benchmarks. Figure \ref{} presents the total average return of evaluation rollouts during training of all algorithms on continuous control benchmarks. Results of each algorithm are averaged over five different instances with different random seeds. The solid curves corresponds to the mean and the shaded region to the standard errors over the five trials. The results show that...
 
 %\begin{wrapfigure}{R}{0.5\textwidth}
 %\label{fig:ablation}
