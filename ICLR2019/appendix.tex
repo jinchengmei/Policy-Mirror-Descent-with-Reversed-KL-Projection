@@ -77,7 +77,7 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 	Simply compute the Hessian matrix of the objective,
 	 \[\frac{d^2 \KL(\refPi \| \pi_{\theta})}{d \theta^2} = \Phi (\Delta(\pi_\theta) - \pi_\theta \pi_\theta^\top) \Phi^\top \succeq 0.
 	 \]
-	 Thus $\KL(q \| \pi_{\theta})$ is convex in $\theta$.
+	 Thus $\KL(\refPi \| \pi_{\theta})$ is convex in $\theta$.
 \end{proof}
 
 \subsection{Proof of \cref{prop:sr}}
@@ -148,8 +148,8 @@ The proposed REPMD algorithm solves \cref{eq:repmd} in the deterministic transit
 \begin{equation}
 \label{eq:repmd_stochastic}
 \begin{split}
-	&\argmin\limits_{\pi_\theta \in \Pi}{\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) }, \\
-	\text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* & =  \argmax\limits_{\pi \in \Delta_f}{ \ep\limits_{\rho \sim p_{\pi, f}}{ \left[ r(\rho) - \tau^{\prime} \log{\pi(\rho)} \right] } - \tau \KL(p_{\pi, f} \| p_{\pi_{\theta_t}, f} ) },
+\text{\bf (Project Step)} \quad &\argmin\limits_{\pi_\theta \in \Pi}{\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) }, \\
+\text{\bf (Lift Step)}  \quad & \text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* =  \argmax\limits_{\pi \in \Delta_f}{ \ep\limits_{\rho \sim p_{\pi, f}}{ \left[ r(\rho) - \tau^{\prime} \log{\pi(\rho)} \right] } - \tau \KL(p_{\pi, f} \| p_{\pi_{\theta_t}, f} ) }. 
 \end{split}
 \end{equation}
 which also recovers \cref{eq:repmd} as a special case when $f(\rho) = 1, \forall \rho$.
