@@ -9,21 +9,36 @@
 The lift-and-project formulation differs our method from most of the previous policy search methods. 
 %On the one hand, such formulation provides an easier way in analyzing the behavior of the algorithm in parameter space. For example, the monotonical improvement guarantee can be proved in a fairly direct and simple way in this paper, even for some particular non-convex $\pi_\theta$. 
 %On the other hand, such formulation suggests to perform multiple steps of gradient descent on the project step with the current policy fixed as the reference policy. As shown in \cref{sec:experiments}, multiple steps of gradient descent leads to a significant improvement in performances compared to single step of gradient descent. 
-Two methods that also use such lift-and-project formulation are Mirror Descent Guided Policy Search (MDGPS) and Guide Actor-Critic (GAC) \citet{montgomery2016guided,tangkaratt2017guide}.
-Mirror Descent Guided Policy Search (MDGPS) has a fundamentally different learning scheme from our method. In particular, MDGPS use the lift step to learn multiple (rather than one) local simple policies, and use the project step to align all the local policies with the global one.
-Our method also has an additional entropy regularization term in the objective of the lift step to encourage the exploration. Instead, since the lift step in MDGPS is to learn simple policy to fit local trajectories well, such exploration encouragement is naturally not used. 
-GAC has the same objective in the lift step as our method, but 
+To our best knowledge, four methods in the literature also use such lift-and-project formulation: Mirror Descent Guided Policy Search (MDGPS) \citep{montgomery2016guided}, Guide Actor-Critic (GAC) \citep{tangkaratt2017guide}, Maxmimum aposteriori (MPO) \citep{abdolmaleki2018maximum}, and Soft Actor-Critic (SAC) \citep{haarnoja2018soft}.
+MDGPS \citep{montgomery2016guided} has a fundamentally different learning principle from our method. 
+In particular, MDGPS use the lift step to learn multiple (rather than one) local simple policies, and use the project step to align all the local policies with the global one.
+Our method also has an additional entropy regularization term in the objective of the lift step to encourage the exploration.
+MPO \citep{abdolmaleki2018maximum} does not have this entropy regularizer neither. 
+%In fact, without such regularizer, every deterministic policy is a fixed point, which may make the algorithm trapped in poor local optima quickly.
+As shown in \cref{subsec:ablationstudy}, such entropy term with an annealing $\tau'$ could significantly improve the efficiency of the algorithm.
+%The relative entropy regularizer is also used in the project step of MPO.
+%[Why it matters?]
+Both GAC and SAC use the mode seeking direction of KL divergence for the project step, different from the mean seeking direction in our method \citep{tangkaratt2017guide,haarnoja2018soft}. 
+Furthermore, compared to our method, SAC uses only the entropy regularizer in the lift step (no relative entropy regularizer). 
+The benefit of the relative entropy has been discussed in TRPO \citep{schulman2015trust} and MPO  \citep{abdolmaleki2018maximum} that it could significantly help stabilize the learning.
+GAC tends to match the mean of Gaussian policies in the project step instead of directly minimizing the KL divergence with gradient descent.
+%[Why it matters?]
+%GAC has the same objective in the lift step as our method, but 
 %However, GAC only considers the Gaussian policies with second order approximation for $Q$ functions.
 %, so that as it tends to solve the constraint optimization problem in closed form and to simplify the computation in the project step.  
 %Instead, our method is built on a Monte Carlo estimate of the gradient, which can be applied to general policy parametrizations. For the project step, GAC also
-uses the mode seeking direction of the KL divergence for the project step, different from the mean seeking direction used in our method \citep{tangkaratt2017guide}.  
-Another two concurrent works also use the lift-and-project procedure: Maxmimum aposteriori (MPO) and Soft Actor-Critic (SAC) \citep{abdolmaleki2018maximum,haarnoja2018soft}. 
-Similar to GAC, SAC use the mode seeking KL divergence for the project step. 
-Our algorithm differs from MPO in the lift step that we have the additional entropy regularizer. 
-As shown in \cref{subsec:ablationstudy}, such entropy term with an annealing $\tau'$ could significantly improve the efficiency of the algorithm.
-Although we may or may not be able to reformulate other "one-step" policy search methods into a lift-and-project procedure following the same idea in \cref{subsec:revisitTRPO},
-they would still differs from ****, as we use different directions of KL divergence for the lift step and the project step. 
+%uses the mode seeking direction of the KL divergence for the project step, different from the mean seeking direction used in our method \citep{tangkaratt2017guide}.  
+%Another two concurrent works also use the lift-and-project procedure: 
+%Similar to GAC, SAC use the mode seeking KL divergence for the project step. 
+%Our algorithm differs from MPO in the lift step that we have the additional entropy regularizer. 
+For other "one-step" methods, although they could or could not be reformulated into a lift-and-project procedure,
+they would still obliviously differs from REPMD, as we use different directions of KL divergence for the lift step and the project step. 
 
+
+%\begin{itemize}
+%	\item SAC: (1) start from the soft Q-learning framework, while we start from a stable policy gradient framework; (2) Actor-Critic version has different directions in the project step; We have the trust region regularizer in the lift step. (3) improvement guarantee in soft Q value, not the expected reward.
+%	\item MPO: (1) start from a variational inference point; (2) no entropy regularization: deterministic policies are all fixed points (3 ) the project step includes the trust region regularizer. (4) MPO also has very similar guarantees for non-convex settings.	 
+%\end{itemize}
 
 %The benefit of this, as discussed in \cref{subsec:repmd} has two folds: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can still be globally optimally solved for one-layer networks which is non-convex.
 
