@@ -10,7 +10,7 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 \begin{proof}
 	{\bf (Monotonic Improvement Guarantee)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. By expanding the KL divergence and rearranging terms, we have $ \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) - \sum_{\rho}{ \pi_{\theta_{t+1}}(\rho) r(\rho) } \leq - \sum_{\rho}{ \pi_{\theta_{t}}(\rho) r(\rho) }$, which gives $\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \geq \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \geq 0$.
 	
-	{\bf (Global optimum inclusion)} The stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$ is the $\pi_\theta$ satisfies,
+	{\bf (Global optimum inclusion)} The stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$ is the $\pi_\theta$ which satisfies,
 	\begin{equation}
 	\label{eq:stationary_point_of_expected_reward}
 	\begin{split}
@@ -23,17 +23,21 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 	\begin{equation*}
 		\sum\limits_{\rho}{ c \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } = c \cdot \frac{d \sum_{\rho}{ \pi_{\theta}(\rho) }}{d \theta} = c \cdot \frac{d 1}{d \theta} = 0.
 	\end{equation*}
-	Let $c = 1 + \log{ \sum\limits_{\rho}{\pi_\theta(\rho) \exp\left\{r(\rho) / \tau\right\} } }$, \cref{eq:stationary_point_of_expected_reward} is equivalent with,
+	Let $c = 1 + \log{ \sum\limits_{\rho^\prime}{\pi_\theta(\rho^\prime) \exp\left\{r(\rho^\prime) / \tau\right\} } }$, \cref{eq:stationary_point_of_expected_reward} is equivalent with,
 	\begin{equation}
 	\label{eq:stationary_point_of_expected_reward_cont}
 	\begin{split}
 		\sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log\left\{\pi_\theta(\rho) \exp\left\{r(\rho) / \tau\right\} \right\} + c \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \\
-		\iff \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log\left\{ \frac{ \pi_\theta(\rho) \exp\left\{r(\rho) / \tau\right\}}{ \sum\limits_{\rho}{\pi_\theta(\rho) \exp\left\{r(\rho) / \tau\right\} } } \right\} + 1 \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \\
+		\iff \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log\left\{ \frac{ \pi_\theta(\rho) \exp\left\{r(\rho) / \tau\right\}}{ \sum\limits_{\rho^\prime}{\pi_\theta(\rho^\prime) \exp\left\{r(\rho^\prime) / \tau\right\} } } \right\} + 1 \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \\
 		\iff \sum\limits_{\rho}{ \left[ \log{\pi_\theta(\rho)} - \log{ \bar{\pi}_\tau^*(\rho) } + 1 \right] \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0 \qquad \text{by \cref{eq:pitaustar} } \\
 		\iff \frac{d \KL( \pi_{\theta} \| \bar{\pi}_\tau^*) }{d \theta} &= 0.
 	\end{split}
 	\end{equation}
-	The last equation in \cref{eq:stationary_point_of_expected_reward_cont} is the condition that the fixed points of PMD iteration \cref{eq:pmd} satisfy.
+	Notice that in \cref{eq:stationary_point_of_expected_reward_cont}, $\bar{\pi}_\tau^*$ is constructed from $\pi_\theta$, and the same $\pi_\theta$ also makes the gradient of $\KL( \pi_{\theta} \| \bar{\pi}_\tau^*)$ equal to zero. Now in \cref{eq:pmd}, we have,
+	\begin{equation*}
+		\pi_\theta \xrightarrow{\text{Lift Step}} \bar{\pi}_\tau^* \xrightarrow{\text{Project Step}} \pi_\theta,
+	\end{equation*}•
+	which means $\pi_{\theta}$ is a fixed point of PMD iteration \cref{eq:pmd}.
 \end{proof}
 
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
