@@ -230,9 +230,13 @@ However, in practice, $\Pi$ is typically non-convex. Setting $\tau \to 0$ might 
 
 On the other hand, as $\tau \to \infty$ the stationary point set of $\SR(\pi_\theta)$ will approach the stationary point set of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
 There exists an ideal sequence of $\tau$ values and $\tau \to \infty$ that make $\pi_\theta$ finally converge to $\pi_\theta^* \in \argmax_{\pi_\theta}{ \sum_{\rho}{\pi_\theta(\rho) r(\rho)} }$, i.e., the optimal policy in $\Pi$ with highest expected reward, recovering the target of policy optimization \cref{max_expected_reward}. \todor[]{Why?}
-The following simulation results suggest that $\SR(\pi)$ could be a good guidance for maximizing the true expected reward.
-A principled way to find such an ideal sequence of $\tau$ is under investigation.
-
+We empirical investigate the behavior of $\SR{\pi}$ on a simulation setting, as shown in \cref{fig:srsimulation}.
+\todor[]{Add the simulation setting in the caption of the figure.}
+Note that there is a poor local maximum for $\theta <0$, where naive gradient method will converge to if $\theta$ is initialized on the left. 
+Picking $\tau = 0.2$, the reward landscape of $SR(\pi)$ guides $\theta$ to converges the neighbourhood of $0$, avoiding such poor local maximum. Later in the training when $\tau$ increases to $10$, $SR(\pi)$ recovers the true expected reward landscape, where $\theta$ will converge to good local , if not the global, maximum.
+While a simulation result may be still preliminary, it suggests that $\SR(\pi)$ could be a good guidance for maximizing the true expected reward in some cases.
+Further investigation and a principled way to find such an ideal sequence of $(\tau,\tau')$ is left for future work.
+ \todor[]{Add the simulation result for true loss and $\SR(\pi)$ with different value of $\tau$.}
 \if0
 Using very small $\tau$ value, i.e., $\tau \to 0$, given $\tau^{\prime} \to 0$ and the reward landscape has been sufficiently explored, the constructed unconstrained policy $\bar{\pi}_{\tau,\tau^{\prime}}^* \to \pi^*$, where $\pi^*$ is the global deterministic optimal policy. Solving the projection $\pi_\theta \leftarrow \argmin_{\pi_\theta \in \Pi}{\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta}) \approx \argmin_{\pi_\theta \in \Pi}{\KL(\pi^* \| \pi_\theta})$, we actually obtain $\pi_\theta$ policy by directly projecting $\pi^*$ into $\Pi$. When the policy constraint $\Pi$ has additional nice properties, such as convexity, that support good behavior of KL projection, this should be a good choice.
 %\end{remk}
@@ -245,7 +249,6 @@ However, in practice, $\Pi$ is typically non-convex, even when $\pi_\theta$ is p
  
 Remark \ref{large_tau_choices} indicates that during learning, $\pi_\theta$ may get stuck around some local maximum of $\SR(\pi_\theta)$, and increasing the $\tau$ value will lead to a different contour of $\SR(\pi_\theta)$, which might help $\pi_\theta$ escape to alternative local maxima. There exists an ideal sequence of $\tau$ values and $\tau \to \infty$ that make $\pi_\theta$ finally converge to $\pi_\theta^* \in \argmax_{\pi_\theta}{ \sum_{\rho}{\pi_\theta(\rho) r(\rho)} }$, i.e., the optimal policy in $\Pi$ with highest expected reward, recovering the target of policy optimization \cref{max_expected_reward}. A principled way to find such an ideal sequence of $\tau$ is under investigation.
  \fi
- \todor[]{Add the simulation result for true loss and $\SR(\pi)$ with different value of $\tau$.}
  
 \begin{figure*}[t]
 \begin{center}
@@ -253,7 +256,7 @@ Remark \ref{large_tau_choices} indicates that during learning, $\pi_\theta$ may 
 \end{center}
 \caption{
 Simulation result for true reward landscape and $\SR(\pi)$ with different value of $\tau$.} 
-\label{fig:results}
+\label{fig:srsimulation}
 \end{figure*}
  
 \subsection{Learning}
