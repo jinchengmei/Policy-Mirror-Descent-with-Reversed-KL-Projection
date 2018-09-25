@@ -156,6 +156,17 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 	\end{equation}
 \end{proof}
 
+\subsection{Proof of \cref{thm:rmacgradientestimate}}
+\begin{proof}
+Let $\pi(a \vert s) =  \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\}$, then we have,
+\begin{align*}
+\nabla_\theta L(\theta) = & \nabla_\theta  \E_{s \sim \gD} \left[\sum_a  \pi(a|s) \log \pi(a|s) - \pi(a|s) \log \pi_\theta(a|s) \right]\\
+= & \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
+= & \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \refPi(a|s) \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
+= & \nabla_\theta \E_{s \sim \gD} \left[ \E_{a\sim \refPi}\left[ - \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right]   \right] 
+\end{align*}
+\end{proof}
+
 \section{Stochastic Transition Setting}
 \label{sec:stochasticsetting}
 In \cref{subsec:notations_and_settings}, we assume that the state transition function is deterministic for simplicity. For completeness, we consider the general stochastic transition setting here.
@@ -278,3 +289,57 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 \begin{proof}
 See \cref{subsec:proof_of_repmdgradientestimate} for the proof of Theorem \ref{thm:repmdgradientestimate}.
 \end{proof}
+
+\section{Details of Learning Algorithm}
+
+Details of the learning algorithms of REPMD and *** are provided in this section. 
+
+\subsection{Details of REPMD}
+
+Pseudocode for REPMD is presented in \cref{alg:repmd}. 
+
+\begin{algorithm}[H]
+	\caption{\label{alg:repmd}  The REPMD algorithm}
+	\begin{algorithmic}[1]
+		\INPUT temperature parameters $\tau$ and $\tau'$, number of samples for computing gradient $K$
+		\STATE Random initialized $\pi_{\theta_1}$;
+		\FOR { $t=1,2,\ldots$ }
+		\STATE Set $\refPi = \pi_\theta$
+		\REPEAT 
+		\STATE Sample a mini-batch of $K$ trajectories from $\refPi$
+		\STATE Compute the gradient according to \cref{eq:gradient_estimator}
+		\STATE Update $\pi_{\theta_t}$ by gradient descent
+		\UNTIL converged or reach maximum of training steps
+		\ENDFOR
+		\STATE Return $\pi_{\theta_T}$.
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Details of *****}
+
+Pseudocode for *** is presented in \cref{alg:rmac}. The major difference between *** and repmd in the lift step is that instead of sampling $K$ actions as described in \cref{alg:repmd}, **** only samples one action to construct $\bar{\pi}_{\tau,\tau^{\prime}}^*$, due to the fact both the soft-Q and state value function approximations are adopted. The value function approximations also make *** capable of using off-policy data from a reply buffer. 
+
+\begin{algorithm}[H]
+	\caption{\label{alg:rmac}  The **** algorithm}
+	\begin{algorithmic}[1]
+		\INPUT temperature parameters $\tau$ and $\tau'$, lag on target value network $\alpha$
+		\STATE Initialize $\parPi, \parV, \parTargetV, \parQone, \parQtwo$ and replay buffer $\gD$
+		\FOR { $t=1,2,\ldots$ }
+			\FOR { each environment step } 
+			\STATE $a\sim \pi_\theta(\cdot | s)$
+			\STATE Observe $s'$ and $r$ from environment
+			\STATE $\gD \leftarrow \gD\ \cup\ \left\{ \left(s, a, r, s'\right) \right\}$
+			\ENDFOR
+			\STATE Set $\refPi = \parPi$
+			\FOR { each training step }
+			\STATE Sample a mini-batch of data $\gM=\{ (s_i, a_i, r_i, s'_i) \}_{i=1}^B$ from $\gD$
+			\STATE Compute gradient $\nabla_\theta L(\theta), \nabla_\phi L(\phi), \nabla_{\psi_1} L(\psi_1),  \nabla_{\psi_2} L(\psi_2)$according to \cref{eq:trainQ,eq:trainpi,eq:trainV}
+			\STATE Update parameters $\theta, \phi, \psi_1, \psi_2$ by gradient descent
+			\STATE Update $\bar{\phi}$ by $\alpha \phi + (1-\alpha) \bar{\phi}$
+			\ENDFOR
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+
+
+
