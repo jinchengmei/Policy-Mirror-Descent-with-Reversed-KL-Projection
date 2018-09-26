@@ -66,9 +66,7 @@ Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which inc
 In terms of the theoretical analyses, 
 \begin{itemize}
 	\item MPO: (1) guarantee on the regularized reward of a non-parametric policy. (2) A variant of the algorithm? (3) depends on the assumption that the non-convex problem can be solved globally.
-	\item Maybe emphasize that for one-layer network, we don't need the solvable non-convex problem assumption.
-	\item SAC: Similar result on Q-value, given that the non-convex problem can be globally solved.
-	\item SAC proves the globally optimal convergence. PMD/REPMD can achieve a similar result.
+	\item SAC: (1) Similar result on Q-value, given that the non-convex problem can be globally solved. (2) SAC proves the globally optimal convergence on Q-value given it can be solved. PMD/REPMD can achieve a similar result. (3) When it cannot be solved, SAC has no fixed point results.
 	\item All the methods doesn't say anything about convergence speed.
 \end{itemize}
 
