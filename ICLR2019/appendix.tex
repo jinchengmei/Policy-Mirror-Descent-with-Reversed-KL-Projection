@@ -167,6 +167,18 @@ Let $\pi(a \vert s) =  \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \p
 \end{align*}
 \end{proof}
 
+\section{Implementation details of REPMD}
+
+
+\section{Implementation details of PMAC}
+\label{sec:implementationPMAC}
+To increase the stability of the training, we include a target state value network $\parTargetV$, where $\bar{\phi}$ is an exponentially moving average of the value network weights $\phi$. 
+Different from \cref{eq:trainQ}, the soft Q-function parameters $\psi$ is then trained to minimize the soft Bellman error using the target state value network,
+\begin{equation}
+L(\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parTargetV(s') \right] \right)^2 \right]
+\end{equation}
+Our approach also use two soft-Q functions in order to mitigate the overestimation problem caused by value function approximation \citep{haarnoja2018soft,fujimoto2018addressing}. Specifically, we apply two soft-Q function approximations, $\parQone(s,a)$ and $\parQtwo(s,a)$, and train them independently.  The minimum of the two Q-functions will be used whenever the soft-Q value is needed. 
+
 \section{Stochastic Transition Setting}
 \label{sec:stochasticsetting}
 In \cref{subsec:notations_and_settings}, we assume that the state transition function is deterministic for simplicity. For completeness, we consider the general stochastic transition setting here.

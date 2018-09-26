@@ -37,7 +37,7 @@ they would still obliviously differs from REPMD, as we use different directions 
 
 %\begin{itemize}
 %	\item SAC: (1) start from the soft Q-learning framework, while we start from a stable policy gradient framework; (2) Actor-Critic version has different directions in the project step; We have the trust region regularizer in the lift step. (3) improvement guarantee in soft Q value, not the expected reward.
-%	\item MPO: (1) start from a variational inference point; (2) no entropy regularization: deterministic policies are all fixed points (3 ) the project step includes the trust region regularizer. (4) MPO also has very similar guarantees for non-convex settings.	 
+%	\item MPO: (1) start from a probabilistic inference point; (2) no entropy regularization: deterministic policies are all fixed points (3 ) the project step includes the trust region regularizer. (4) MPO also has very similar guarantees for non-convex settings.	 
 %\end{itemize}
 
 %The benefit of this, as discussed in \cref{subsec:repmd} has two folds: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can still be globally optimally solved for one-layer networks which is non-convex.
@@ -62,6 +62,15 @@ Our method also includes additional modifications to address its potential drawb
 UREX uses the same mean seeking KL divergence for regularization, which encourages exploration but also makes the optimization more difficult. As shown in \ref{sec:experiments}, UREX is significantly less efficient than our method. 
 
 Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which includes both entropy and relative entropy regularizer \citep{nachum2017trust}. However, the policy update strategy is different: while REPMD uses KL projection, Trust PCL inherits the same idea from PCL that minimizes path inconsistency error between value and policy for any trajectories \citep{nachum2017bridging}. Although policy optimization by minimizing path inconsistency error can efficiently utilize off-policy data, it loses the desirable monotonical improvement guarantee.
+
+In terms of the theoretical analyses, 
+\begin{itemize}
+	\item MPO: (1) guarantee on the regularized reward of a non-parametric policy. (2) A variant of the algorithm? (3) depends on the assumption that the non-convex problem can be solved globally.
+	\item Maybe emphasize that for one-layer network, we don't need the solvable non-convex problem assumption.
+	\item SAC: Similar result on Q-value, given that the non-convex problem can be globally solved.
+	\item SAC proves the globally optimal convergence. PMD/REPMD can achieve a similar result.
+	\item All the methods doesn't say anything about convergence speed.
+\end{itemize}
 
 %it is not justified that this method can guarantee policy improvement during learning. On the other hand, the proposed REPMD method can monotonically increase the softmax approximated expected reward, as shown in \cref{sec:repmd}.
 
