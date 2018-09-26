@@ -93,7 +93,7 @@ Given a \emph{reference policy} $\refPi$,
 %\label{eq:pitaustar}
 %\bar{\pi}_\tau^*(\rho) =  \frac{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ r(\rho^{\prime}) / \tau \right\} } }.
 %\end{equation}
-The above reformulation leads to our PMD algorithm: Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$, then perform multiple steps of gradient descent on the project step to update $\pi_{\theta_{t+1}}$. \footnote{To estimate this gradient, one would need to use the self-normalized importance sampling \cite{owen2013monte}. We omit its implementation details since PMD  is not our main algorithm, and similar techniques can be found in the implementation of REPMD in \cref{}.}
+The above reformulation leads to our PMD algorithm: Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$, then perform multiple steps of gradient descent on the project step to update $\pi_{\theta_{t+1}}$. \footnote{To estimate this gradient, one would need to use the self-normalized importance sampling \cite{owen2013monte}. We omit its implementation details since PMD  is not our main algorithm, and similar techniques can be found in the implementation of REPMD in cref-tbd.}
 %We name this method by Policy Mirror Descent (PMD).  \todor[]{May wanna add the implementation details in Appendix.}
 %Note that vanilla gradient descent methods for TRPO can be interpreted as performing only one step gradient descent for the project step. \todor[]{Is it correct?} 
 
