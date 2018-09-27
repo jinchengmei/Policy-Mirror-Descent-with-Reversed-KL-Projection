@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2018)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: iclr2019_conference.aux
+The style file: iclr2019_conference.bst
+Database file #1: iclr2019_conference.bib
+Warning--empty publisher in kevin2012machine
+Warning--empty journal in nemirovskii1983problem
+Warning--empty publisher in owen2013monte
+You've used 35 entries,
+            2773 wiz_defined-function locations,
+            776 strings with 11045 characters,
+and the built_in function-call counts, 19458 in all, are:
+= -- 1686
+> -- 1319
+< -- 22
++ -- 446
+- -- 408
+* -- 1586
+:= -- 2917
+add.period$ -- 110
+call.type$ -- 35
+change.case$ -- 234
+chr.to.int$ -- 32
+cite$ -- 73
+duplicate$ -- 883
+empty$ -- 1471
+format.name$ -- 457
+if$ -- 4137
+int.to.chr$ -- 4
+int.to.str$ -- 1
+missing$ -- 38
+newline$ -- 183
+num.names$ -- 140
+pop$ -- 518
+preamble$ -- 1
+purify$ -- 202
+quote$ -- 0
+skip$ -- 731
+stack$ -- 0
+substring$ -- 661
+swap$ -- 178
+text.length$ -- 12
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 370
+warning$ -- 3
+while$ -- 152
+width$ -- 0
+write$ -- 448
+(There were 3 warnings)

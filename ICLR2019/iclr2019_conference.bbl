@@ -1,0 +1,233 @@
+\begin{thebibliography}{35}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abdolmaleki et~al.(2018)Abdolmaleki, Springenberg, Tassa, Munos,
+  Heess, and Riedmiller]{abdolmaleki2018maximum}
+Abbas Abdolmaleki, Jost~Tobias Springenberg, Yuval Tassa, Remi Munos, Nicolas
+  Heess, and Martin Riedmiller.
+\newblock Maximum a posteriori policy optimisation.
+\newblock In \emph{ICLR}, 2018.
+
+\bibitem[Beck \& Teboulle(2003)Beck and Teboulle]{beck2003mirror}
+Amir Beck and Marc Teboulle.
+\newblock Mirror descent and nonlinear projected subgradient methods for convex
+  optimization.
+\newblock \emph{Operations Research Letters}, 31\penalty0 (3):\penalty0
+  167--175, 2003.
+
+\bibitem[Brockman et~al.(2016)Brockman, Cheung, Pettersson, Schneider,
+  Schulman, Tang, and Zaremba]{brockman2016openai}
+Greg Brockman, Vicki Cheung, Ludwig Pettersson, Jonas Schneider, John Schulman,
+  Jie Tang, and Wojciech Zaremba.
+\newblock Openai gym.
+\newblock \emph{arXiv preprint arXiv:1606.01540}, 2016.
+
+\bibitem[Ding \& Soricut(2017)Ding and Soricut]{ding2017cold}
+Nan Ding and Radu Soricut.
+\newblock Cold-start reinforcement learning with softmax policy gradient.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  2817--2826, 2017.
+
+\bibitem[Fox et~al.(2015)Fox, Pakman, and Tishby]{fox2015taming}
+Roy Fox, Ari Pakman, and Naftali Tishby.
+\newblock Taming the noise in reinforcement learning via soft updates.
+\newblock \emph{arXiv preprint arXiv:1512.08562}, 2015.
+
+\bibitem[Fujimoto et~al.(2018)Fujimoto, van Hoof, and
+  Meger]{fujimoto2018addressing}
+Scott Fujimoto, Herke van Hoof, and Dave Meger.
+\newblock Addressing function approximation error in actor-critic methods.
+\newblock \emph{arXiv preprint arXiv:1802.09477}, 2018.
+
+\bibitem[Haarnoja et~al.(2017)Haarnoja, Tang, Abbeel, and
+  Levine]{haarnoja2017reinforcement}
+Tuomas Haarnoja, Haoran Tang, Pieter Abbeel, and Sergey Levine.
+\newblock Reinforcement learning with deep energy-based policies.
+\newblock \emph{arXiv preprint arXiv:1702.08165}, 2017.
+
+\bibitem[Haarnoja et~al.(2018)Haarnoja, Zhou, Abbeel, and
+  Levine]{haarnoja2018soft}
+Tuomas Haarnoja, Aurick Zhou, Pieter Abbeel, and Sergey Levine.
+\newblock Soft actor-critic: Off-policy maximum entropy deep reinforcement
+  learning with a stochastic actor.
+\newblock \emph{arXiv preprint arXiv:1801.01290}, 2018.
+
+\bibitem[Hochreiter \& Schmidhuber(1997)Hochreiter and
+  Schmidhuber]{hochreiter1997long}
+Sepp Hochreiter and J{\"u}rgen Schmidhuber.
+\newblock Long short-term memory.
+\newblock \emph{Neural computation}, 9\penalty0 (8):\penalty0 1735--1780, 1997.
+
+\bibitem[Lillicrap et~al.(2015)Lillicrap, Hunt, Pritzel, Heess, Erez, Tassa,
+  Silver, and Wierstra]{lillicrap2015continuous}
+Timothy~P Lillicrap, Jonathan~J Hunt, Alexander Pritzel, Nicolas Heess, Tom
+  Erez, Yuval Tassa, David Silver, and Daan Wierstra.
+\newblock Continuous control with deep reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:1509.02971}, 2015.
+
+\bibitem[Liu et~al.(2015)Liu, Liu, Ghavamzadeh, Mahadevan, and
+  Petrik]{liu2015finite}
+Bo~Liu, Ji~Liu, Mohammad Ghavamzadeh, Sridhar Mahadevan, and Marek Petrik.
+\newblock Finite-sample analysis of proximal gradient td algorithms.
+\newblock In \emph{UAI}, pp.\  504--513. Citeseer, 2015.
+
+\bibitem[Mahadevan \& Liu(2012)Mahadevan and Liu]{mahadevan2012sparse}
+Sridhar Mahadevan and Bo~Liu.
+\newblock Sparse q-learning with mirror descent.
+\newblock \emph{arXiv preprint arXiv:1210.4893}, 2012.
+
+\bibitem[Mnih et~al.(2015)Mnih, Kavukcuoglu, Silver, Rusu, Veness, Bellemare,
+  Graves, Riedmiller, Fidjeland, Ostrovski, et~al.]{mnih2015human}
+Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei~A Rusu, Joel Veness,
+  Marc~G Bellemare, Alex Graves, Martin Riedmiller, Andreas~K Fidjeland, Georg
+  Ostrovski, et~al.
+\newblock Human-level control through deep reinforcement learning.
+\newblock \emph{Nature}, 518\penalty0 (7540):\penalty0 529, 2015.
+
+\bibitem[Montgomery \& Levine(2016)Montgomery and Levine]{montgomery2016guided}
+William~H Montgomery and Sergey Levine.
+\newblock Guided policy search via approximate mirror descent.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  4008--4016, 2016.
+
+\bibitem[Murphy(2012)]{kevin2012machine}
+Kevin~P Murphy.
+\newblock \emph{Machine learning: a probabilistic perspective}.
+\newblock Cambridge, MA, 2012.
+
+\bibitem[Nachum et~al.(2017{\natexlab{a}})Nachum, Norouzi, and
+  Schuurmans]{nachum2017improving}
+Ofir Nachum, Mohammad Norouzi, and Dale Schuurmans.
+\newblock Improving policy gradient by exploring under-appreciated rewards.
+\newblock In \emph{ICLR}, 2017{\natexlab{a}}.
+
+\bibitem[Nachum et~al.(2017{\natexlab{b}})Nachum, Norouzi, Xu, and
+  Schuurmans]{nachum2017bridging}
+Ofir Nachum, Mohammad Norouzi, Kelvin Xu, and Dale Schuurmans.
+\newblock Bridging the gap between value and policy based reinforcement
+  learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  2772--2782, 2017{\natexlab{b}}.
+
+\bibitem[Nachum et~al.(2017{\natexlab{c}})Nachum, Norouzi, Xu, and
+  Schuurmans]{nachum2017trust}
+Ofir Nachum, Mohammad Norouzi, Kelvin Xu, and Dale Schuurmans.
+\newblock Trust-pcl: An off-policy trust region method for continuous control.
+\newblock In \emph{ICLR}, 2017{\natexlab{c}}.
+
+\bibitem[Nemirovskii et~al.(1983)Nemirovskii, Yudin, and
+  Dawson]{nemirovskii1983problem}
+Arkadii Nemirovskii, David~Borisovich Yudin, and Edgar~Ronald Dawson.
+\newblock Problem complexity and method efficiency in optimization.
+\newblock 1983.
+
+\bibitem[Norouzi et~al.(2016)Norouzi, Bengio, Jaitly, Schuster, Wu, Schuurmans,
+  et~al.]{norouzi2016reward}
+Mohammad Norouzi, Samy Bengio, Navdeep Jaitly, Mike Schuster, Yonghui Wu, Dale
+  Schuurmans, et~al.
+\newblock Reward augmented maximum likelihood for neural structured prediction.
+\newblock In \emph{Advances In Neural Information Processing Systems}, pp.\
+  1723--1731, 2016.
+
+\bibitem[Owen(2013)]{owen2013monte}
+Art~B. Owen.
+\newblock \emph{Monte Carlo theory, methods and examples}.
+\newblock 2013.
+
+\bibitem[Peters \& Schaal(2007)Peters and Schaal]{peters2007reinforcement}
+Jan Peters and Stefan Schaal.
+\newblock Reinforcement learning by reward-weighted regression for operational
+  space control.
+\newblock In \emph{Proceedings of the 24th international conference on Machine
+  learning}, pp.\  745--750. ACM, 2007.
+
+\bibitem[Peters et~al.(2010)Peters, M{\"u}lling, and Altun]{peters2010relative}
+Jan Peters, Katharina M{\"u}lling, and Yasemin Altun.
+\newblock Relative entropy policy search.
+\newblock In \emph{AAAI}, pp.\  1607--1612. Atlanta, 2010.
+
+\bibitem[Schulman et~al.(2015)Schulman, Levine, Abbeel, Jordan, and
+  Moritz]{schulman2015trust}
+John Schulman, Sergey Levine, Pieter Abbeel, Michael Jordan, and Philipp
+  Moritz.
+\newblock Trust region policy optimization.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  1889--1897, 2015.
+
+\bibitem[Schulman et~al.(2017{\natexlab{a}})Schulman, Chen, and
+  Abbeel]{schulman2017equivalence}
+John Schulman, Xi~Chen, and Pieter Abbeel.
+\newblock Equivalence between policy gradients and soft q-learning.
+\newblock \emph{arXiv preprint arXiv:1704.06440}, 2017{\natexlab{a}}.
+
+\bibitem[Schulman et~al.(2017{\natexlab{b}})Schulman, Wolski, Dhariwal,
+  Radford, and Klimov]{schulman2017proximal}
+John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
+\newblock Proximal policy optimization algorithms.
+\newblock \emph{arXiv preprint arXiv:1707.06347}, 2017{\natexlab{b}}.
+
+\bibitem[Silver et~al.(2016)Silver, Huang, Maddison, Guez, Sifre, Van
+  Den~Driessche, Schrittwieser, Antonoglou, Panneershelvam, Lanctot,
+  et~al.]{silver2016mastering}
+David Silver, Aja Huang, Chris~J Maddison, Arthur Guez, Laurent Sifre, George
+  Van Den~Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda
+  Panneershelvam, Marc Lanctot, et~al.
+\newblock Mastering the game of go with deep neural networks and tree search.
+\newblock \emph{nature}, 529\penalty0 (7587):\penalty0 484--489, 2016.
+
+\bibitem[Sutton et~al.(1998)Sutton, Barto, et~al.]{sutton1998reinforcement}
+Richard~S Sutton, Andrew~G Barto, et~al.
+\newblock \emph{Reinforcement learning: An introduction}.
+\newblock MIT press, 1998.
+
+\bibitem[Tangkaratt et~al.(2017)Tangkaratt, Abdolmaleki, and
+  Sugiyama]{tangkaratt2017guide}
+Voot Tangkaratt, Abbas Abdolmaleki, and Masashi Sugiyama.
+\newblock Guide actor-critic for continuous control.
+\newblock \emph{arXiv preprint arXiv:1705.07606}, 2017.
+
+\bibitem[Thomas et~al.(2013)Thomas, Dabney, Giguere, and
+  Mahadevan]{thomas2013projected}
+Philip~S Thomas, William~C Dabney, Stephen Giguere, and Sridhar Mahadevan.
+\newblock Projected natural actor-critic.
+\newblock In \emph{Advances in neural information processing systems}, pp.\
+  2337--2345, 2013.
+
+\bibitem[Todorov et~al.(2012)Todorov, Erez, and Tassa]{todorov2012mujoco}
+Emanuel Todorov, Tom Erez, and Yuval Tassa.
+\newblock Mujoco: A physics engine for model-based control.
+\newblock In \emph{Intelligent Robots and Systems (IROS), 2012 IEEE/RSJ
+  International Conference on}, pp.\  5026--5033. IEEE, 2012.
+
+\bibitem[Van~Hoof et~al.(2015)Van~Hoof, Peters, and Neumann]{van2015learning}
+Herke Van~Hoof, Jan Peters, and Gerhard Neumann.
+\newblock Learning of non-parametric control policies with high-dimensional
+  state features.
+\newblock In \emph{Artificial Intelligence and Statistics}, pp.\  995--1003,
+  2015.
+
+\bibitem[Wierstra et~al.(2008)Wierstra, Schaul, Peters, and
+  Schmidhuber]{wierstra2008episodic}
+Daan Wierstra, Tom Schaul, Jan Peters, and Juergen Schmidhuber.
+\newblock Episodic reinforcement learning by logistic reward-weighted
+  regression.
+\newblock In \emph{International Conference on Artificial Neural Networks},
+  pp.\  407--416. Springer, 2008.
+
+\bibitem[Williams(1992)]{williams1992simple}
+Ronald~J Williams.
+\newblock Simple statistical gradient-following algorithms for connectionist
+  reinforcement learning.
+\newblock \emph{Machine Learning}, 8\penalty0 (3-4):\penalty0 229--256, 1992.
+
+\bibitem[Williams \& Peng(1991)Williams and Peng]{williams1991function}
+Ronald~J Williams and Jing Peng.
+\newblock Function optimization using connectionist reinforcement learning
+  algorithms.
+\newblock \emph{Connection Science}, 3\penalty0 (3):\penalty0 241--268, 1991.
+
+\end{thebibliography}

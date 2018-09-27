@@ -1,0 +1,29 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Notation and Problem Setting}{section.1}% 2
+\BOOKMARK [1][-]{section.2}{Policy Mirror Descent}{}% 3
+\BOOKMARK [1][-]{section.3}{Reversed Entropy Policy Mirror Descent}{}% 4
+\BOOKMARK [2][-]{subsection.3.1}{Learning Algorithms}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.2}{Behavior of SR\(\)}{section.3}% 6
+\BOOKMARK [1][-]{section.4}{An Actor-Critic Extension}{}% 7
+\BOOKMARK [1][-]{section.5}{Experiments}{}% 8
+\BOOKMARK [2][-]{subsection.5.1}{Settings}{section.5}% 9
+\BOOKMARK [2][-]{subsection.5.2}{Comparative Evaluation}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.3}{Ablation Study}{section.5}% 11
+\BOOKMARK [1][-]{section.6}{Related Work}{}% 12
+\BOOKMARK [1][-]{section.7}{Conclusion and Future Work}{}% 13
+\BOOKMARK [1][-]{appendix.A}{Proofs for sec:reversedemtropypolicymirrordescent}{}% 14
+\BOOKMARK [2][-]{subsection.A.1}{Proof of prop:mirrordescentprojection}{appendix.A}% 15
+\BOOKMARK [2][-]{subsection.A.2}{Proof of prop:monotopolicymirrordescent}{appendix.A}% 16
+\BOOKMARK [2][-]{subsection.A.3}{Proof of thm:monotonicallyincreasingsrproperty}{appendix.A}% 17
+\BOOKMARK [2][-]{subsection.A.4}{Proof of prop:solvableprojection}{appendix.A}% 18
+\BOOKMARK [2][-]{subsection.A.5}{Proof of prop:sr}{appendix.A}% 19
+\BOOKMARK [1][-]{appendix.B}{Details of REPMD Learning}{}% 20
+\BOOKMARK [1][-]{appendix.C}{Details of PMAC Learning}{}% 21
+\BOOKMARK [1][-]{appendix.D}{Stochastic Transition Setting}{}% 22
+\BOOKMARK [2][-]{subsection.D.1}{Notations and Settings}{appendix.D}% 23
+\BOOKMARK [2][-]{subsection.D.2}{REPMD Optimization Problem}{appendix.D}% 24
+\BOOKMARK [2][-]{subsection.D.3}{Theoretical Analysis}{appendix.D}% 25
+\BOOKMARK [2][-]{subsection.D.4}{Learning}{appendix.D}% 26
+\BOOKMARK [1][-]{appendix.E}{Experiments Details}{}% 27
+\BOOKMARK [2][-]{subsection.E.1}{Algorithmic and Mujoco Tasks}{appendix.E}% 28
+\BOOKMARK [2][-]{subsection.E.2}{Implementation Details}{appendix.E}% 29
