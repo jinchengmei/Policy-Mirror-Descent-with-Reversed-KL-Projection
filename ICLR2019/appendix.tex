@@ -10,7 +10,9 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 \begin{proof}
 	{\bf (Monotonic Improvement Guarantee)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. By expanding the KL divergence and rearranging terms, we have $ \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) - \sum_{\rho}{ \pi_{\theta_{t+1}}(\rho) r(\rho) } \leq - \sum_{\rho}{ \pi_{\theta_{t}}(\rho) r(\rho) }$, which gives $\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \geq \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \geq 0$.
 	
-	{\bf (Global optimum inclusion)} The stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$ is the $\pi_\theta$ which satisfies,
+	{\bf (Global Optimum Guarantee)} By the {\bf Monotonic Improvement Guarantee} proved above, the sequence $\oep_{\rho \sim \pi_{\theta_t}}{ r(\rho)}$ is monotonically increased. Let $\pi^*$ be the converged fixed policy, we show $\pi^*$ is the optimal policy. According to the algorithm, at convergence it must be that $\forall \pi\in \Pi, \pi\neq \pi^*, \KL(\pi^* \| \bar{\pi}_\tau^*) \leq \KL(\pi \| \bar{\pi}_\tau^*)$. Using the same argument above we have $\forall \pi\in \Pi, \pi\neq \pi^*, \oep_{\rho \sim \pi^*}{ r(\rho)} \geq \oep_{\rho \sim \pi}{ r(\rho)}$. Hence $\pi^*$ is optimal in $\Pi$. 
+	
+	{\bf (Fixed Points)} The stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$ is the $\pi_\theta$ which satisfies,
 	\begin{equation}
 	\label{eq:stationary_point_of_expected_reward}
 	\begin{split}
@@ -65,7 +67,9 @@ This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_poli
 	\end{split}
 	\end{equation*}
 	
-	{\bf (Global optimum inclusion)} The stationary point of $\SR(\pi_{\theta})$ is the $\pi_\theta$ which satisfies,
+	{\bf (Global Optimum Guarantee)} By the {\bf Monotonic Improvement Guarantee} proved above, the sequence $SR(\pi_{\theta_t})$ is monotonically increased. Let $\pi^*$ be the converged fixed policy, we show $\pi^*$ is the optimal policy. According to the algorithm, at convergence it must be that $\forall \pi\in \Pi, \pi\neq \pi^*, { \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi^*)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi)$. Using the same argument above we have $SR(\pi^*)\geq SR(\pi)$. Hence $\pi^*$ is optimal in $\Pi$. 
+	
+	{\bf (Fixed Points)} The stationary point of $\SR(\pi_{\theta})$ is the $\pi_\theta$ which satisfies,
 	\begin{equation}
 	\label{eq:stationary_point_of_sr}
 	\begin{split}
@@ -357,22 +361,18 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 See \cref{subsec:proof_of_repmdgradientestimate} for the proof of Theorem \ref{thm:repmdgradientestimate}.
 \end{proof}
 
-
-
-\if0
-
 \section{Details of Learning Algorithm}
 
-Details of the learning algorithms of REPMD and *** are provided in this section. 
+Details of REPMD and PMAC are provided in this section. 
 
 \subsection{Details of REPMD}
 
-Pseudocode for REPMD is presented in \cref{alg:repmd}. 
+Pseudocode for REPMD is presented in \cref{alg:repmd}. Recall that the policy is updated by performing KL divergence projection using stochastic gradient descent (SGD). In our experiments, the end condition of SGD is controlled by two parameters: $\epsilon > 0$ and $\text{F\_STEP}\in \{0,1 \}$. First, SGD halts if the change of the KL divergence is below or equal to $\epsilon$. Second, $\text{F\_STEP}$ decides the maximum number of SGD steps. If $\text{F\_STEP}=1$, the maximum number is $\sqrt{t}$ at iteration $t$; while if $\text{F\_STEP}=0$, there is no restriction on the maximum number of gradient steps, and stopping condition of SGD only depends on $\epsilon$.
 
 \begin{algorithm}[H]
-	\caption{  The REPMD algorithm}
+	\caption{\label{alg:repmd}  The REPMD algorithm}
 	\begin{algorithmic}[1]
-		\INPUT temperature parameters $\tau$ and $\tau'$, number of samples for computing gradient $K$
+		\INPUT temperature parameters $\tau$ and $\tau'$, number of samples for computing gradient $K$, project convergence condition $\epsilon$, project steps limits controller F\_STEP
 		\STATE Random initialized $\pi_{\theta_1}$;
 		\FOR { $t=1,2,\ldots$ }
 		\STATE Set $\refPi = \pi_\theta$
@@ -386,14 +386,14 @@ Pseudocode for REPMD is presented in \cref{alg:repmd}.
 	\end{algorithmic}
 \end{algorithm}
 
-\subsection{Details of *****}
+\subsection{Details of PMAC}
 
-Pseudocode for *** is presented in \cref{alg:rmac}. The major difference between *** and repmd in the lift step is that instead of sampling $K$ actions as described in \cref{alg:repmd}, **** only samples one action to construct $\bar{\pi}_{\tau,\tau^{\prime}}^*$, due to the fact both the soft-Q and state value function approximations are adopted. The value function approximations also make *** capable of using off-policy data from a reply buffer. 
+Pseudocode for PMAC is presented in \cref{alg:rmac}. The major difference between PMAC and REPMD in the lift step is that instead of sampling $K$ actions as described in \cref{alg:repmd}, PMAC only samples one action to construct $\bar{\pi}_{\tau,\tau^{\prime}}^*$, due to the fact both the soft-Q and state value function approximations are adopted. The value function approximations also make PMAC capable of using off-policy data from a reply buffer. Furthermore, in the project step of PMAC, we use a fixed number of iteration for SGD, which is given by an input parameter of the algorithm.
 
 \begin{algorithm}[H]
-	\caption{\label{alg:rmac}  The **** algorithm}
+	\caption{\label{alg:rmac}  The PMAC algorithm}
 	\begin{algorithmic}[1]
-		\INPUT temperature parameters $\tau$ and $\tau'$, lag on target value network $\alpha$
+		\INPUT temperature parameters $\tau$ and $\tau'$, lag on target value network $\alpha$, number of training steps $M$
 		\STATE Initialize $\parPi, \parV, \parTargetV, \parQone, \parQtwo$ and replay buffer $\gD$
 		\FOR { $t=1,2,\ldots$ }
 			\FOR { each environment step } 
@@ -402,8 +402,8 @@ Pseudocode for *** is presented in \cref{alg:rmac}. The major difference between
 			\STATE $\gD \leftarrow \gD\ \cup\ \left\{ \left(s, a, r, s'\right) \right\}$
 			\ENDFOR
 			\STATE Set $\refPi = \parPi$
-			\FOR { each training step }
-			\STATE Sample a mini-batch of data $\gM=\{ (s_i, a_i, r_i, s'_i) \}_{i=1}^B$ from $\gD$
+			\FOR { $i=1,\dots,M$ }
+			\STATE Sample a mini-batch of data $\{ (s_j, a_j, r_j, s'_j) \}_{j=1}^B$ from $\gD$
 			\STATE Compute gradient $\nabla_\theta L(\theta), \nabla_\phi L(\phi), \nabla_{\psi_1} L(\psi_1),  \nabla_{\psi_2} L(\psi_2)$according to \cref{eq:trainQ,eq:trainpi,eq:trainV}
 			\STATE Update parameters $\theta, \phi, \psi_1, \psi_2$ by gradient descent
 			\STATE Update $\bar{\phi}$ by $\alpha \phi + (1-\alpha) \bar{\phi}$
@@ -411,7 +411,131 @@ Pseudocode for *** is presented in \cref{alg:rmac}. The major difference between
 		\ENDFOR
 	\end{algorithmic}
 \end{algorithm}
+	
 
-\fi
+\section{Experiments Details}
+\label{appendix-experiments}
+
+We describe the algorithmic and mujoco tasks we experimented on as well as details of experimental setup in this section.
+
+\subsection{Algorithmic and Mujoco Tasks}
+\label{subsec:benchmarks}
+In each algorithmic task, the agent operates on a tape of characters or digits. At each time step, the agent read one character or digit, and then decide to either move the read pointer one step in any direction of the tape, or write a character or digit to output. The total reward of each sampled trajectory is only observed at the end. The goal of each task is:
+\begin{itemize}
+\item \textbf{Copy:} Copy a sequence of characters to output. 
+\item \textbf{DuplicatedInput:} Duplicate a sequence of characters.
+\item \textbf{RepeatCopy:} Copy a sequence of characters, reverse it, then forward the sequence again. 
+\item \textbf{Reverse:} Reverse a sequence of characters.
+\item \textbf{ReversedAddition:} Observe two numbers in base 3 in little-endian order on a $2\times n$ grid tape. The agent should add the two numbers together. 
+\end{itemize}
+
+The Mujoco library contains various of continuous control tasks \citep{todorov2012mujoco}. The specific action dimensions of each problem is summarized in \cref{table:mujoco-act-dims}. 
+
+\begin{table}[ht]
+\caption{Action Dimensions of Mujoco Tasks} % title of Table
+\centering 
+\begin{tabular}{c c} 
+\hline
+Task & Action Dimensions \\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+Hopper & 3  \\ % inserting body of the table
+Walker2d & 6  \\
+HalfCheetah & 6  \\
+Ant & 8  \\
+Humanoid & 17  \\ [1ex] % [1ex] adds vertical space
+\hline %inserts single line
+\end{tabular}
+\label{table:mujoco-act-dims} % is used to refer this table in the text
+\end{table}
+
+\subsection{Implementation Details}
+\label{subsec:implementation}
+For the synthetic bandit problem, we parameterize the policy by a weight vector $\theta\in  \mathbb{R}^{20}$. Let $\Phi = \left( \phi_1, \dots, \phi_{10,000} \right)$ be the feature matrix. The policy is defined by $\text{softmax}(\Phi^{\top}\theta)$. The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-bandit}. 
+\begin{table}[ht]
+\caption{REPMD Hyperparameters in Synthetic Bandit} % title of Table
+\centering 
+\begin{tabular}{l l} 
+\hline
+Parameter & Values \\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+\ \ \ \ $\tau$ & 0.1  \\
+\ \ \ \ $\tau'$ & 0.0 \\
+\ \ \ \ learning rate & 0.01 \\
+\ \ \ \ $\epsilon $ & $5\cdot 10^{-4}$ \\
+\ \ \ \ F\_STEP & 0 \\
+\hline
+\end{tabular}
+\label{table:paras-bandit} % is used to refer this table in the text
+\end{table}
+
+%\emph{UREX} &   \\ % inserting body of the table
+%\ \ \ \ $\tau$ & 0.1  \\
+%\ \ \ \ learning rate & 0.005 \\
+%\hline
+%\emph{MENT} &   \\ % inserting body of the table
+%\ \ \ \ $\tau$ & 0.1  \\
+%\ \ \ \ learning rate & 0.005 \\
+%\hline %inserts single line
+
+For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256 \citep{hochreiter1997long}. In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to (\ref{eq:gradient_estimator}), which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks. The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
+
+\begin{table}[ht]
+\caption{REPMD Hyperparameters in Algorithmic Tasks} % title of Table
+\centering 
+\begin{tabular}{l l l l l l} 
+\hline
+ &  Copy & DuplicatedInput &  RepeatCopy & Reverse &  ReversedAddition \\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+\ \ \ \ $\tau$ & 0.5  & 0.5 & 2.0 & 0.2 & 0.5 \\
+\ \ \ \ $\tau'$ & 0.01 & 0.01 & 0.01 & 0.02 & 0.01\\
+\ \ \ \ learning rate & 0.01 & 0.01 & 0.01 & 0.001 & 0.001\\
+\ \ \ \ clip norm & 20 & 20 & 20 & 20 &20\\
+\ \ \ \ $\epsilon $ & 0.01 & 0.01 & 0.005 & 0.005 & 0.005\\
+\hline
+\end{tabular}
+\label{table:paras-algorithmic} % is used to refer this table in the text
+\end{table}
+
+%\emph{UREX} &   \\ % inserting body of the table
+%\ \ \ \ $\tau$ & 0.1 & 0.1 & 0.1 & 0.1 & 0.1\\
+%\ \ \ \ learning rate & 0.01 & 0.01 & 0.01 & 0.01 & 0.001\\
+%\ \ \ \ clip norm & 10 & 10 & 10 & 10 & 40\\
+%\hline %inserts single line
+%\emph{MENT} &   \\ % inserting body of the table
+%\ \ \ \ $\tau$ & 0.1 & 0.1 & 0.1 & 0.1 & 0.1\\
+%\ \ \ \ learning rate & 0.01 & 0.01 & 0.01 & 0.01 & 0.001\\
+%\ \ \ \ clip norm & 10 & 10 & 10 & 10 & 40\\
+%\hline
+
+We use standard gaussian policy for all experimented algorithms in the mujoco tasks. Two layer fully-connected feed-forward neural networks with hidden dimension 300 and ReLU nonlinearity are applied to parameterize policy, soft state value, and soft-Q value. We batch size 256 for all algorithms on all tasks. The lag parameter $\alpha$ of PMAC for target value network update is 0.01 in all tasks.  The other domain-dependent PMAC parameters are summarized in \cref{table:paras-mujoco}.
+
+\begin{table}[ht]
+\caption{REPMD Hyperparameters in Mujoco Tasks} % title of Table
+\centering 
+\begin{tabular}{l l l l l l} 
+\hline
+ &  Walker2d & Hopper &  HalfCheetah & Ant &  Humanoid \\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+\ \ \ \ $\tau$ & 1.5  & 0.5 & 0.5 & 1.0 & 2.0 \\
+\ \ \ \ $\tau'$ & 0.2 & 0.05 & 0.2 & 0.1 & 0.05\\
+\ \ \ \ $\psi$ learning rate & $5\cdot 10^{-4}$ & $5\cdot 10^{-4}$ & $3\cdot 10^{-4}$ & $3\cdot 10^{-4}$ & $3\cdot 10^{-4}$\\
+\ \ \ \ $\phi$ learning rate & $5\cdot 10^{-4}$ & $5\cdot 10^{-4}$ & $3\cdot 10^{-4}$ & $3\cdot 10^{-4}$ & $3\cdot 10^{-4}$\\
+\ \ \ \ $\theta$ learning rate & $5\cdot 10^{-4}$ & $5\cdot 10^{-4}$ & $3\cdot 10^{-4}$ & $3\cdot 10^{-4}$ & $3\cdot 10^{-4}$\\
+\hline
+\end{tabular}
+\label{table:paras-mujoco} % is used to refer this table in the text
+\end{table}
+
+%As shown in \cref{alg:repmd}, the policy is updated by performing KL divergence projection using stochastic gradient descent (SGD). In our experiments, the end condition of SGD is controlled by two parameters: $\epsilon > 0$ and $\text{F\_STEP}\in \{0,1 \}$. First, SGD halts if the change of the KL divergence is below or equal to $\epsilon$. Second, $\text{F\_STEP}$ decides the maximum number of SGD steps. If $\text{F\_STEP}=1$, the maximum number is $\sqrt{t}$ at iteration $t$; while if $\text{F\_STEP}=0$, there is no restriction on the maximum number of gradient steps, and stopping condition of SGD only depends on $\epsilon$.
+
+%For the synthetic bandit problem, we explore the following main hyper-parameters: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; entropy regularizer of UREX and MENT $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; relative entropy regularizer of REPMD $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stop condition of SGD in REPMD. The entropy regularizer $\tau'$ of REPMD is set to 0.
+
+%For the algorithmic tasks, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to (\ref{eq:gradient_estimator}), which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. The following main hyper-parameters are explored: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; relative entropy regularizer of REPMD $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; entropy regularizer of REPMD $\tau'\in \{0, 0.01, 0.005, 0.001\}$; gradient clipped norm for training LSTM $c\in \{1, 10, 40, 100\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stopping condition of SGD in REPMD. Parameters of UREX are set according to the ones reported in \citet{nachum2017improving}. Implementations of all algorithm are based on the open source code by the author of UREX \footnote{\url{https://github.com/tensorflow/models/tree/master/research/pcl_rl}}.
+
+
 
 
