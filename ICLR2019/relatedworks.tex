@@ -71,7 +71,6 @@ TRPO also has a similar formulation to
 \cref{eq:max_expected_reward_plus_relative_entropy}
 as a constrained version with a mean seeking KL divergence
 \citep{schulman2015trust}. 
-%However, \cref{eq:max_expected_reward_plus_relative_entropy} uses a different direction of the KL divergence. 
 Unfortunately, the monotonic improvement guarantee only exists for an
 impractical formulation of TRPO.%
 %
@@ -93,7 +92,7 @@ Trust PCL adopts the same objective defined in \cref{eq:repmd},
 including both entropy and relative entropy regularization
 \citep{nachum2017trust}.
 However, the policy update strategy is substantially different:
-while REPMD uses KL projection, Trust PCL %inherits the same idea from PCL that
+while REPMD uses KL projection, Trust PCL
 minimizes a path inconsistency error (inherited from PCL)
 between the value and policy along observed trajectories
 \citep{nachum2017bridging}.
@@ -101,18 +100,17 @@ Although policy optimization by minimizing path inconsistency error
 can efficiently utilize off-policy data, this approach loses the 
 desirable monotonic improvement guarantee.
 
-In terms of the theoretical analyses, 
-\begin{itemize}
-	\item MPO: (1) guarantee on the regularized reward of a non-parametric policy. (2) A variant of the algorithm? (3) depends on the assumption that the non-convex problem can be solved globally.
-	\item SAC: (1) Similar result on Q-value, given that the non-convex problem can be globally solved. (2) SAC proves the globally optimal convergence on Q-value given it can be solved. PMD/REPMD can achieve a similar result. (3) When it cannot be solved, SAC has no fixed point results.
-	\item All the methods doesn't say anything about convergence speed.
-\end{itemize}
-
-%it is not justified that this method can guarantee policy improvement during learning. On the other hand, the proposed REPMD method can monotonically increase the softmax approximated expected reward, as shown in \cref{sec:repmd}.
-
-
-%These related works include maximum a posterior policy optimization \citep{abdolmaleki2018maximum}, and soft actor-critic \citep{haarnoja2018soft}. 
-
-%The proposed reversed entropy policy mirror descent (REPMD) method employs a modified version of PMD framework. First, the objective function of PMD is combined with entropy regularizer to enhance further exploration. Second, the projection step applies the \emph{mean seeking} direction of KL divergence instead of the \emph{mean seeking} one used PMD. As shown in both theoretical and practical justification, these two novelties play a very important role in REPMD. 
-
+In terms of existing theoretical analyses, 
+MPO provides a guarantee on the regularized reward of a non-parametric policy,
+but this depends on the assumption that a non-convex optimization problem
+can be solved globally.
+SAC obtains a similar result with respect to the optimal achievable
+Q-values, again relying on an assumption that a non-convex optimization
+problem can be solved globally.
+We have shown that similar results hold in the case of PMD/REPMD,
+but here we have also established something stronger:
+When the projection step cannot be efficiently solved to global optimality,
+we have shown that PMD/REPMD still preserve stationary points in 
+their respective, principled objectives.
+MPO and SAC have no such guarantee, as far as we are aware. 
 
