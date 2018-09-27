@@ -1,4 +1,5 @@
 
+\section{Experiments}
 We evaluate REPMD and PMAC on a number of benchmark tasks. We first introduce the experimented tasks, then present the experiment results. Implementation details are provided in \cref{subsec:implementation}. 
 
 \subsection{Tasks}
@@ -7,49 +8,11 @@ We test the performance of REPMD on a synthetic bandit problem and the algorithm
 
 \begin{figure*}[t]
 \begin{center}
-\includegraphics[width=0.85\linewidth]{./fig1.pdf}
+\includegraphics[width=0.8\linewidth]{./fig1.pdf}
 \end{center}
 \caption{
 Results of MENT (red), UREX (green), and REPMD (blue) on synthetic bandit problem and algorithmic tasks. Plots show average reward with standard error during training. Synthetic bandit results averaged over 5 runs. Algorithmic task results averaged over 25 random training runs (5 runs $\times$ 5 random seeds for neural network initialization). X-axis is number of sampled trajectories. } 
 \label{fig:results}
-\end{figure*}
-
-\begin{figure*}[t]
-\begin{minipage}{0.333\linewidth}
-\centering
-\includegraphics[width=1.8in]{./mujoco-results/Walker2d-v2-AVE.pdf}
-%\caption{Error rate}
-%\label{a}
-\end{minipage}%
-\begin{minipage}{0.333\linewidth}
-\centering
-\includegraphics[width=1.8in]{./mujoco-results/Hopper-v2-AVE.pdf}
-%\caption{Error rate}
-%\label{a}
-\end{minipage}%
-\begin{minipage}{0.333\linewidth}
-\centering
-\includegraphics[width=1.8in]{./mujoco-results/HalfCheetah-v2-AVE.pdf}
-%\caption{Error rate}
-%\label{a}
-\end{minipage}%
-
-\begin{minipage}{0.5\linewidth}
-\raggedleft
-%\centering
-\includegraphics[width=1.8in]{./mujoco-results/Ant-v2-AVE.pdf}
-%\caption{Error rate}
-%\label{a}
-\end{minipage}%
-\begin{minipage}{0.5\linewidth}
-%\centering
-\includegraphics[width=1.8in]{./mujoco-results/Humanoid-v2-AVE.pdf}
-%\caption{Error rate}
-%\label{a}
-\end{minipage}%
-
-\caption{Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on mujoco tasks. Plots show mean reward with standard error during training, averaged over five different instances with different random seeds. X-axis is millions of environment steps. We observe that PMAC is consistently able to math and, in many cases, outperform all baseline algorithms across all tasks, both in terms of final performance and sample efficiency. }
-\label{fig:result_mujoco}
 \end{figure*}
 
 \subsection{Comparative Evaluation of REPMD}
@@ -62,6 +25,16 @@ We compare PMAC to deep deterministic policy gradient (DDPG) \citep{lillicrap201
 RL methods, twin delayed deep deterministic policy gradient algorithm (TD3) \citep{fujimoto2018addressing}, a recent extension to DDPG by applying the double Q-learning trick to address over-estimation problem when function approximations are adopted, and Soft-Actor-Critic (SAC) \citep{haarnoja2018soft}, a recent state-of-the-art off-policy algorithm on a number of continuous control benchmarks. All these algorithms are implemented in rlkit \footnote{https://github.com/vitchyr/rlkit}. We do not include TRPO and PPO as our baselines in the experiments since their performance are dominated by SAC and TD3 as shown in \citep{haarnoja2018soft,fujimoto2018addressing}. 
 
 \cref{fig:result_mujoco} presents the total mean return of evaluation rollouts during training of all algorithms. Results of each algorithm are averaged over five different instances with different random seeds. The solid curves corresponds to the mean and the shaded region to the standard errors over the five trials. For fair comparison with PMAC, we implement the double-Q but not the reparameterization trick (see equation (11)-(13) in \citep{haarnoja2018soft}) for SAC, which expains the discrepancy with the reported results in \citep{haarnoja2018soft}. We observe that without the reparameterization trick SAC cannot make any progress in the hardest problem Humanoid. To clarify this we also report the result of SAC with such trick on Humanoid using the author's GitHub implementation. The results show that PMAC matches or, in many cases, surpasses all other baseline algorithms in both final performance and sample efficiency across all tasks. In Humanoid, although PMAC is outperformed in the learning speed, its final performance is still comparable with SAC. Note that the reparameterization trick could also be applied in PMAC. We will include this in PMAC in the future work.
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width=0.85\linewidth]{./mujoco-results.pdf}
+\end{center}
+\caption{
+Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on mujoco tasks. Plots show mean reward with standard error during training, averaged over five different instances with different random seeds. X-axis is millions of environment steps. We observe that PMAC is consistently able to math and, in many cases, outperform all baseline algorithms across all tasks, both in terms of final performance and sample efficiency. }
+\label{fig:result_mujoco } 
+\end{figure*}
+
 
 %\begin{wrapfigure}{R}{0.5\textwidth}
 %\label{fig:ablation}
@@ -88,10 +61,10 @@ The comparative evaluations provided in the previous sections suggest that our p
 \begin{figure*}[t]
 \begin{minipage}{0.5\linewidth}
 \raggedleft
-\includegraphics[width=1.8in]{./ablation.pdf}
+\includegraphics[width=1.6in]{./ablation.pdf}
 \end{minipage}%
 \begin{minipage}{0.5\linewidth}
-\includegraphics[width=1.8in]{./ablation.pdf}
+\includegraphics[width=1.6in]{./ablation.pdf}
 %\caption{Error rate}
 %\label{a}
 \end{minipage}%
