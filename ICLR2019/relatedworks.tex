@@ -9,7 +9,7 @@ Guide Actor-Critic (GAC) \citep{tangkaratt2017guide},
 Maxmimum aposteriori (MPO) \citep{abdolmaleki2018maximum},
 and Soft Actor-Critic (SAC) \citep{haarnoja2018soft}.
 These approaches also adopt a mirror descent framework,
-but differ from the proposed method in key aspects.
+but differ from the proposed approach in key aspects.
 %
 MDGPS \citep{montgomery2016guided} follows a different learning principle,
 using the Lift Step to learn multiple local policies 
@@ -24,7 +24,7 @@ term;
 appropriate annealing of $\tau'$ significantly improves learning efficiency.
 %
 Both GAC and SAC use the mode seeking direction of KL divergence in
-the Project Step, reversed from the mean seeking direction
+the Project Step, in opposition to the mean seeking direction
 we consider here \citep{tangkaratt2017guide,haarnoja2018soft}. 
 Additionally, SAC only uses entropy regularization
 in the Lift Step, neglecting the proximal relative entropy.
@@ -50,7 +50,7 @@ As noted in \cref{subsec:revisitTRPO},
 REPMD resembles policy gradient methods that maximize expected reward
 with an additional entropy regularizer
 \citep{williams1991function,fox2015taming,nachum2017bridging}.
-Using KL divergence, or Bregman divergences more generally,
+Using KL divergence (or Bregman divergences more generally)
 as regularizers has also been explored
 in \citet{liu2015finite,thomas2013projected,mahadevan2012sparse}.
 However, these approaches differ from the proposed method
@@ -67,15 +67,13 @@ a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$,
 which is then approximated similar to a cross entropy loss
 \citep{peters2007reinforcement,wierstra2008episodic}.
 
-TRPO/PPO also has a similar formulation to
+TRPO and PPO also have a similar formulation to
 \cref{eq:max_expected_reward_plus_relative_entropy},
 using a constrained version with a mean seeking KL divergence
 \cite{schulman2015trust,schulman2017proximal}. 
 Our proposed method includes additional modifications that,
 as shown in \cref{sec:experiments}, significantly improve performance.
-UREX also uses %the %same 
-mean seeking KL %divergence 
-for regularization,
+UREX also uses mean seeking KL for regularization,
 which encourages exploration but also complicates the optimization;
 as shown in \cref{sec:experiments},
 UREX is significantly less efficient than the method proposed here.
@@ -97,7 +95,7 @@ similar monotonic improvement guarantee exists for TRPO, but only for an
 impractical formulation.%
 %
 \footnote{
-	For the monotonic improvement guarantee, % to hold,
+	For the monotonic improvement guarantee,
 	TRPO must use $\KL^{\max} $ rather than the stanard KL divergence.
 } 
 Here, by contrast,
@@ -111,7 +109,7 @@ Q-values, again relying on an assumption that a non-convex optimization
 problem can be solved globally.
 We have shown that similar results hold in the case of PMD/REPMD,
 but here we have also established something stronger:
-When the projection step cannot be efficiently solved to global optimality,
+when the projection step cannot be efficiently solved to global optimality,
 we have shown that PMD/REPMD still preserve stationary points in 
 their respective, principled objectives.
 MPO and SAC have no such guarantee, as far as we are aware. 

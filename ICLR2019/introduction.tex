@@ -11,7 +11,7 @@ A central method of deep RL is \emph{policy optimization}
 (aka\ policy gradient),
 which is based on formulating the problem
 as the optimization of a stochastic objective (expected return)
-with respect to the underlying policy parameters %parameterization
+with respect to the underlying policy parameters
 \citep{williams1991function,williams1992simple,sutton1998reinforcement}.
 Unlike standard optimization,
 stochastic optimization requires the objective and gradient to be 
@@ -21,11 +21,8 @@ simultaneously with parameter updates.
 Such an interaction between estimation and updating
 complicates the optimization process,
 and often necessitates the introduction of variance reduction methods,
-leading to algorithms %that exhibit 
-with
-subtle hyperparameter sensitivity.
-Joint estimation and %parameter 
-updating can also create poor local optima
+leading to algorithms with subtle hyperparameter sensitivity.
+Joint estimation and updating can also create poor local optima
 whenever sampling neglect of some region
 can lead to further entrenchment of a current solution.
 For example, a non-exploring policy might fail to sample from high
