@@ -2,7 +2,8 @@
 
 
 %\subsection{Cooperate with Value Function Approximation}
-\section{Cooperate with Value Function Approximation}
+%\section{Combining REPMD with Value Function Approximation}
+\section{An Actor-Critic Extension}
 \label{subsec:repmd_value}
 
 \newcommand{\parV}{V_{\phi}}
@@ -20,7 +21,7 @@ The last part of this section is a nature extension of REPMD with value function
 It has been shown that the data efficiency of policy-based methods can be improved by a critic in general. 
 In this section, we present an actor-critic version of REPMD, named as Policy Mirror Actor Critic (PMAC). 
 %We consider an infinite trajectory $\rho$ while keeping the discounted factor $\gamma=1$ for simplicity. All the results have no difficulty to extend to a  general value of $\gamma$. 
-Given a reference policy $\refPi$ and an initial state $s$, recall that the objective in the lift step is 
+Given a reference policy $\refPi$ and an initial state $s$, recall that the objective in the Lift Step is 
 \[
 \gO_{\text{REPMD}}(\pi, s) =   \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi)}, 
 \]
@@ -75,7 +76,7 @@ The soft Q-function parameters $\psi$ is then trained to minimize the soft Bellm
 L(\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parV(s') \right] \right)^2 \right]
 \end{equation}
 
-Finally, the policy parameters is updated by doing the project step in (\ref{eq:repmd}) with stochastic gradient descent,
+Finally, the policy parameters is updated by doing the Project Step in (\ref{eq:repmd}) with stochastic gradient descent,
 \begin{equation}
 \label{eq:trainpi}
 L(\theta) = \E_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\} \middle\Vert \parPi(\cdot |s) \right) \right]

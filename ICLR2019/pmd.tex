@@ -67,8 +67,8 @@ Given a \emph{reference policy} $\refPi$,
 Note that this result holds even for the non-convex setting.
 %
 The reformulation \cref{eq:pmd} immediately leads to our PMD algorithm:
-lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$,
-then perform multiple steps of gradient descent on the project step
+Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$,
+then perform multiple steps of gradient descent in the Project Step
 to update $\pi_{\theta_{t+1}}$.%
 %
 \footnote{
@@ -93,24 +93,24 @@ parametrization of $\pi$.
 \begin{enumerate}
 	\item {\bf (Monotonic Improvement Guarantee)} 
 	%The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
-	If the project step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then
+	If the Project Step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then
 	 \begin{equation*}
 	\oep_{\rho \sim \pi_{\theta_{t+1}}}{r(\rho)} - \oep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \ge 0.
 	\end{equation*}
-	\item  {\bf (Global Optimum Guarantee)} If the project step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then $ \pi_{\theta_{t}}$ converges to the global optimum $\pi^*$, i.e. 
+	\item  {\bf (Global Optimum Guarantee)} If the Project Step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then $ \pi_{\theta_{t}}$ converges to the global optimum $\pi^*$, i.e. 
 	\[
 \lim_{t\rightarrow\infty}\oep_{\rho \sim \pi_{\theta_t}}{  r(\rho)}
 =
 	 \oep_{\rho \sim \pi^*}{  r(\rho)} \ge \oep_{\rho \sim \pi}{  r(\rho)}, \quad \forall \pi \in \Pi.
 	\]
-	\item {\bf (Fixed Points)} Assume that the project step is optimized by gradient descent, then the fixed points of PMD are the 
+	\item {\bf (Fixed Points)} Assume that the Project Step is optimized by gradient descent, then the fixed points of PMD are the 
 	 stationary points of the expected reward $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$. 
 \end{enumerate}
 \end{prop}
 
 Despite these desirable properties, 
 \cref{prop:monoto_policymirrordescent}
-relies on the condition that the projection step in PMD is solved to
+relies on the condition that the Project Step in PMD is solved to
 global optimality.
 It is usually not practical to achieve such a stringent requirement
 when $\pi_\theta$ is not convex in $\theta$,
