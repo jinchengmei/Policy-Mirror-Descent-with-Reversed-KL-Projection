@@ -168,6 +168,61 @@ Let $\pi(a \vert s) =  \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \p
 \end{proof}
 
 \section{Implementation details of REPMD}
+%\subsection{Learning }
+\label{subsec:learning}
+\label{appx:learning}
+
+%\todor[]{Maybe move this section to Appendix}
+
+We now provide some of the implementation details of REPMD.
+The full algorithm is presented in \cref{alg:repmd}.
+Despite its non-convexity, it can be verified that the Lift Step
+has an analytic solution
+%
+\begin{equation}
+\label{eq:pitautauprime}
+\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
+\end{equation}
+%
+The Project Step in \cref{eq:repmd}, $\min\nolimits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ to estimate its gradient. To see this, note that $\argmin\nolimits_{\pi_\theta \in \Pi}\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \argmin\nolimits_{\pi_\theta \in \Pi} \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* }  - \log \pi_\theta(\rho)$. The next theorem shows that sampling from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ can be done using self-normalized importance sampling \citep{owen2013monte}, following the idea of UREX \citep{nachum2017improving}.
+
+\begin{thm}
+\label{thm:repmdgradientestimate}
+Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}$. Given $K$ \emph{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, we have the following unbiased gradient estimator,
+\begin{equation}
+\label{eq:gradient_estimator}
+	\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)\approx -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} },
+\end{equation}
+%	where 
+%	\[
+%	\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}.
+%	\] 
+\end{thm}
+
+%\begin{wrapfigure}{r}{0.56\textwidth}
+%	\begin{minipage}{0.56\textwidth}
+		\begin{algorithm}[H]
+			\caption{\label{alg:repmd}  The REPMD algorithm}
+			\begin{algorithmic}[1]
+				\INPUT $\tau, \tau', K$
+				\OUTPUT  Policy $\pi_\theta$
+				\STATE Randomly initialize $\pi_{\theta_1}$;
+				\FOR { $t=1,2,\ldots, T$ }
+				\STATE Set $\refPi = \pithetat$;
+				\REPEAT 
+				\STATE Sample a mini-batch of $K$ trajectories from $\refPi$;
+				\STATE Compute the gradient according to \cref{eq:gradient_estimator};
+				\STATE Update $\pi_{\theta_{t+1}}$ by the gradient;
+				\UNTIL converged or reach max\_iter;
+				\ENDFOR
+				\STATE Return $\pi_{\theta_T}$.
+			\end{algorithmic}
+		\end{algorithm}
+%	\end{minipage}
+%\end{wrapfigure}
+
+
+
 
 
 \section{Implementation details of PMAC}
@@ -302,6 +357,10 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 See \cref{subsec:proof_of_repmdgradientestimate} for the proof of Theorem \ref{thm:repmdgradientestimate}.
 \end{proof}
 
+
+
+\if0
+
 \section{Details of Learning Algorithm}
 
 Details of the learning algorithms of REPMD and *** are provided in this section. 
@@ -353,5 +412,6 @@ Pseudocode for *** is presented in \cref{alg:rmac}. The major difference between
 	\end{algorithmic}
 \end{algorithm}
 
+\fi
 
 
