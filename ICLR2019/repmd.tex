@@ -31,8 +31,7 @@ at each iteration:
 \end{equation}
 %
 The idea of optimizing the reverse direction of KL divergence has proved
-to be effective %for structured prediction and reinforcement learning
-in previous work,
+to be effective in previous work,
 such as reward augmented maximum likelihood \citep{norouzi2016reward}
 and UREX \citep{nachum2017improving}.
 Its \emph{mean seeking} behavior further encourages exploration by the
@@ -114,7 +113,7 @@ even when targeting desirable behavior with respect to $r(\rho)$.
 In fact, by properly adjusting the two temperature parameters $\tau$ and
 $\tau^{\prime}$ in REPMD,
 the resulting surrogate objective $\SR(\pi_\theta)$
-recovers existing performance measures, as shown in \cref{prop:sr}.
+recovers existing performance measures. %, as shown in \cref{prop:sr}.
 
 \begin{prop}
 \label{prop:sr}
