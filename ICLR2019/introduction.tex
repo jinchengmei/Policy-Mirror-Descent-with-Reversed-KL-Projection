@@ -21,7 +21,9 @@ simultaneously with parameter updates.
 Such an interaction between estimation and updating
 complicates the optimization process,
 and often necessitates the introduction of variance reduction methods,
-leading to algorithms that exhibit subtle hyperparameter sensitivity.
+leading to algorithms %that exhibit 
+with
+subtle hyperparameter sensitivity.
 Joint estimation and %parameter 
 updating can also create poor local optima
 whenever sampling neglect of some region
@@ -29,7 +31,7 @@ can lead to further entrenchment of a current solution.
 For example, a non-exploring policy might fail to sample from high
 reward trajectories,
 preventing any further improvement since no useful signal is observed.
-In practice, it is known that successful application of deep RL techniques
+In practice, it is well known that successful application of deep RL techniques
 requires a combination of extensive hyperparameter tuning,
 and a large, if not impractical, number of sampled trajectories.
 It remains a major challenge to develop methods that can reliably

@@ -2,70 +2,104 @@
 \section{Related Work}
 \label{sec:related_work}
 
-%\begin{itemize}
-	%\item Mirror Descent: Value based; Linear approximation, with a mirror descent type regularization on the parameter \citep{liu2015finite,thomas2013projected,mahadevan2012sparse}. 
-	%\item guided policy search via approximate mirror descent: Used as an objective function to align the learned policy with local "teacher" policies. \citep{montgomery2016guided}
-%	\item Trust region: Similar idea; Result also holds in ; Then two stage view with reversed projection \cite{schulman2015trust}
-	%\item Guided AC for continuous control: two-stage optimization; constraint form; Maximizing past trajectory reward. Gaussian policy for $\pi$ and second order approximation for $Q$ function. We directly estimate its gradient based on samples. \citep{tangkaratt2017guide}
-	%\item relative entropy policy search: constraint version; Use KL divergence on join distribution; Linear approximation for value function or in RKHS. No entropy, no multiple projection. \citep{peters2010relative,van2015learning}
-%\end{itemize}
+The lift-and-project approach is distinct from the previous literature on policy
+search, with the exception of a few recent works:
+Mirror Descent Guided Policy Search (MDGPS) \citep{montgomery2016guided},
+Guide Actor-Critic (GAC) \citep{tangkaratt2017guide},
+Maxmimum aposteriori (MPO) \citep{abdolmaleki2018maximum},
+and Soft Actor-Critic (SAC) \citep{haarnoja2018soft}.
+These approaches also adopt a mirror descent framework,
+but differ from the proposed method in key aspects.
+%
+MDGPS \citep{montgomery2016guided} follows a different learning principle,
+using the Lift Step to learn multiple local policies 
+(rather than a single policy)
+then aligning these with a global policy in the Project Step.
+MDGPS also does not include the entropy term in the Lift objective,
+which we have found to be essential for exploration. 
+%
+MPO \citep{abdolmaleki2018maximum} also neglects to add the additional entropy 
+term;
+\cref{subsec:ablationstudy} shows that entropy regularization with an
+appropriate annealing of $\tau'$ significantly improves learning efficiency.
+%
+Both GAC and SAC use the mode seeking direction of KL divergence in
+the Project Step, reversed from the mean seeking direction
+we consider here \citep{tangkaratt2017guide,haarnoja2018soft}. 
+Additionally, SAC only uses entropy regularization
+in the Lift Step, neglecting the proximal relative entropy.
+The benefits of regularizing with relative entropy
+has been discussed in TRPO \citep{schulman2015trust}
+and MPO \citep{abdolmaleki2018maximum},
+where it is noted that proximal regularization
+significantly improves learning stability.
+GAC seeks to match the mean of Gaussian policies in the Project Step,
+instead of directly minimizing the KL divergence with gradient descent.
+%
+Although one might also attempt to interpret ``one-step'' methods
+in terms of lift-and-project,
+these approaches would obliviously still differ from REPMD,
+given that we use different directions of the KL divergence
+for the Lift and Project steps respectively. 
 
-The lift-and-project formulation differs our method from most of the previous policy search methods. 
-%On the one hand, such formulation provides an easier way in analyzing the behavior of the algorithm in parameter space. For example, the monotonical improvement guarantee can be proved in a fairly direct and simple way in this paper, even for some particular non-convex $\pi_\theta$. 
-%On the other hand, such formulation suggests to perform multiple steps of gradient descent on the project step with the current policy fixed as the reference policy. As shown in \cref{sec:experiments}, multiple steps of gradient descent leads to a significant improvement in performances compared to single step of gradient descent. 
-To our best knowledge, four methods in the literature also use such lift-and-project formulation: Mirror Descent Guided Policy Search (MDGPS) \citep{montgomery2016guided}, Guide Actor-Critic (GAC) \citep{tangkaratt2017guide}, Maxmimum aposteriori (MPO) \citep{abdolmaleki2018maximum}, and Soft Actor-Critic (SAC) \citep{haarnoja2018soft}.
-MDGPS \citep{montgomery2016guided} has a fundamentally different learning principle from our method. 
-In particular, MDGPS use the lift step to learn multiple (rather than one) local simple policies, and use the project step to align all the local policies with the global one.
-Our method also has an additional entropy regularization term in the objective of the lift step to encourage the exploration.
-MPO \citep{abdolmaleki2018maximum} does not have this entropy regularizer neither. 
-%In fact, without such regularizer, every deterministic policy is a fixed point, which may make the algorithm trapped in poor local optima quickly.
-As shown in \cref{subsec:ablationstudy}, such entropy term with an annealing $\tau'$ could significantly improve the efficiency of the algorithm.
-%The relative entropy regularizer is also used in the project step of MPO.
-%[Why it matters?]
-Both GAC and SAC use the mode seeking direction of KL divergence for the project step, different from the mean seeking direction in our method \citep{tangkaratt2017guide,haarnoja2018soft}. 
-Furthermore, compared to our method, SAC uses only the entropy regularizer in the lift step (no relative entropy regularizer). 
-The benefit of the relative entropy has been discussed in TRPO \citep{schulman2015trust} and MPO  \citep{abdolmaleki2018maximum} that it could significantly help stabilize the learning.
-GAC tends to match the mean of Gaussian policies in the project step instead of directly minimizing the KL divergence with gradient descent.
-%[Why it matters?]
-%GAC has the same objective in the lift step as our method, but 
-%However, GAC only considers the Gaussian policies with second order approximation for $Q$ functions.
-%, so that as it tends to solve the constraint optimization problem in closed form and to simplify the computation in the project step.  
-%Instead, our method is built on a Monte Carlo estimate of the gradient, which can be applied to general policy parametrizations. For the project step, GAC also
-%uses the mode seeking direction of the KL divergence for the project step, different from the mean seeking direction used in our method \citep{tangkaratt2017guide}.  
-%Another two concurrent works also use the lift-and-project procedure: 
-%Similar to GAC, SAC use the mode seeking KL divergence for the project step. 
-%Our algorithm differs from MPO in the lift step that we have the additional entropy regularizer. 
-For other "one-step" methods, although they could or could not be reformulated into a lift-and-project procedure,
-they would still obliviously differs from REPMD, as we use different directions of KL divergence for the lift step and the project step. 
+Regarding the optimization objective,
+several existing methods have considered related approaches,
+either by considering (relative) entropy regularization during policy search,
+or directly using KL divergence as the target objective. 
+As noted in \cref{subsec:revisitTRPO},
+REPMD resembles policy gradient methods that maximize expected reward
+with an additional entropy regularizer
+\citep{williams1991function,fox2015taming,nachum2017bridging}.
+Using KL divergence, or Bregman divergences more generally,
+as regularizers has also been explored
+in \citet{liu2015finite,thomas2013projected,mahadevan2012sparse}.
+However, these approaches differ from the proposed method
+in important ways.
+In particular, they apply regularization to the parameters of the
+\emph{linear} approximated value functions, whereas here KL regularization
+is applied directly to the policy space.
+The literature on relative entropy policy search also uses a similar
+KL divergence regularization scheme
+\citep{peters2010relative,van2015learning},
+but on over joint state-action distributions.
+Instead of KL divergence, Reward-Weighted Regression (RWR) uses
+a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$,
+which is then approximated similar to a cross entropy loss
+\citep{peters2007reinforcement,wierstra2008episodic}.
 
-
-%\begin{itemize}
-%	\item SAC: (1) start from the soft Q-learning framework, while we start from a stable policy gradient framework; (2) Actor-Critic version has different directions in the project step; We have the trust region regularizer in the lift step. (3) improvement guarantee in soft Q value, not the expected reward.
-%	\item MPO: (1) start from a probabilistic inference point; (2) no entropy regularization: deterministic policies are all fixed points (3 ) the project step includes the trust region regularizer. (4) MPO also has very similar guarantees for non-convex settings.	 
-%\end{itemize}
-
-%The benefit of this, as discussed in \cref{subsec:repmd} has two folds: (1) Using the mean seeking KL divergence in the project step helps avoids some poor local optima; (2) The problem can still be globally optimally solved for one-layer networks which is non-convex.
-
-In terms of the optimization objective, several existing methods are also similar to our algorithm,
-%with the policy mirror descent (PMD) framework, 
-by either considering the (relative) entropy regularizer in policy search/optimization, or using KL divergence as the objective to optimize the policy. 
-As mentioned in \cref{subsec:revisitTRPO}, our algorithm ensembles
-the policy gradient descent method in maximizing expected reward with an entropy regularizer \citep{williams1991function,fox2015taming,nachum2017bridging}.
-Using KL divergence, or Bregman divergence, type fo regularization has also been explored  in \citet{liu2015finite,thomas2013projected,mahadevan2012sparse}, but in a different way. 
-In particular, they apply such regularization to the parameters of the  linear approximated value functions, while in this paper, the KL divergence is applied to the policy space as a "distance" measure for polices. 
-The literature of relative entropy policy search also uses similar KL divergence regularizer \citep{peters2010relative,van2015learning} but on the joint distributions of state and action in the purpose of . 
-Instead of the KL divergence, Reward-Weighted Regression (RWR) uses a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$ as its objective, which is then approximated similar to a cross entropy loss \citep{peters2007reinforcement,wierstra2008episodic}.
-
-TRPO also has a similar formulation to \cref{eq:max_expected_reward_plus_relative_entropy} in a constraint version, with a mean seeking KL divergence \citep{schulman2015trust}. 
+TRPO also has a similar formulation to
+\cref{eq:max_expected_reward_plus_relative_entropy}
+as a constrained version with a mean seeking KL divergence
+\citep{schulman2015trust}. 
 %However, \cref{eq:max_expected_reward_plus_relative_entropy} uses a different direction of the KL divergence. 
-The monotonical improvement guarantee
-only exists for an impractical formulation of TRPO \footnote{For the version that monotonical improvement guarantee holds, TRPO needs to use $\KL^{\max} $ rather than the stanard KL divergence.}. 
-%We also prove the monotonical improvement guarantee for the exact formulation, while such guarantee in TRPO only exists for an impractical formulation\footnote{For the version that monotonical improvement guarantee holds, TRPO needs to use $\KL^{\max} $ rather than the stanard KL divergence.}. 
-Based on our lift-and-project reformulation, we were also able to prove the monotonical improvement guarantee in a fairly simple and direct way.
-Our method also includes additional modifications to address its potential drawbacks. As shown in \ref{sec:experiments}, such modifications improve its performance significantly.
-UREX uses the same mean seeking KL divergence for regularization, which encourages exploration but also makes the optimization more difficult. As shown in \ref{sec:experiments}, UREX is significantly less efficient than our method. 
+Unfortunately, the monotonic improvement guarantee only exists for an
+impractical formulation of TRPO.%
+%
+\footnote{
+For the monotonic improvement guarantee to hold,
+TRPO must use $\KL^{\max} $ rather than the stanard KL divergence.
+} 
+Here, by contrast,
+we use the lift-and-project reformulation to establish a monotonic
+improvement guarantee in a simple and direct way.
+Our proposed method also includes additional modifications that,
+as shown in \ref{sec:experiments}, significantly improve performance.
+UREX also uses the same mean seeking KL divergence for regularization,
+which encourages exploration but also complicates the optimization;
+as shown in \ref{sec:experiments},
+UREX is significantly less efficient than the method proposed here.
 
-Trust PCL method adopts the same objective defined in \cref{eq:repmd}, which includes both entropy and relative entropy regularizer \citep{nachum2017trust}. However, the policy update strategy is different: while REPMD uses KL projection, Trust PCL inherits the same idea from PCL that minimizes path inconsistency error between value and policy for any trajectories \citep{nachum2017bridging}. Although policy optimization by minimizing path inconsistency error can efficiently utilize off-policy data, it loses the desirable monotonical improvement guarantee.
+Trust PCL adopts the same objective defined in \cref{eq:repmd},
+including both entropy and relative entropy regularization
+\citep{nachum2017trust}.
+However, the policy update strategy is substantially different:
+while REPMD uses KL projection, Trust PCL %inherits the same idea from PCL that
+minimizes a path inconsistency error (inherited from PCL)
+between the value and policy along observed trajectories
+\citep{nachum2017bridging}.
+Although policy optimization by minimizing path inconsistency error
+can efficiently utilize off-policy data, this approach loses the 
+desirable monotonic improvement guarantee.
 
 In terms of the theoretical analyses, 
 \begin{itemize}
