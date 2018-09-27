@@ -1,12 +1,17 @@
-\section{Proofs for \cref{sec:reversed_emtropy_policy_mirror_descent}}
-This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_policy_mirror_descent}.
+
+\section{Proofs} % for \cref{sec:reversed_emtropy_policy_mirror_descent}}
+
+%This section is devoted to the omitted proofs in \cref{sec:reversed_emtropy_policy_mirror_descent}.
+
 \subsection{Proof of \cref{prop:mirrordescent_projection}}
+
 \begin{proof}
 	Note that $-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) = - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} = \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi}$. Note the fact that $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
 \end{proof}
 
 \subsection{Proof of \cref{prop:monoto_policymirrordescent}}
 \label{appsec:monoto_policymirrordescent}
+
 \begin{proof}
 	{\bf (Monotonic Improvement Guarantee)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. By expanding the KL divergence and rearranging terms, we have $ \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) - \sum_{\rho}{ \pi_{\theta_{t+1}}(\rho) r(\rho) } \leq - \sum_{\rho}{ \pi_{\theta_{t}}(\rho) r(\rho) }$, which gives $\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \geq \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \geq 0$.
 	
@@ -129,7 +134,7 @@ We first show the derivation of the analytic solution of the Lift Step.
 	\label{lem:opt_pi_ref}
 	The lift step of \cref{eq:repmd} has the following closed form expression:
 	\begin{equation}
-	\label{eq:pitautauprime}
+	\label{eq:pitautauprime1}
 	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
 	\end{equation}
 \end{lem}
@@ -156,7 +161,7 @@ The next lemma provides the derivation of the gradient estimation of REPMD (Lemm
 	\begin{equation}
 	\begin{split}
 	&\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) \approx -\frac{1}{K}\sum_{k=1}^K \frac{\bar{\pi}_{\tau,\tau^{\prime}}^* (\rho_k)}{\refPi(\rho_k)} \nabla_{\theta} \log \pi_\theta(\rho_k)\\ 
-	&= -\frac{1}{K}\sum_{k=1}^K \frac{ \refPi(\rho_k) \exp\left\{ \frac{r(\rho_k)-\tau^{\prime} \log \refPi(\rho_k) }{ \tau+\tau^{\prime}} \right\} }{\refPi(\rho_k)  \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} }  } \nabla_{\theta} \log \pi_\theta(\rho_k) \qquad \text{by \ref{eq:pitautauprime} }  \\
+	&= -\frac{1}{K}\sum_{k=1}^K \frac{ \refPi(\rho_k) \exp\left\{ \frac{r(\rho_k)-\tau^{\prime} \log \refPi(\rho_k) }{ \tau+\tau^{\prime}} \right\} }{\refPi(\rho_k)  \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} }  } \nabla_{\theta} \log \pi_\theta(\rho_k) \qquad \text{by \ref{eq:pitautauprime1} }  \\
 	&\approx -\frac{1}{K}\sum_{k=1}^K \frac{\exp \{\omega_k\}} {\frac{1}{K} \sum_{j=1}^K \exp \{\omega_j\}} \nabla_{\theta} \log \pi_\theta(\rho_k) \\
 	&=  -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} } \qedhere.
 	\end{split}
