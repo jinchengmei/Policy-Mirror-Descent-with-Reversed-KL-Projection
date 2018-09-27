@@ -379,7 +379,7 @@ Humanoid & 17  \\ [1ex] % [1ex] adds vertical space
 
 \subsection{Implementation Details}
 \label{subsec:implementation}
-For the synthetic bandit problem, we parameterize the policy by a weight vector $\theta\in  \mathbb{R}^{20}$. Let $\Phi = \left( \phi_1, \dots, \phi_{10,000} \right)$ be the feature matrix. The policy is defined by $\text{softmax}(\Phi^{\top}\theta)$. The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-bandit}. 
+For the synthetic bandit problem, we parameterize the policy by a weight vector $\theta\in  \mathbb{R}^{20}$. Let $\Omega = \left( \omega_1, \dots, \omega_{10,000} \right)$ be the feature matrix. The policy is defined by $\text{softmax}(\Omega^{\top}\theta)$. The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-bandit}. 
 \begin{table}[ht]
 \caption{REPMD Hyperparameters in Synthetic Bandit} % title of Table
 \centering 
