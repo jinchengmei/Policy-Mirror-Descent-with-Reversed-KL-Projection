@@ -10,7 +10,7 @@ We test the performance of REPMD on a synthetic bandit problem and the algorithm
 
 \begin{figure*}[t]
 \begin{center}
-\includegraphics[width=0.8\linewidth]{./fig1.pdf}
+\includegraphics[width=0.75\linewidth]{./fig1.pdf}
 \end{center}
 \caption{
 Results of MENT (red), UREX (green), and REPMD (blue) on synthetic bandit problem and algorithmic tasks. Plots show average reward with standard error during training. Synthetic bandit results averaged over 5 runs. Algorithmic task results averaged over 25 random training runs (5 runs $\times$ 5 random seeds for neural network initialization). X-axis is number of sampled trajectories. } 
@@ -23,7 +23,7 @@ For both synthetic bandit problem and algorithmic tasks, we compare REPMD agains
 
 \begin{figure*}[t]
 \begin{center}
-\includegraphics[width=0.85\linewidth]{./mujoco-results.pdf}
+\includegraphics[width=0.8\linewidth]{./mujoco-results.pdf}
 \end{center}
 \caption{
 Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on mujoco tasks. Plots show mean reward with standard error during training, averaged over five different instances with different random seeds. X-axis is millions of environment steps. We observe that PMAC is consistently able to math and, in many cases, outperform all baseline algorithms across all tasks, both in terms of final performance and sample efficiency. }
@@ -58,20 +58,15 @@ The comparative evaluations provided in the previous sections suggest that our p
 
 \textbf{Importance of KL divergence projection.} Another important difference between \cref{eq:repmd} with other RL methods is to use a project step to optimize policy, rather than direct SGD of the objective function. To show the importance of the project step, we test REPMD and PMAC without projection, which only performs one step of gradient update at each iteration of training. 
 
-\textbf{Importance of direction of KL divergence.} We choose PMD \ref{eq:pmd} as another baseline to prove the effectiveness of using the \emph{mean seeking} direction of KL divergence in the project step. Similar as in REPMD, we add a separate tempreture parameter $\tau'\geq 0$ to the original objective function in (\ref{eq:pmd}) to encourage exploration of the policy, which gives $\argmax_{\pi_\theta \in \Pi}{ \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \text{KL}(\pi_\theta \| \refPi) } + \tau'\cH(\pi_\theta) }$. The corresponded algorithm in actor-critic setting, named , is also used to compared with PMAC. 
+\textbf{Importance of direction of KL divergence.} We choose PMD \ref{eq:pmd} as another baseline to prove the effectiveness of using the \emph{mean seeking} direction of KL divergence in the project step. Similar as in REPMD, we add a separate tempreture parameter $\tau' > 0$ to the original objective function in (\ref{eq:pmd}) to encourage policy exploration, which gives $\argmax_{\pi_\theta \in \Pi}{ \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \text{KL}(\pi_\theta \| \refPi) } + \tau'\cH(\pi_\theta) }$. We name this algorithm PMD+entropy, The corresponded algorithms in actor-critic setting, named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
 
 \begin{figure*}[t]
-\begin{minipage}{0.5\linewidth}
-\raggedleft
-\includegraphics[width=1.4in]{./ablation.pdf}
-\end{minipage}%
-\begin{minipage}{0.5\linewidth}
-\includegraphics[width=1.7in]{./mujoco-ablation.pdf}
-%\caption{Error rate}
-\end{minipage}%
-\caption{Ablation Study. We compare REPMD and PMAC with designed baselines on ReversedAddition and Ant. }
+\begin{center}
+\includegraphics[width=0.6\linewidth]{./ablation-results.pdf}
+\end{center}
+\caption{Ablation Study by comparing REPMD and PMAC with designed baselines on ReversedAddition and Ant. }
 \label{fig:ablation}
 \end{figure*}
 
-Results are presented in \cref{fig:ablation}, which clearly indicate all of the three major components of \cref{eq:repmd} can help yield better performance. 
+Results are presented in \cref{fig:ablation}, which clearly indicate all of the three major components of \cref{eq:repmd} are helpful for yielding better performance. 
 
