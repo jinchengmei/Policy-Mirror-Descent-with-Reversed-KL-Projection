@@ -1,0 +1,18 @@
+
+Policy optimization is a fundamental problem in reinforcement learning.
+In this paper, 
+we investigate Reversed Entropy Policy Mirror Descent (REPMD), 
+an on-line policy optimization method that improves exploration
+while ensuring monotonic progress in a principled objective.
+REPMD conducts a form of maximum entropy exploration
+within a mirror descent framework,
+but alters the policy update with a reversed KL projection.
+This modification bypasses undesirable mode seeking behaviour
+and avoids premature convergence to sub-optimal policies,
+while still achieving strong theoretical properties
+such as a policy improvement guarantee.
+An experimental evaluation also
+shows that this approach significantly improves practical exploration behavior,
+surpassing the performance of state-of-the art policy optimization methods
+in a range of benchmark tasks.
+
