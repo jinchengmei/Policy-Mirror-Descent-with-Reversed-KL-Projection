@@ -195,24 +195,24 @@ a $\pi_\theta$ with large expected reward.
 
 
 On the other hand, as $\tau \to \infty$,
-the stationary point set of $\SR(\pi_\theta)$ will approach the
-stationary point set of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
-\cref{fig:srsimulation} shows the results of a simulation
-investigating the behavior of $\SR{\pi}$ for different $\tau$.
+the stationary point of $\SR(\pi_\theta)$ will approach the
+stationary point of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
+\cref{fig:srsimulation} shows the a simulation
+investigating the behavior of $\SR(\pi_\theta)$ for different $\tau$.
 Note that there is a poor local maximum for $\theta <0$,
-where naive gradient method will converge to if $\theta$ is initialized
-on the left. 
-When $\tau = 0.2$, the reward landscape of $SR(\pi)$ guides
+where naive gradient method will converge to if initialization is
+about $\theta < -10$. 
+When $\tau = 0.05$, the reward landscape of $\SR(\pi_\theta)$ guides
 $\theta$ to converge to the neighbourhood of $0$,
 thus helping avoid the poor local maximum.
-Later in training, when $\tau$ increases to $10$,
-$SR(\pi)$ recovers the true expected reward landscape,
+Later in training, when $\tau$ increases to $5$,
+$\SR(\pi_\theta)$ recovers the true expected reward landscape,
 ensuring that $\theta$ will converge to a good local (if not the global)
 maximum.
 While it is hard for a simulation study to be comprehensive,
-these results demonstrate how $\SR(\pi)$ can offer reasonable guidance
+these results demonstrate how $\SR(\pi_\theta)$ can offer reasonable guidance
 for maximizing the true expected reward.
-Further investigation on the behavior of $\SR(\pi)$
+Further investigation on the behavior of $\SR(\pi_\theta)$
 is left for future work.
  
 \begin{figure*}[t]
