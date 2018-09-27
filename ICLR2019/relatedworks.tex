@@ -70,22 +70,8 @@ which is then approximated similar to a cross entropy loss
 TRPO/PPO also has a similar formulation to
 \cref{eq:max_expected_reward_plus_relative_entropy}
 as a constrained version with a mean seeking KL divergence
-\citep{schulman2015trust}. 
-Unfortunately, the monotonic improvement guarantee only exists for an
-impractical formulation of TRPO.%
-%
-\footnote{
-For the monotonic improvement guarantee, % to hold,
-TRPO must use $\KL^{\max} $ rather than the stanard KL divergence.
-} 
-Here, by contrast,
-we use the lift-and-project reformulation to establish a monotonic
-improvement guarantee in a simple and direct way.
-Our proposed method also includes additional modifications that,
-=======
 \cite{schulman2015trust,schulman2017proximal}. 
 Our proposed method includes additional modifications that,
->>>>>>> e0c8fb2d8e7529f9cc3150fdde9a95a20d888d9d
 as shown in \cref{sec:experiments}, significantly improve performance.
 UREX also uses the same mean seeking KL divergence for regularization,
 which encourages exploration but also complicates the optimization;
