@@ -38,9 +38,6 @@ Its \emph{mean seeking} behavior further encourages exploration by the
 algorithm.
 As we will see in \cref{sec:experiments},
 REPMD outperforms PMD significantly in experimental evaluations.
-%
-Further details about the REPMD algorithm are given in
-\cref{appx:learning}.
 
 \cref{thm:monotonically_increasing_sr_property}
 shows that REPMD still enjoys similar desirable properties to PMD
@@ -94,9 +91,50 @@ affording a significant computational advantage over PMD.
 Assume $\pi_\theta(s) = \softmax(\phi_s^{\top}\theta)$.
 Given a reference policy $\refPi$,
 the Projection Step
-$\min\limits_{\theta \in \mathbb{R}^d}{\KL(\refPi \| \pi_\theta)}$
+$\min\nolimits_{\theta \in \mathbb{R}^d}{\KL(\refPi \| \pi_\theta)}$
 is a convex optimization problem in $\theta$.
 \end{prop}
+
+\subsection{Learning Algorithms}
+
+We now provide some of the learning algorithms for REPMD.
+Despite its non-convexity, the Lift Step
+has an analytic solution,
+\begin{equation}
+	\label{eq:pitautauprime}
+	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
+\end{equation}
+	
+The Project Step in \cref{eq:repmd}, $\min\nolimits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ to estimate its gradient. To see this, note that $\argmin\nolimits_{\pi_\theta \in \Pi}\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \argmin\nolimits_{\pi_\theta \in \Pi} \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* }  - \log \pi_\theta(\rho)$. The next lemma shows that sampling from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ can be done using self-normalized importance sampling \citep{owen2013monte} when it is possible to draw multiply samples, following the idea of UREX \citep{nachum2017improving}.   
+\begin{lem}
+\label{lem:repmdgradientestimate}
+Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}$. Given $K$ \emph{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, we have the following unbiased gradient estimator,
+\begin{equation}
+\label{eq:gradient_estimator}
+	\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)\approx -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} },
+\end{equation}
+%	where 
+%	\[
+%	\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}.
+%	\] 
+\end{lem}
+Derivation for the analytic solution of the Lift Step and above Lemma as well as other implementation details can be found in \cref{appx:repmd-learning}.
+
+\begin{algorithm}[t]
+	\caption{\label{alg:repmd}  The REPMD algorithm}
+	\begin{algorithmic}[1]
+		\INPUT temperature parameters $\tau$ and $\tau'$, number of samples for computing gradient $K$
+		\STATE Random initialized $\pi_{\theta}$
+		\FOR { $t=1,2,\ldots$ }
+		\STATE Set $\refPi = \pi_\theta$
+		\REPEAT 
+		\STATE Sample a mini-batch of $K$ trajectories from $\refPi$
+		\STATE Compute the gradient according to \cref{eq:gradient_estimator}
+		\STATE Update $\pi_{\theta}$ by gradient descent
+		\UNTIL converged or reach maximum of training steps
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
 
 
 %\subsubsection{Behavior of $\SR(\pi)$}
@@ -161,7 +199,6 @@ the stationary point set of $\SR(\pi_\theta)$ will approach the
 stationary point set of $\sum_{\rho}{ \pi_\theta(\rho) r(\rho) }$.
 \cref{fig:srsimulation} shows the results of a simulation
 investigating the behavior of $\SR{\pi}$ for different $\tau$.
-\todor[]{Add the simulation setting in the caption of the figure.}
 Note that there is a poor local maximum for $\theta <0$,
 where naive gradient method will converge to if $\theta$ is initialized
 on the left. 
