@@ -2,34 +2,123 @@
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate REPMD and PMAC on a number of benchmark tasks. We first introduce the experimented tasks, then present the experiment results. Implementation details are provided in \cref{subsec:implementation}. 
+We evaluate the main proposed methods, REPMD and PMAC,
+on a number of benchmark tasks
+%against state-of-the-art baselines.
+against strong baselines.
+%We first introduce the experimented tasks, then present the experiment results.
+Additional implementation details are provided in \cref{subsec:implementation}. 
 
 \begin{figure*}[t]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{./fig1.pdf}
 \end{center}
 \caption{
-Results of MENT (red), UREX (green), and REPMD (blue) on synthetic bandit problem and algorithmic tasks. Plots show average reward with standard error during training. Synthetic bandit results averaged over 5 runs. Algorithmic task results averaged over 25 random training runs (5 runs $\times$ 5 random seeds for neural network initialization). X-axis is number of sampled trajectories. } 
+Results of MENT (red), UREX (green), and REPMD (blue) on synthetic bandit
+problem and algorithmic tasks.
+Plots show average reward with standard error during training.
+Synthetic bandit results averaged over 5 runs.
+Algorithmic task results averaged over 25 random training runs
+(5 runs $\times$ 5 random seeds for neural network initialization).
+X-axis is number of sampled trajectories.
+} 
 \label{fig:results}
 \end{figure*}
 
 \subsection{Settings}
 \label{subsec:tasks}
-We test the performance of REPMD on a synthetic bandit problem and the algorithmic tasks from OpenAI gym library \citep{brockman2016openai}. The synthetic multi-armed bandit problem has 10,000 distinct actions. The reward of each action $i$ is initialized by $r_i = s_i^{8}$, where $s_i$ is randomly sampled from a uniform distribution over $[0,1)$. Each action $i$ is represented by a randomly sampled feature vector $\omega_i\in \mathbb{R}^{20}$ from standard normal distribution. Note that these features are fixed during training. We further test our method on five algorithmic tasks from the OpenAI gym library, in rough order of difficulty: Copy, DuplicatedInput, RepeatCopy, Reverse, and ReversedAddition \citep{brockman2016openai}. Lastly, we test PMAC using standard continuous-control benchmarks from OpenAI Gym utilizing the Mujoco environment \citep{brockman2016openai,todorov2012mujoco}, including Hopper, Walker2d, HalfCheetah, Ant and Humanoid. The details of algorithmic and mujoco tasks are provided in \cref{subsec:benchmarks}. 
 
-Note that only cumulative rewards are available in both synthetic bandit problem and algorithmic tasks. Therefore value-based RL algorithms can not be applied in this setting. We compare REPMD against REINFORCE with entropy regularization (MENT) \citep{williams1992simple} and under-appreciated reward exploration (UREX) \citep{nachum2017improving}, which are the state-of-the-art policy-based algorithms in algorithmic tasks to our best knowledge. For continuous control tasks, we compare PMAC to deep deterministic policy gradient (DDPG) \citep{lillicrap2015continuous}, an efficient off-policy deep RL methods, twin delayed deep deterministic policy gradient algorithm (TD3) \citep{fujimoto2018addressing}, a recent extension to DDPG by applying the double Q-learning trick to address over-estimation problem when function approximations are adopted, and Soft-Actor-Critic (SAC) \citep{haarnoja2018soft}, a recent state-of-the-art off-policy algorithm on a number of benchmarks. All these algorithms are implemented in rlkit \footnote{https://github.com/vitchyr/rlkit}. We do not include TRPO and PPO as our baselines in the experiments since their performance are dominated by SAC and TD3 as shown in \citep{haarnoja2018soft,fujimoto2018addressing}. 
+We first investigate the performance of REPMD on a synthetic bandit problem
+and the algorithmic task suite from the OpenAI gym %library 
+\citep{brockman2016openai}.
+The synthetic multi-armed bandit problem has 10,000 distinct actions,
+where
+the reward of each action $i$ is initialized by $r_i = s_i^{8}$
+such that
+%where 
+$s_i$ is randomly sampled from a uniform $[0,1)$ distribution.
+Each action $i$ is represented by a randomly sampled feature vector
+$\omega_i\in \mathbb{R}^{20}$ from standard normal distribution.
+Note that these features are fixed during training.
+We further test our method on five algorithmic tasks from the OpenAI gym
+library, in rough order of difficulty:
+Copy, DuplicatedInput, RepeatCopy, Reverse, and ReversedAddition
+\citep{brockman2016openai}.
+%
+Second, we test the second PMAC approach on continuous-control benchmarks
+from OpenAI Gym, utilizing the Mujoco environment
+\citep{brockman2016openai,todorov2012mujoco};
+including Hopper, Walker2d, HalfCheetah, Ant and Humanoid.
+The details of the algorithmic and Mujoco tasks are provided in
+\cref{subsec:benchmarks}. 
+
+Note that only cumulative rewards are available in both the
+synthetic bandit and algorithmic tasks.
+Therefore, value-based RL algorithms can not be applied in this setting.
+This restriction compels us to compare REPMD against
+REINFORCE with entropy regularization (MENT) \citep{williams1992simple}
+and under-appreciated reward exploration (UREX) \citep{nachum2017improving},
+which, to the best of our knowledge,
+are the state-of-the-art policy-based algorithms for these algorithmic tasks. 
+%
+For the continuous control tasks, we compare the second PMAC approach
+to deep deterministic policy gradient (DDPG) \citep{lillicrap2015continuous},
+an efficient off-policy deep RL methods;
+twin delayed deep deterministic policy gradient algorithm (TD3)
+\citep{fujimoto2018addressing},
+a recent extension to DDPG by applying the double Q-learning trick
+to address over-estimation problem when function approximations are adopted;
+and Soft-Actor-Critic (SAC) \citep{haarnoja2018soft},
+a recent state-of-the-art off-policy algorithm on a number of benchmarks.
+All of these algorithms are implemented in \emph{rlkit}.%
+%
+\footnote{
+https://github.com/vitchyr/rlkit
+} 
+We do not include TRPO and PPO in these experiments,
+as their performance is dominated by SAC and TD3,
+as shown in \citep{haarnoja2018soft,fujimoto2018addressing}. 
 
 
 \subsection{Comparative Evaluation}
 
-The results on synthetic bandit problem and algorithmic tasks are reported in \cref{fig:results}. It is clear that REPMD substantially outperforms the competitors on all of these benchmark tasks. REPMD is able to consistently achieve the highest score and learn substantially faster than UREX. We also find the performance of UREX is very unstable. On the difficult tasks, including RepeatCopy, Reverse and ReversedAddition, UREX can only successfully find appropriate solutions a few times out of 5 runs for each random seed, which brings the overall scores down. This observation creates the gap between our presented results with the ones reported in the paper\footnote{The results reported in \citet{nachum2017improving} averages over 5 runs of random restart, while our results are averaged over 25 random training runs (5 runs $\times$ 5 random seed for neural network initialization). }. Note that the performance of REPMD is sill significantly better than UREX even compared with the results reported in \citet{nachum2017improving}. 
+The results on synthetic bandit problem and algorithmic tasks are reported 
+in \cref{fig:results}. 
+It is clear that REPMD substantially outperforms the baseline methods
+on all of these tasks.
+REPMD appears able to consistently achieve a higher score and
+learn substantially faster than UREX.
+We also find the performance of UREX is unstable.
+On the difficult tasks, including RepeatCopy, Reverse and ReversedAddition,
+UREX can only successfully find appropriate solutions a few times out of
+5 runs for each random seed, which brings the overall scores down.
+This observation explains the gap between the results we find here
+and those reported in \citet{nachum2017improving}.%
+%
+\footnote{
+The results reported in \citep{nachum2017improving} are averaged over 
+5 runs of random restarting,
+while our results are averaged over 25 random training runs
+(5 runs $\times$ 5 random seed for neural network initialization). 
+}
+Note that the performance of REPMD is sill significantly better than
+UREX even compared to the results reported in \citet{nachum2017improving}. 
 
 \begin{figure*}[t]
 \begin{center}
 \includegraphics[width=0.8\linewidth]{./mujoco-results.pdf}
 \end{center}
 \caption{
-Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on mujoco tasks. Plots show mean reward with standard error during training, averaged over five different instances with different random seeds. X-axis is millions of environment steps. We observe that PMAC is consistently able to math and, in many cases, outperform all baseline algorithms across all tasks, both in terms of final performance and sample efficiency. }
+Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on
+Mujoco tasks (with SAC+R (gray) added on Humanoid).
+Plots show mean reward with standard error during training,
+averaged over five different instances with different random seeds.
+X-axis is millions of environment steps.
+We observe that PMAC is consistently able to match and, in many cases,
+the performance of the baseline algorithms across all tasks,
+both in terms of final performance and sample efficiency;
+the sole exception being SAC+R on Humanoid.
+}
 \label{fig:result-mujoco} 
 \end{figure*}
 
