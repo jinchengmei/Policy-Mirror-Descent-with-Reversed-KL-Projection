@@ -438,7 +438,7 @@ For the algorithmic tasks, policy is parameterized by a recurrent neural network
 %\ \ \ \ clip norm & 10 & 10 & 10 & 10 & 40\\
 %\hline
 
-We use standard gaussian policy for all experimented algorithms in the mujoco tasks. Two layer fully-connected feed-forward neural networks with hidden dimension 300 and ReLU nonlinearity are applied to parameterize policy, soft state value, and soft-Q value. We batch size 256 for all algorithms on all tasks. The lag parameter $\alpha$ of PMAC for target value network update is 0.01 in all tasks.  The other domain-dependent PMAC parameters are summarized in \cref{table:paras-mujoco}.
+We use standard gaussian policy for all experimented algorithms in the mujoco tasks. Two layer fully-connected feed-forward neural networks with hidden dimension 300 and ReLU nonlinearity are applied to parameterize policy, soft state value, and soft-Q value. We batch size 256 for all algorithms on all tasks. The lag parameter $\alpha$ of PMAC for target value network update is 0.01, and the number of training steps is set as $M = 100$ in all tasks. The other domain-dependent PMAC parameters are summarized in \cref{table:paras-mujoco}.
 
 \begin{table}[ht]
 \caption{REPMD Hyperparameters in Mujoco Tasks} % title of Table
