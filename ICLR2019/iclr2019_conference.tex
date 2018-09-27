@@ -21,7 +21,41 @@
 \newcommand{\todor}[2][]{\todo[color=blue!25,size=\small,#1]{Ruitong: #2}}
 %\setlength{\marginparwidth}{2in}
 
-\title{Policy Mirror Descent with Reversed KL Projection}
+%\title{Policy Mirror Descent with Reversed KL Projection}
+%\title{Policy Mirror Descent with Reversed Projection}
+%\title{Projection in Policy Mirror Descent}
+%\title{Projection for Policy Mirror Descent}
+%\title{Reversed Entropy Policy Mirror Descent}
+%\title{Reversed Projection for Policy Mirror Descent}
+%\title{Reversed KL Policy Mirror Descent}
+%\title{Reversed Divergence Policy Mirror Descent}
+%\title{Reverse Divergence Policy Mirror Descent}
+\title{Exploration with Policy Mirror Descent}
+%\title{Exploration via Policy Mirror Descent}
+%\title{Exploration in Policy Mirror Descent}
+%\title{Exploration for Policy Mirror Descent}
+%\title{Exploratory Policy Mirror Descent}
+%\title{Enhancing Exploration in Policy Mirror Descent}
+%\title{Augmenting Policy Mirror Descent with Reversed KL Projection}
+%\title{Augmented Policy Mirror Descent}
+%\title{Incorporating Principled Exploration in Policy Mirror Descent}
+%\title{Incorporating Exploration in Policy Mirror Descent}
+%\title{Improving Exploration in Policy Mirror Descent}
+%\title{Policy Mirror Descent with Principled Exploration}
+%\title{Policy Mirror Descent with Exploration}
+%\title{Policy Mirror Descent with Reversed Divergence}
+
+
+% Authors must not appear in the submitted version. They should be hidden
+%\title{Policy Mirror Descent with Reversed KL Projection}
+%\title{Augmenting Policy Mirror Descent with Reversed KL Projection}
+%\title{Augmented Policy Mirror Descent}
+%\title{Incorporating Principled Exploration in Policy Mirror Descent}
+%\title{Incorporating Exploration in Policy Mirror Descent}
+%\title{Exploration for Policy Mirror Descent}
+%\title{Policy Mirror Descent with Principled Exploration}
+%\title{Policy Mirror Descent with Exploration}
+
 
 % Authors must not appear in the submitted version. They should be hidden
 % as long as the \iclrfinalcopy macro remains commented out below.
@@ -65,7 +99,9 @@ Address \\
 \maketitle
 
 \begin{abstract}
-Policy optimization is a basic problem in reinforcement learning. This paper proposes Reversed Entropy Policy Mirror Descent (REPMD), achieving two properties that enhance on-line exploration: preventing early convergence to  sub-optimal policies, and monotonically increasing a performance measure. REPMD adopts maximum entropy exploration within the classic mirror descent framework, and updates policy by a reversed KL projection. This approach overcomes undesirable mode seeking behaviour, while still enjoying the policy improvement guarantee. Experiments on bandit and algorithmic tasks demonstrate that the proposed method achieves better exploration than both undirected maximum entropy exploration and directed exploration with standard entropy projection.
+\input{abstract}
+%\vskip1\baselineskip
+%\input{abstract_old}
 \end{abstract}
 
 \section{Introduction}
