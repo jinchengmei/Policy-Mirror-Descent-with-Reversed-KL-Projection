@@ -1,0 +1,131 @@
+
+
+\section{Policy Mirror Descent}
+\label{subsec:revisitTRPO}
+
+\newcommand{\real}{\mathbb{R}}
+
+
+We begin with the development of the basic Policy Mirror Descent (PMD) strategy,
+which will form the basis for our subsequent algorithms and their analyses.
+As mentioned in the introduction, our analysis of this and subsequent methods
+focuses on the \emph{non-convex} setting.
+
+Consider the following local optimization problem:
+given a \emph{reference policy} $\refPi$ (usually the current policy), 
+maximize the prox regularized expected reward,
+using relative entropy as the regularizer:
+%
+\begin{equation}
+\label{eq:max_expected_reward_plus_relative_entropy}
+\pi_{\theta} = \argmax\limits_{\pi_\theta \in \Pi} { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
+\end{equation}
+%
+Relative entropy regularization has been widely investigated in
+online learning and constrained optimization
+\citep{nemirovskii1983problem,beck2003mirror},
+primarily as a component of the mirror descent algorithm.
+Observe that when $\refPi$ is the uniform distribution,
+\cref{eq:max_expected_reward_plus_relative_entropy}
+reduces to entropy regularized expected reward.
+It is important to note that,
+since we are interested in the non-convex setting
+and only assume that
+$\pi$ is parametrized as a smooth
+function of $\theta \in \real^d$,
+$\Pi$ is generally a non-convex subset of the simplex.
+Therefore, 
+\cref{eq:max_expected_reward_plus_relative_entropy}
+is a difficult constrained optimization problem.
+
+A useful way to decompose this constrained optimization
+is to consider an alternating lift-and-project procedure
+that isolates the different computational challenges.
+%
+\begin{equation}
+\label{eq:pmd}
+\begin{split}
+\text{\bf (Project Step)} \quad &\argmin\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}, \\
+\text{\bf (Lift Step)}  \quad & \text{where}\ \ \bar{\pi}_{\tau}^* =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) } }. 
+\end{split}
+\end{equation}
+%
+Crucially, the reformulation \cref{eq:pmd} remains equivalent to the
+original problem \cref{eq:max_expected_reward_plus_relative_entropy},
+in that it preserves the same set of solutions,
+as established in \cref{prop:mirrordescent_projection}.
+
+\begin{prop}
+\label{prop:mirrordescent_projection}
+Given a \emph{reference policy} $\refPi$,
+\[
+ \argmax\limits_{\pi_\theta \in \Pi} { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } } 
+ = \argmin\limits_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*) }.
+\]
+\end{prop}
+
+Note that this result holds even for the non-convex setting.
+%
+The reformulation \cref{eq:pmd} immediately leads to our PMD algorithm:
+lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$,
+then perform multiple steps of gradient descent on the project step
+to update $\pi_{\theta_{t+1}}$.%
+%
+\footnote{
+To estimate this gradient one would need to use self-normalized importance
+sampling \cite{owen2013monte}.
+We omit the details here since PMD is not our main algorithm;
+similar techniques can be found in the implementation of REPMD. 
+% in cref-tbd.
+}
+%Note that vanilla gradient descent methods for TRPO can be interpreted as performing only one step gradient descent for the project step. \todor[]{Is it correct?} 
+
+When $\Pi$ is a convex set, one can show that PMD asymptotically converges to the optimal policy \citep{nemirovskii1983problem,beck2003mirror}. 
+The next proposition shows that despite the non-convexity of $\Pi$,
+PMD still enjoys desirable properties.
+
+\begin{prop}
+\label{prop:monoto_policymirrordescent}
+Let $\pi_{\theta_{t}}$ denote the policy produced at step $t$ of
+the update sequence.
+Then PMD satisfies the following properties for an arbitrary 
+parametrization of $\pi$.
+\begin{enumerate}
+	\item {\bf (Monotonic Improvement Guarantee)} 
+	%The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
+	If the project step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then
+	 \begin{equation*}
+	\oep_{\rho \sim \pi_{\theta_{t+1}}}{r(\rho)} - \oep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \ge 0.
+	\end{equation*}
+	\item  {\bf (Global Optimum Guarantee)} If the project step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then $ \pi_{\theta_{t}}$ converges to the global optimum $\pi^*$, i.e. 
+	\[
+\lim_{t\rightarrow\infty}\oep_{\rho \sim \pi_{\theta_t}}{  r(\rho)}
+=
+	 \oep_{\rho \sim \pi^*}{  r(\rho)} \ge \oep_{\rho \sim \pi}{  r(\rho)}, \quad \forall \pi \in \Pi.
+	\]
+	\item {\bf (Fixed Points)} Assume that the project step is optimized by gradient descent, then the fixed points of PMD are the 
+	 stationary points of the expected reward $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$. 
+\end{enumerate}
+\end{prop}
+
+Despite these desirable properties, 
+\cref{prop:monoto_policymirrordescent}
+relies on the condition that the projection step in PMD is solved to
+global optimality.
+It is usually not practical to achieve such a stringent requirement
+when $\pi_\theta$ is not convex in $\theta$,
+limiting the applicability of \cref{prop:monoto_policymirrordescent}.
+
+Another shortcoming with this naive strategy is 
+that PMD typically gets trapped in poor local optima.
+Indeed, while the relative entropy regularizer help prevent
+a large policy update, it also tends to limit exploration.
+Moreover, minimizing the KL divergence
+$\KL(\pi_\theta \| \bar{\pi}_\tau^*)$
+is known to be \emph{mode seeking} \citep{kevin2012machine},
+which can lead to mode collapse during the learning process.
+Once a policy $\bar{\pi}_\tau^*$ has lost important modes,
+learning can easily become trapped at a sub-optimal policy.
+Unfortunately, at such points,
+the relative entropy regularizer does not encourage further exploration.
+
