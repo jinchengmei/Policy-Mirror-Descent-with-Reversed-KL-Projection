@@ -56,9 +56,10 @@ Note that only cumulative rewards are available in both the
 synthetic bandit and algorithmic tasks.
 Therefore, value-based RL algorithms can not be applied in this setting.
 This restriction compels us to compare REPMD against
-REINFORCE with entropy regularization (MENT) \citep{williams1992simple}
-and under-appreciated reward exploration (UREX) \citep{nachum2017improving},
-which, to the best of our knowledge,
+REINFORCE with entropy regularization (MENT) \citep{williams1992simple},
+and under-appreciated reward exploration (UREX) \citep{nachum2017improving}.
+To the best of our knowledge,
+these
 are the state-of-the-art policy-based algorithms for these algorithmic tasks. 
 %
 For the continuous control tasks, we compare the second PMAC approach
@@ -90,8 +91,8 @@ REPMD appears able to consistently achieve a higher score and
 learn substantially faster than UREX.
 We also find the performance of UREX is unstable.
 On the difficult tasks, including RepeatCopy, Reverse and ReversedAddition,
-UREX can only successfully find appropriate solutions a few times out of
-5 runs for each random seed, which brings the overall scores down.
+UREX only finds solutions a few times out of 5 runs for each random seed,
+which brings the overall scores down.
 This observation explains the gap between the results we find here
 and those reported in \citet{nachum2017improving}.%
 %
@@ -114,15 +115,42 @@ Mujoco tasks (with SAC+R (gray) added on Humanoid).
 Plots show mean reward with standard error during training,
 averaged over five different instances with different random seeds.
 X-axis is millions of environment steps.
-We observe that PMAC is consistently able to match and, in many cases,
-the performance of the baseline algorithms across all tasks,
-both in terms of final performance and sample efficiency;
-the sole exception being SAC+R on Humanoid.
+%We observe that PMAC is consistently able to match and, in many cases,
+%the performance of the baseline algorithms across all tasks,
+%both in terms of final performance and sample efficiency;
+%the sole exception being SAC+R on Humanoid.
 }
 \label{fig:result-mujoco} 
 \end{figure*}
 
-\cref{fig:result-mujoco} presents the total mean returns of evaluation rollouts during training of all algorithms. Results of each algorithm are averaged over five different instances with different random seeds. The solid curves corresponds to the mean and the shaded region to the standard errors over the five trials. For fair comparison with PMAC, we implement the double-Q but not the reparameterization trick (see equation (11)-(13) in \citep{haarnoja2018soft}) for SAC, which expains the discrepancy with the reported results in \citep{haarnoja2018soft}. We observe that without the reparameterization trick SAC cannot make any progress in the hardest problem Humanoid. To clarify this we also report the result of SAC with such trick on Humanoid using the author's GitHub implementation. The results show that PMAC matches or, in many cases, surpasses all other baseline algorithms in both final performance and sample efficiency across all tasks. In Humanoid, although PMAC is outperformed in the learning speed, its final performance is still comparable with SAC. Note that the reparameterization trick could also be applied in PMAC. We will include this in PMAC in the future work.
+\cref{fig:result-mujoco} presents the results on the 
+continuous-control benchmarks, reporting the total mean returns
+on evaluation rollouts obtained by the algorithms during training.
+These
+results are averaged over five different instances
+with different random seeds.
+The solid curves corresponds to the mean and the shaded region to the
+standard errors over the five trials.
+To ensure a fair comparison with PMAC, we implemented the double-Q
+but not the reparameterization trick for SAC 
+(see equation (11)-(13) in \citep{haarnoja2018soft}).
+This difference explains the discrepancy between the results we see here
+and those reported in \citep{haarnoja2018soft}.
+We observe that without the reparameterization trick SAC cannot make
+any progress in the hardest problem Humanoid.
+Therefore, to gain further clarity, 
+we also report the result of SAC with the reparameterization trick,
+denoted SAC+R,
+on Humanoid using the author's GitHub implementation.
+The results show that PMAC matches or, in many cases, surpasses all other
+baseline algorithms in both final performance and sample efficiency across
+tasks, except compared to SAC+R in Humanoid.
+In Humanoid, although SAC+R outperforms PMAC,
+its final performance is still comparable with SAC+R.
+Note that the reparameterization trick that benefits SAC
+could also be applied in PMAC;
+we have yet to add this modification and
+will include this in PMAC in the future work.
 
 
 %\begin{wrapfigure}{R}{0.5\textwidth}
@@ -151,7 +179,8 @@ The comparative evaluations provided in the previous sections suggest that our p
 \begin{center}
 \includegraphics[width=0.5\linewidth]{./ablation-results.pdf}
 \end{center}
-\caption{Ablation Study by comparing REPMD and PMAC with designed baselines on ReversedAddition and Ant. }
+\caption{Ablation Study of REPMD and PMAC %with designed baselines
+on ReversedAddition and Ant. }
 \label{fig:ablation}
 \end{figure*}
 

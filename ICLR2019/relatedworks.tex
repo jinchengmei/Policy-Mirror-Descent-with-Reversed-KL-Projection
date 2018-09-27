@@ -68,12 +68,14 @@ which is then approximated similar to a cross entropy loss
 \citep{peters2007reinforcement,wierstra2008episodic}.
 
 TRPO/PPO also has a similar formulation to
-\cref{eq:max_expected_reward_plus_relative_entropy}
-as a constrained version with a mean seeking KL divergence
+\cref{eq:max_expected_reward_plus_relative_entropy},
+using a constrained version with a mean seeking KL divergence
 \cite{schulman2015trust,schulman2017proximal}. 
 Our proposed method includes additional modifications that,
 as shown in \cref{sec:experiments}, significantly improve performance.
-UREX also uses the same mean seeking KL divergence for regularization,
+UREX also uses %the %same 
+mean seeking KL %divergence 
+for regularization,
 which encourages exploration but also complicates the optimization;
 as shown in \cref{sec:experiments},
 UREX is significantly less efficient than the method proposed here.
@@ -95,7 +97,7 @@ similar monotonic improvement guarantee exists for TRPO, but only for an
 impractical formulation.%
 %
 \footnote{
-	For the monotonic improvement guarantee to hold,
+	For the monotonic improvement guarantee, % to hold,
 	TRPO must use $\KL^{\max} $ rather than the stanard KL divergence.
 } 
 Here, by contrast,
