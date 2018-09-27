@@ -33,7 +33,7 @@ has been discussed in TRPO \citep{schulman2015trust}
 and MPO \citep{abdolmaleki2018maximum},
 where it is noted that proximal regularization
 significantly improves learning stability.
-GAC seeks to match the mean of Gaussian policies in the Project Step,
+GAC seeks to match the mean of Gaussian policies under second order approximation in the Project Step,
 instead of directly minimizing the KL divergence with gradient descent.
 %
 Although one might also attempt to interpret ``one-step'' methods
@@ -61,27 +61,17 @@ is applied directly to the policy space.
 The literature on relative entropy policy search also uses a similar
 KL divergence regularization scheme
 \citep{peters2010relative,van2015learning},
-but on over joint state-action distributions.
+but on joint state-action distributions.
 Instead of KL divergence, Reward-Weighted Regression (RWR) uses
 a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$,
 which is then approximated similar to a cross entropy loss
 \citep{peters2007reinforcement,wierstra2008episodic}.
 
-TRPO also has a similar formulation to
+TRPO/PPO also has a similar formulation to
 \cref{eq:max_expected_reward_plus_relative_entropy}
 as a constrained version with a mean seeking KL divergence
-\citep{schulman2015trust}. 
-Unfortunately, the monotonic improvement guarantee only exists for an
-impractical formulation of TRPO.%
-%
-\footnote{
-For the monotonic improvement guarantee to hold,
-TRPO must use $\KL^{\max} $ rather than the stanard KL divergence.
-} 
-Here, by contrast,
-we use the lift-and-project reformulation to establish a monotonic
-improvement guarantee in a simple and direct way.
-Our proposed method also includes additional modifications that,
+\cite{schulman2015trust,schulman2017proximal}. 
+Our proposed method includes additional modifications that,
 as shown in \cref{sec:experiments}, significantly improve performance.
 UREX also uses the same mean seeking KL divergence for regularization,
 which encourages exploration but also complicates the optimization;
@@ -101,6 +91,16 @@ can efficiently utilize off-policy data, this approach loses the
 desirable monotonic improvement guarantee.
 
 In terms of existing theoretical analyses, 
+similar monotonic improvement guarantee exists for TRPO, but only for an
+impractical formulation.%
+%
+\footnote{
+	For the monotonic improvement guarantee to hold,
+	TRPO must use $\KL^{\max} $ rather than the stanard KL divergence.
+} 
+Here, by contrast,
+we use the lift-and-project reformulation to establish a monotonic
+improvement guarantee in a simple and direct way.
 MPO provides a guarantee on the regularized reward of a non-parametric policy,
 but this depends on the assumption that a non-convex optimization problem
 can be solved globally.
