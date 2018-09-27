@@ -3,10 +3,7 @@
 \label{sec:experiments}
 
 We evaluate the main proposed methods, REPMD and PMAC,
-on a number of benchmark tasks
-%against state-of-the-art baselines.
-against strong baselines.
-%We first introduce the experimented tasks, then present the experiment results.
+on a number of benchmark tasks against strong baseline methods.
 Additional implementation details are provided in \cref{subsec:implementation}. 
 
 \begin{figure*}[t]
@@ -29,14 +26,11 @@ X-axis is number of sampled trajectories.
 \label{subsec:tasks}
 
 We first investigate the performance of REPMD on a synthetic bandit problem
-and the algorithmic task suite from the OpenAI gym %library 
-\citep{brockman2016openai}.
+and the algorithmic task suite from the OpenAI gym \citep{brockman2016openai}.
 The synthetic multi-armed bandit problem has 10,000 distinct actions,
 where
 the reward of each action $i$ is initialized by $r_i = s_i^{8}$
-such that
-%where 
-$s_i$ is randomly sampled from a uniform $[0,1)$ distribution.
+such that $s_i$ is randomly sampled from a uniform $[0,1)$ distribution.
 Each action $i$ is represented by a randomly sampled feature vector
 $\omega_i\in \mathbb{R}^{20}$ from standard normal distribution.
 Note that these features are fixed during training.
@@ -86,7 +80,7 @@ as shown in \citep{haarnoja2018soft,fujimoto2018addressing}.
 The results on synthetic bandit problem and algorithmic tasks are reported 
 in \cref{fig:results}. 
 It is clear that REPMD substantially outperforms the baseline methods
-on all of these tasks.
+on these tasks.
 REPMD appears able to consistently achieve a higher score and
 learn substantially faster than UREX.
 We also find the performance of UREX is unstable.
@@ -150,7 +144,7 @@ its final performance is still comparable with SAC+R.
 Note that the reparameterization trick that benefits SAC
 could also be applied in PMAC;
 we have yet to add this modification and
-will include this in PMAC in the future work.
+will add this to PMAC in future work.
 
 
 %\begin{wrapfigure}{R}{0.5\textwidth}
@@ -164,16 +158,42 @@ will include this in PMAC in the future work.
 \subsection{Ablation Study}
 \label{subsec:ablationstudy}
 
-The comparative evaluations provided in the previous sections suggest that our proposed algorithms based on the policy optimization method \ref{eq:repmd} outperform conventional RL methods on a number of challenging benchmarks. In this section, we further investigate how each novel component of \cref{eq:repmd} boosts the learning performance, by performing an ablation study on ReversedAddition and Ant.
+The comparative evaluations provided in the previous sections suggest 
+that our proposed algorithms 
+%based on the policy optimization method \ref{eq:repmd} 
+outperform conventional RL methods on a number of challenging benchmarks.
+In this section, we further investigate how each novel component of
+\cref{eq:repmd} improves learning performance,
+by performing an ablation study on ReversedAddition and Ant.
 
 %\piccaption[]{Ablation Study.\label{fig:ablation}}
 %\parpic[r]{\includegraphics[width=0.35\linewidth]{ablation.pdf}}
 
-\textbf{Importance of entropy regularizer.} The main difference between the function objective in \cref{eq:repmd} with the PMD objective \cref{eq:pmd} is to add another entropy regularizer. We demonstrate the importance of this choice by presenting the results of REPMD and PMAC without the extra entropy regularizer, i.e. $\tau'=0$.
+\textbf{Importance of entropy regularizer.}
+The main difference between the objective in \cref{eq:repmd} and the PMD
+objective \cref{eq:pmd} is the entropy regularizer.
+We demonstrate the importance of this choice by presenting the results of REPMD and PMAC without the extra entropy regularizer, i.e. $\tau'=0$.
 
-\textbf{Importance of KL divergence projection.} Another important difference between \cref{eq:repmd} with other RL methods is to use a project step to optimize policy, rather than direct SGD of the objective function. To show the importance of the project step, we test REPMD and PMAC without projection, which only performs one step of gradient update at each iteration of training. 
+\textbf{Importance of KL divergence projection.}
+Another important difference between \cref{eq:repmd} with other RL methods
+is to use a Project Step to optimize the policy,
+rather than direct SGD of the objective function.
+To show the importance of the Project Step,
+we test REPMD and PMAC without projection,
+which only performs one step of gradient update at each iteration of training. 
 
-\textbf{Importance of direction of KL divergence.} We choose PMD \ref{eq:pmd} as another baseline to prove the effectiveness of using the \emph{mean seeking} direction of KL divergence in the project step. Similar as in REPMD, we add a separate tempreture parameter $\tau' > 0$ to the original objective function in (\ref{eq:pmd}) to encourage policy exploration, which gives $\argmax_{\pi_\theta \in \Pi}{ \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \text{KL}(\pi_\theta \| \refPi) } + \tau'\cH(\pi_\theta) }$. We name this algorithm PMD+entropy, The corresponded algorithms in actor-critic setting, named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
+\textbf{Importance of direction of KL divergence.}
+We choose PMD \cref{eq:pmd} as another baseline
+to prove the effectiveness of using the \emph{mean seeking}
+direction of KL divergence in the project step.
+Similar to REPMD, we add a separate temperature parameter $\tau' > 0$
+to the original objective function in \cref{eq:pmd}
+to encourage policy exploration,
+which gives
+$\argmax_{\pi_\theta \in \Pi}{ \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \text{KL}(\pi_\theta \| \refPi) } + \tau'\cH(\pi_\theta) }$.
+We name this algorithm PMD+entropy.
+The corresponding algorithms in the actor-critic setting,
+named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
 
 \begin{figure*}[t]
 \begin{center}
@@ -184,5 +204,7 @@ on ReversedAddition and Ant. }
 \label{fig:ablation}
 \end{figure*}
 
-Results are presented in \cref{fig:ablation}, which clearly indicate all of the three major components of \cref{eq:repmd} are helpful for yielding better performance. 
+The results are presented in \cref{fig:ablation},
+which clearly indicate all of the three major components of \cref{eq:repmd}
+are helpful for achieving better performance. 
 
