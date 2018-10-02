@@ -63,11 +63,6 @@ then
 	\label{eq:SR}
 	\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
 	\end{equation}
-	\item  {\bf (Global Optimum Guarantee)} If the Project Step can be solved globally optimally, then $ \pi_{\theta_{t}}$ converges to the global optimum $\pi^*$, i.e. 
-	\[
-\lim_{t\rightarrow\infty}\SR(\pi_{\theta_t})=
-	\SR(\pi^*) \ge  \SR(\pi), \quad \forall \pi\in\Pi.
-	\]
 	\item {\bf (Fixed points)} Assume that the Project Step is optimized by gradient descent, then the fixed points of REPMD are the 
 	stationary points of the expected reward $\SR(\pi_\theta)$. 
 \end{enumerate}

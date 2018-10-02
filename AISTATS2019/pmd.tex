@@ -97,12 +97,6 @@ parametrization of $\pi$.
 	 \begin{equation*}
 	\oep_{\rho \sim \pi_{\theta_{t+1}}}{r(\rho)} - \oep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \ge 0.
 	\end{equation*}
-	\item  {\bf (Global Optimum Guarantee)} If the Project Step $\min\limits_{\pi_\theta \in \Pi}{\KL( \pi_\theta \| \bar{\pi}_{\tau}^* )}$ can be solved globally optimally, then $ \pi_{\theta_{t}}$ converges to the global optimum $\pi^*$, i.e. 
-	\[
-\lim_{t\rightarrow\infty}\oep_{\rho \sim \pi_{\theta_t}}{  r(\rho)}
-=
-	 \oep_{\rho \sim \pi^*}{  r(\rho)} \ge \oep_{\rho \sim \pi}{  r(\rho)}, \quad \forall \pi \in \Pi.
-	\]
 	\item {\bf (Fixed Points)} Assume that the Project Step is optimized by gradient descent, then the fixed points of PMD are the 
 	 stationary points of the expected reward $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$. 
 \end{enumerate}
