@@ -111,34 +111,14 @@ first frobulate the widgets,'' write ``As described by Cheesman
 (1985), we first frobulate the widgets.''  %Be sure to avoid
 %accidentally disclosing author identities through citations.
 
-Make sure that the figure caption does not get separated from the
-figure. Leave extra white space at the bottom of the page rather than
-splitting the figure and figure caption.
-\begin{figure}[h]
-\vspace{.3in}
-\centerline{\fbox{This figure intentionally left non-blank}}
-\vspace{.3in}
-\caption{Sample Figure Caption}
-\end{figure}
-
-
 \section{SUPPLEMENTARY MATERIAL}
 
 If you need to include additional appendices during submission, you
 can include them in the supplementary material file.
 
 %\subsubsection*{Acknowledgements}
-
 %Use the unnumbered third level heading for the acknowledgements.  All
 %acknowledgements go at the end of the paper.
-
-\subsubsection*{References}
-
-References follow the acknowledgements.  Use an unnumbered third level
-heading for the references section.  Any choice of citation style is
-acceptable as long as you are consistent.  Please use the same font
-size for references as for the body of the paper---remember that
-references do not count against your page length total.
 
 \bibliography{aistats2019_conference}
 
@@ -159,4 +139,9 @@ references do not count against your page length total.
     \newblock Neurogammon wins computer Olympiad.
     \newblock \textit{Neural Computation} \textbf{1}(3):321--323.
 \end{thebibliography}
+
+\newpage
+\appendix 
+\input{appendix}
+
 \end{document}
