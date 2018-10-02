@@ -25,6 +25,7 @@
 \bibliographystyle{apalike}
 
 \input{math_commands.tex}
+\usepackage{mathtools}
 
 \usepackage{hyperref}
 \usepackage{url}
@@ -100,45 +101,29 @@
 
 \input{conclusion}
 
-\subsubsection{Citations in Text}
-
-Citations within the text should include the author's last name and
-year, e.g., (Cheesman, 1985). References should follow any style that
-you are used to using, as long as their style is consistent throughout
-the paper.  Be sure that the sentence reads correctly if the citation
-is deleted: e.g., instead of ``As described by (Cheesman, 1985), we
-first frobulate the widgets,'' write ``As described by Cheesman
-(1985), we first frobulate the widgets.''  %Be sure to avoid
-%accidentally disclosing author identities through citations.
-
-\section{SUPPLEMENTARY MATERIAL}
-
-If you need to include additional appendices during submission, you
-can include them in the supplementary material file.
-
 %\subsubsection*{Acknowledgements}
 %Use the unnumbered third level heading for the acknowledgements.  All
 %acknowledgements go at the end of the paper.
 
 \bibliography{aistats2019_conference}
 
-\begin{thebibliography}{}
-\setlength{\itemindent}{-\leftmargin}
-\makeatletter\renewcommand{\@biblabel}[1]{}\makeatother
-\bibitem{} J.~Alspector, B.~Gupta, and R.~B.~Allen (1989).
-    \newblock Performance of a stochastic learning microchip.
-    \newblock In D. S. Touretzky (ed.),
-    \textit{Advances in Neural Information Processing Systems 1}, 748--760.
-    San Mateo, Calif.: Morgan Kaufmann.
-
-\bibitem{} F.~Rosenblatt (1962).
-    \newblock \textit{Principles of Neurodynamics.}
-    \newblock Washington, D.C.: Spartan Books.
-
-\bibitem{} G.~Tesauro (1989).
-    \newblock Neurogammon wins computer Olympiad.
-    \newblock \textit{Neural Computation} \textbf{1}(3):321--323.
-\end{thebibliography}
+%\begin{thebibliography}{}
+%\setlength{\itemindent}{-\leftmargin}
+%\makeatletter\renewcommand{\@biblabel}[1]{}\makeatother
+%\bibitem{} J.~Alspector, B.~Gupta, and R.~B.~Allen (1989).
+%    \newblock Performance of a stochastic learning microchip.
+%    \newblock In D. S. Touretzky (ed.),
+%    \textit{Advances in Neural Information Processing Systems 1}, 748--760.
+%    San Mateo, Calif.: Morgan Kaufmann.
+%
+%\bibitem{} F.~Rosenblatt (1962).
+%    \newblock \textit{Principles of Neurodynamics.}
+%    \newblock Washington, D.C.: Spartan Books.
+%
+%\bibitem{} G.~Tesauro (1989).
+%    \newblock Neurogammon wins computer Olympiad.
+%    \newblock \textit{Neural Computation} \textbf{1}(3):321--323.
+%\end{thebibliography}
 
 \newpage
 \appendix 

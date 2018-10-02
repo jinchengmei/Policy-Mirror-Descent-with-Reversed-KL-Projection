@@ -3,7 +3,7 @@
 \label{sec:intro}
 
 
-Model-free deep reinforcement learning (RL) has recently
+Deep reinforcement learning (RL) has recently
 been shown to be remarkably effective in solving
 challenging sequential decision making problems
 \citep{schulman2015trust,mnih2015human,silver2016mastering}.
@@ -60,13 +60,12 @@ following the lines of Mirror Descent
 \citep{nemirovskii1983problem,beck2003mirror}.
 Such a reformulation achieves two things.
 First, %this approach 
-it
-makes it easier to analyze policy optimization
+it is easier to analyze policy optimization
 in the parameter space:
 using this reformulation we can establish a monotonic improvement guarantee
 with a fairly simple proof,
 even in a non-convex setting.
-We also provide a study of the fixed point properties of this setup.
+We also study the fixed point properties of this setup.
 Second, the proposed reformulation has practical algorithmic consequences,
 suggesting, for example,
 that multiple gradient descent updates should be performed
@@ -109,7 +108,7 @@ and develop an actor-critic version that is effective in practice.
 \subsection{Notation and Problem Setting}
 \label{subsec:notations_and_settings}
 
-For simplicity, we only consider finite horizon
+We consider finite horizon
 settings with finite state and action spaces. 
 The behavior of an agent is modelled by a policy $\pi(a|s)$
 that specifies a probability distribution over a finite set of actions
@@ -140,6 +139,6 @@ $\Delta \triangleq \{ \pi | \sum_{\rho}{\pi(\rho)} = 1, \pi(\rho) \ge 0,
 to refer to the probability simplex over all possible trajectories. 
 Without loss of generality, we also assume that the state transition function
 is deterministic, and the discount factor $\gamma = 1$.
-This same simplification is also assumed in \citet{nachum2017improving}. 
+%This same simplification is also assumed in \citet{nachum2017improving}. 
 Results for the case of a stochastic state transition function are presented
 in \cref{sec:stochasticsetting}.

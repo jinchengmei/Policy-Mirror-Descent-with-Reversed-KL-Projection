@@ -176,8 +176,8 @@ We demonstrate the importance of this choice by presenting the results of REPMD 
 
 \textbf{Importance of KL divergence projection.}
 Another important difference between \cref{eq:repmd} with other RL methods
-is to use a Project Step to optimize the policy,
-rather than direct SGD of the objective function.
+is to use a Project Step to update the policy,
+rather than one SGD.
 To show the importance of the Project Step,
 we test REPMD and PMAC without projection,
 which only performs one step of gradient update at each iteration of training. 
@@ -191,7 +191,7 @@ to the original objective function in \cref{eq:pmd}
 to encourage policy exploration,
 which gives
 $\argmax_{\pi_\theta \in \Pi}{ \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \text{KL}(\pi_\theta \| \refPi) } + \tau'\cH(\pi_\theta) }$.
-We name this algorithm PMD+entropy.
+We name it PMD+entropy.
 The corresponding algorithms in the actor-critic setting,
 named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
 
