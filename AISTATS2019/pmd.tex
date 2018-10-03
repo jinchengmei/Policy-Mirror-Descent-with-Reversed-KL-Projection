@@ -123,6 +123,7 @@ Moreover, minimizing the KL divergence
 $\KL(\pi_\theta \| \bar{\pi}_\tau^*)$
 is known to be \emph{mode seeking} \citep{kevin2012machine},
 which can lead to mode collapse during the learning process.
+%Indeed, if the current policy has $0$ probability on some actions, the relative entropy term and the mode seeking projection will prevent the algorithm to explore these actions anymore.
 Once a policy $\bar{\pi}_\tau^*$ has lost important modes,
 learning can easily become trapped at a sub-optimal policy.
 Unfortunately, at such points,
