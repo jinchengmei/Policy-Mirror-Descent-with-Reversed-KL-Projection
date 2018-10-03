@@ -25,7 +25,6 @@
 \bibliographystyle{apalike}
 
 \input{math_commands.tex}
-\usepackage{mathtools}
 
 \usepackage{hyperref}
 \usepackage{url}
@@ -36,6 +35,13 @@
 \usepackage[capitalize]{cleveref}
 \crefname{prop}{Proposition}{Propositions}
 \crefname{thm}{Theorem}{Theorems}
+
+\usepackage{xr}
+\externaldocument{supplementary}
+
+%\usepackage{zref-xr}
+%\zxrsetup{toltxlabel}
+%\zexternaldocument*{supplementary}
 
 \begin{document}
 

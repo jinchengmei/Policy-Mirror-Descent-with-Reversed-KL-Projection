@@ -13,7 +13,17 @@
 \label{appsec:monoto_policymirrordescent}
 
 \begin{proof}
-	{\bf (Monotonic Improvement Guarantee)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. By expanding the KL divergence and rearranging terms, we have $ \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) - \sum_{\rho}{ \pi_{\theta_{t+1}}(\rho) r(\rho) } \leq - \sum_{\rho}{ \pi_{\theta_{t}}(\rho) r(\rho) }$, which gives $\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} \geq \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \geq 0$.
+	{\bf (Monotonic Improvement)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. Then we have,
+	{\small
+	\begin{equation*}
+	\begin{split}
+		&\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} = \tau \left[ \sum\limits_{\rho}{\pi_{\theta_{t+1}}(\rho) \cdot \frac{r(\rho)}{\tau}} - \sum\limits_{\rho}{\pi_{\theta_{t}}(\rho) \cdot \frac{r(\rho)}{\tau}} \right] \\
+		&= \tau \sum\limits_{\rho}{\left[ \pi_{\theta_{t+1}}(\rho) \log\left\{ \frac{ \pi_{\theta_{t}}(\rho) \exp\left\{\frac{r(\rho)}{\tau}\right\} }{ \sum\limits_{\rho^\prime}{ \pi_{\theta_{t}}(\rho^\prime) \exp\left\{\frac{r(\rho^\prime)}{\tau}\right\} } } \right\} - \pi_{\theta_{t+1}}(\rho) \log{ \pi_{\theta_{t}}(\rho)} - \pi_{\theta_{t}}(\rho) \log\left\{ \frac{ \pi_{\theta_{t}}(\rho) \exp\left\{\frac{r(\rho)}{\tau}\right\} }{ \sum\limits_{\rho^\prime}{ \pi_{\theta_{t}}(\rho^\prime) \exp\left\{\frac{r(\rho^\prime)}{\tau}\right\} } } \right\} + \pi_{\theta_{t}}(\rho) \log{ \pi_{\theta_{t}}(\rho) } \right]} \\
+		&= \tau \sum\limits_{\rho}{\left[ \pi_{\theta_{t+1}}(\rho) \log{ \bar{\pi}_\tau^*(\rho) } - \pi_{\theta_{t+1}}(\rho) \log{ \pi_{\theta_{t}}(\rho)} - \pi_{\theta_{t}}(\rho) \log{ \bar{\pi}_\tau^*(\rho) } + \pi_{\theta_{t}}(\rho) \log{ \pi_{\theta_{t}}(\rho) } \right]} \\
+		&= \tau \left[ \KL(\pi_{\theta_{t+1}} \Vert \bar{\pi}_\tau^*) - \KL(\pi_{\theta_{t}} \Vert \bar{\pi}_\tau^*) + \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \right] \ge \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \ge 0.
+	\end{split}
+	\end{equation*}
+	}
 	
 	{\bf (Fixed Points)} The stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$ is the $\pi_\theta$ which satisfies,
 	\begin{equation}
@@ -59,7 +69,7 @@
 
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
 \begin{proof}
-	{\bf (Monotonic Improvement Guarantee)} Using $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}}) = \min_{\pi_\theta \in \Pi}{ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat)$ and Jensen's inequality,
+	{\bf (Monotonic Improvement)} Using $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}}) = \min_{\pi_\theta \in \Pi}{ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat)$ and Jensen's inequality,
 	\begin{equation*}
 	\begin{split}
 	&\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat) = (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
@@ -157,7 +167,7 @@ The next lemma provides the derivation of the gradient estimation of REPMD (Lemm
 	\begin{equation}
 	\begin{split}
 	&\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) \approx -\frac{1}{K}\sum_{k=1}^K \frac{\bar{\pi}_{\tau,\tau^{\prime}}^* (\rho_k)}{\refPi(\rho_k)} \nabla_{\theta} \log \pi_\theta(\rho_k)\\ 
-	&= -\frac{1}{K}\sum_{k=1}^K \frac{ \refPi(\rho_k) \exp\left\{ \frac{r(\rho_k)-\tau^{\prime} \log \refPi(\rho_k) }{ \tau+\tau^{\prime}} \right\} }{\refPi(\rho_k)  \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} }  } \nabla_{\theta} \log \pi_\theta(\rho_k) \qquad \text{by \ref{eq:pitautauprime1} }  \\
+	&= -\frac{1}{K}\sum_{k=1}^K \frac{ \refPi(\rho_k) \exp\left\{ \frac{r(\rho_k)-\tau^{\prime} \log \refPi(\rho_k) }{ \tau+\tau^{\prime}} \right\} }{\refPi(\rho_k)  \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} }  } \nabla_{\theta} \log \pi_\theta(\rho_k) \qquad \text{by \cref{eq:pitautauprime1} }  \\
 	&\approx -\frac{1}{K}\sum_{k=1}^K \frac{\exp \{\omega_k\}} {\frac{1}{K} \sum_{j=1}^K \exp \{\omega_j\}} \nabla_{\theta} \log \pi_\theta(\rho_k) \\
 	&=  -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} } \qedhere.
 	\end{split}
@@ -408,7 +418,7 @@ Parameter & Values \\ [0.5ex] % inserts table
 %\ \ \ \ learning rate & 0.005 \\
 %\hline %inserts single line
 
-For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256 \citep{hochreiter1997long}. In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to (\ref{eq:gradient_estimator}), which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks (See \cref{appx:repmd-learning}). The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
+For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256 \citep{hochreiter1997long}. In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to \cref{eq:gradient_estimator}, which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks (See \cref{appx:repmd-learning}). The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
 
 \begin{table}[ht]
 \caption{REPMD Hyperparameters in Algorithmic Tasks} % title of Table
