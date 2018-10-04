@@ -105,19 +105,19 @@ Here, by contrast,
 we use the lift-and-project reformulation to establish a monotonic
 improvement guarantee in a simple and direct way.
 MPO also enjoys a monotonic
-improvement guarantee which can be recovered as a special case of our $\SR$ for $\tau^\prime = 0$.
+improvement guarantee and a fixed points property which can be recovered as a special case of our $\SR$ for $\tau^\prime = 0$. 
 SAC obtains a similar result with respect to the optimal achievable
 Q-values.
 All these results are obtained under the solvability assumption that a non-convex optimization problem can be solved globally.
 Furthermore, under the same assumption SAC is also shown to obtain a global optimum property. 
-Such property, while stronger than our fixed points guarantee at first sight, arguably is essentially a natural corollary from the solvability assumption.
-One way to see this is to consider its policy-based version.
-As mentioned above, the policy-based version of SAC degenerates to MENT,
-and this property becomes a tautology: assume that $\min_\pi \KL(\pi \| \pi^*_\tau)$ can be solved globally, then $\pi^*$ maximizes $\E_{\rho \sim \pi} r(\rho) + \tau \cH(\pi)$  globally.
+Such property, while stronger than our fixed points guarantee at first sight, arguably is essentially a natural corollary from the strong solvability assumption.
+One way to see this is to consider its policy-based version,i.e. MENT as mentioned above \cite{levine2018reinforcement}. 
+%As mentioned above, the policy-based version of SAC degenerates to MENT,
+The global optimum property now becomes a tautology: assume that $\min_\pi \KL(\pi \| \pi^*_\tau)$ can be solved globally, then $\pi^*$ maximizes $\E_{\rho \sim \pi} r(\rho) + \tau \cH(\pi)$  globally.
 %We have shown that similar results hold in the case of PMD/REPMD,
 In this paper, we have established something stronger:
 when the projection step cannot be efficiently solved to global optimality,
 we have shown that PMD/REPMD still preserve stationary points in 
 their respective, principled objectives.
-MPO and SAC have no such guarantee, as far as we are aware. 
+SAC has no such guarantee, as far as we are aware. 
 
