@@ -35,9 +35,8 @@ The benefits of regularizing with relative entropy has been discussed in TRPO \c
 where it is noted that proximal regularization
 significantly improves learning stability.
 As it is shown in \cref{subsec:compeval}, the performance of SAC heavily relies on the re-parametrization trick, which again restricts SAC to the continuous setting.
-%
-Moreover, REPMD is a purely policy-based method, which can be applied to the setting where only cumulative reward is available, and thus actor-critic algorithms can not be applied. 
-A policy-based version of SAC will degenerates to MENT, which as shown in \cref{subsec:compeval} is significantly outperformed by REPMD.
+%Moreover, REPMD is a purely policy-based method, which can be applied to the setting where only cumulative reward is available, and thus actor-critic algorithms can not be applied. 
+A policy-based version of SAC will degenerates to MENT \citep{levine2018reinforcement}, which as shown in \cref{subsec:compeval} is significantly outperformed by REPMD.
 Although one might also attempt to interpret ``one-step'' methods
 in terms of lift-and-project,
 these approaches would obliviously still differ from REPMD,
