@@ -67,8 +67,7 @@ The soft state-value function approximates the soft optimal state-value $\bar{V}
 = \\
 & \quad (\tau + \tau') \log \E _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
 \end{align*}
-}
-This suggests a Monte-Carlo estimate for
+}This suggests a Monte-Carlo estimate for
 $\bar{V}_{\tau,\tau^{\prime}}^*(s)$:
 by sampling one single action $a$ according to the reference policy $\refPi$,
 we have $\bar{V}_{\tau,\tau^{\prime}}^*(s)
@@ -83,14 +82,12 @@ the mean squared error,
 \label{eq:trainV}
 L (\phi) = \E_{s\sim \gD} \left[ \frac{1}{2} \left( \parV(s) -  \left[ \parQ(s,a ) - \tau' \log \bar{\pi}(a|s) \right] \right)^2 \right].
 \end{equation*}
-}
-%One might note that, in principle, there is no need to include a 
-%separate state-value approximation, since it can be directly computed
-%from a soft-Q function and reference policy, 
-%using \cref{soft-v-and-pi}.
-%However, 
-We also include a separate function approximator for the state-value
-can help stabilize the training \citep{haarnoja2018soft}. 
+}One might note that, in principle, there is no need to include a 
+separate state-value approximation, since it can be directly computed
+from a soft-Q function and reference policy, 
+using \cref{soft-v-and-pi}.
+However, including a separate function approximator for the state-value
+can help stabilize the training \citep{haarnoja2018soft}.
 The soft Q-function parameters $\psi$ is then trained to minimize the soft Bellman error using the state-value network,
 {\small
 \begin{equation*}
@@ -100,15 +97,13 @@ L(\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(
 }
 The policy parameters are updated by performing the Project Step in
 \cref{eq:repmd} with stochastic gradient descent,
-%
 {\small
 \begin{align*}
 \label{eq:trainpi}
 & L(\theta)  = \E_{s \sim \gD} \bigg[ \\
 & \quad \KL \bigg( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\}  \bigg\Vert\, \parPi(\cdot |s) \bigg) \bigg]
 \end{align*}
-}
-where we approximate $\bar{\pi}_{\tau,\tau^{\prime}}^*$ by the soft-Q and state-value function approximations. 
+}where we approximate $\bar{\pi}_{\tau,\tau^{\prime}}^*$ by the soft-Q and state-value function approximations. 
 
 Finally,
 we also use a target state-value network \citep{lillicrap2015continuous}

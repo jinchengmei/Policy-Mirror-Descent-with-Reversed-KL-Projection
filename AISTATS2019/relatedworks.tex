@@ -111,7 +111,7 @@ Q-values.
 All these results are obtained under the solvability assumption that a non-convex optimization problem can be solved globally.
 Furthermore, under the same assumption SAC is also shown to obtain a global optimum property. 
 Such property, while stronger than our fixed points guarantee at first sight, arguably is essentially a natural corollary from the solvability assumption.
-One way to see it is to consider its policy-based version.
+One way to see this is to consider its policy-based version.
 As mentioned above, the policy-based version of SAC degenerates to MENT,
 and this property becomes a tautology: assume that $\min_\pi \KL(\pi \| \pi^*_\tau)$ can be solved globally, then $\pi^*$ maximizes $\E_{\rho \sim \pi} r(\rho) + \tau \cH(\pi)$  globally.
 %We have shown that similar results hold in the case of PMD/REPMD,
