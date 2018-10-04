@@ -18,29 +18,24 @@ Finally, we develop a natural extension of REPMD to an actor-critic
 formulation by incorporating a value function approximator.
 We refer to this algorithm as Policy Mirror Actor-Critic (PMAC). 
 
-It is well known that data efficiency of policy-based methods 
-can be generally improved by adding a value-based critic.
+%It is well known that data efficiency of policy-based methods 
+%can be generally improved by adding a value-based critic.
 Given $\refPi$ and an initial state $s$,
 recall that the objective in the Lift Step of REPMD is
-{\small
 \begin{equation*}
 	\gO_{\text{REPMD}}(\pi, s) =   \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi)},
 \end{equation*}
-}
 where $\rho=  (s_1 = s, a_1, s_2, a_2, \ldots)$.
 To incorporate value function approximation, we need derive 
 the temporal consistency structure for this objective.
 %, which can be done as follows. 
 First, write
-{\small
 \begin{equation*}
 \begin{split}
  \gO_{\text{REPMD}}(\pi, s) &= \E_{a\sim \pi(\cdot \vert s)} [ r(s,a) + \gO_{\text{REPMD}}(\pi, s') \\
  &+ \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) ].
 \end{split}
 \end{equation*}
-}
-
 Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{REPMD}}(\pi, s) $ denote the optimal policy on state $s$. 
 %
 Further denote the soft optimal state-value function $\gO_{\text{REPMD}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s), s)$ by $\bar{V}_{\tau,\tau^{\prime}}^*(s)$, and let  $\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) = r(s,a) + \gamma \bar{V}_{\tau,\tau^{\prime}}^*(s')$ be the soft-Q function.
@@ -67,12 +62,12 @@ The soft state-value function approximates the soft optimal state-value $\bar{V}
 {\small
 \begin{align*}
 \hspace{-0.3cm}
-\bar{V}_{\tau,\tau^{\prime}}^*(s) 
+&\bar{V}_{\tau,\tau^{\prime}}^*(s) 
 %= & (\tau + \tau') \log \sum_a \refPi(a|s) \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \\ 
-= & (\tau + \tau') \log \E _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
+= \\
+& \quad (\tau + \tau') \log \E _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
 \end{align*}
 }
-
 This suggests a Monte-Carlo estimate for
 $\bar{V}_{\tau,\tau^{\prime}}^*(s)$:
 by sampling one single action $a$ according to the reference policy $\refPi$,
@@ -84,37 +79,35 @@ the soft state-value function can be trained to minimize
 the mean squared error,
 %
 {\small
-\begin{equation}
+\begin{equation*}
 \label{eq:trainV}
 L (\phi) = \E_{s\sim \gD} \left[ \frac{1}{2} \left( \parV(s) -  \left[ \parQ(s,a ) - \tau' \log \bar{\pi}(a|s) \right] \right)^2 \right].
-\end{equation}
+\end{equation*}
 }
-
-One might note that, in principle, there is no need to include a 
-separate state-value approximation, since it can be directly computed
-from a soft-Q function and reference policy, 
-using \cref{soft-v-and-pi}.
-However, including a separate function approximator for the state-value
+%One might note that, in principle, there is no need to include a 
+%separate state-value approximation, since it can be directly computed
+%from a soft-Q function and reference policy, 
+%using \cref{soft-v-and-pi}.
+%However, 
+We also include a separate function approximator for the state-value
 can help stabilize the training \citep{haarnoja2018soft}. 
 The soft Q-function parameters $\psi$ is then trained to minimize the soft Bellman error using the state-value network,
 {\small
-\begin{equation}
+\begin{equation*}
 \label{eq:trainQ}
 L(\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parV(s') \right] \right)^2 \right].
-\end{equation}
+\end{equation*}
 }
-
 The policy parameters are updated by performing the Project Step in
 \cref{eq:repmd} with stochastic gradient descent,
 %
 {\small
-\begin{equation}
-\hspace{-0.5cm}
+\begin{align*}
 \label{eq:trainpi}
-L(\theta) = \E_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\} \middle\Vert \parPi(\cdot |s) \right) \right]
-\end{equation}
+& L(\theta)  = \E_{s \sim \gD} \bigg[ \\
+& \quad \KL \bigg( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\}  \bigg\Vert\, \parPi(\cdot |s) \bigg) \bigg]
+\end{align*}
 }
-%
 where we approximate $\bar{\pi}_{\tau,\tau^{\prime}}^*$ by the soft-Q and state-value function approximations. 
 
 Finally,

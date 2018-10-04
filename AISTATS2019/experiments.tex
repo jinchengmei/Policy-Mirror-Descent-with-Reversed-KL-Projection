@@ -7,9 +7,8 @@ on a number of benchmark tasks against strong baseline methods.
 Additional implementation details are provided in \cref{subsec:implementation}. 
 
 \begin{figure*}[t]
-\begin{center}
-\includegraphics[width=0.75\linewidth]{./bandit_algorithmic_results.pdf}
-\end{center}
+\centering
+\includegraphics[width=0.75\linewidth]{./bandit_algorithmic_results.pdf} \vspace{-0.3cm} 
 \caption{
 Results of MENT (red), UREX (green), and REPMD (blue) on synthetic bandit
 problem and algorithmic tasks.
@@ -20,6 +19,7 @@ Algorithmic task results averaged over 25 random training runs
 X-axis is number of sampled trajectories.
 } 
 \label{fig:results}
+\vspace{-0.2cm}
 \end{figure*}
 
 \subsection{Settings}
@@ -100,9 +100,8 @@ Note that the performance of REPMD is sill significantly better than
 UREX even compared to the results reported in \citet{nachum2017improving}. 
 
 \begin{figure*}[t]
-\begin{center}
-\includegraphics[width=0.8\linewidth]{./mujoco-results.pdf}
-\end{center}
+\centering
+\includegraphics[width=0.8\linewidth]{./mujoco-results.pdf} \vspace{-0.3cm} 
 \caption{
 Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on
 Mujoco tasks (with SAC+R (gray) added on Humanoid).
@@ -114,7 +113,8 @@ X-axis is millions of environment steps.
 %both in terms of final performance and sample efficiency;
 %the sole exception being SAC+R on Humanoid.
 }
-\label{fig:result-mujoco} 
+\label{fig:result-mujoco}
+\vspace{-0.2cm} 
 \end{figure*}
 
 \cref{fig:result-mujoco} presents the results on the 
@@ -196,12 +196,12 @@ The corresponding algorithms in the actor-critic setting,
 named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
 
 \begin{figure*}[t]
-\begin{center}
-\includegraphics[width=0.5\linewidth]{./ablation-results.pdf}
-\end{center}
+\centering
+\includegraphics[width=0.5\linewidth]{./ablation-results.pdf} \vspace{-0.3cm} 
 \caption{Ablation Study of REPMD and PMAC %with designed baselines
 on ReversedAddition and Ant. }
 \label{fig:ablation}
+\vspace{-0.2cm}
 \end{figure*}
 
 The results are presented in \cref{fig:ablation},

@@ -42,7 +42,8 @@
 %\usepackage{zref-xr}
 %\zxrsetup{toltxlabel}
 %\zexternaldocument*{supplementary}
-
+\usepackage{paralist}
+\renewenvironment{enumerate}[1]{\begin{compactenum}#1}{\end{compactenum}}
 \begin{document}
 
 % If your paper is accepted and the title of your paper is very long,

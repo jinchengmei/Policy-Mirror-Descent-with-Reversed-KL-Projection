@@ -15,12 +15,10 @@ Consider the following local optimization problem:
 given a \emph{reference policy} $\refPi$ (usually the current policy), 
 maximize the proximal regularized expected reward,
 using relative entropy as the regularizer:
-%
 \begin{equation}
 \label{eq:max_expected_reward_plus_relative_entropy}
 \pi_{\theta} = \argmax\limits_{\pi_\theta \in \Pi} { \ep\limits_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } }.
 \end{equation}
-%
 Relative entropy regularization has been widely investigated in
 online learning and optimization
 \citep{nemirovskii1983problem,beck2003mirror},
@@ -51,8 +49,6 @@ that isolates the different computational challenges.
 \end{aligned}
 \end{equation}
 }
-%
-
 Crucially, the reformulation \cref{eq:pmd} remains equivalent to the
 original problem \cref{eq:max_expected_reward_plus_relative_entropy},
 in that it preserves the same set of solutions,
@@ -68,7 +64,6 @@ Given a \emph{reference policy} $\refPi$,
 \end{equation*}
 }
 \end{prop}
-
 Note that this result holds even for the non-convex setting.
 %
 The reformulation \cref{eq:pmd} immediately leads to our PMD algorithm:
@@ -106,7 +101,6 @@ parametrization of $\pi$.
 	 stationary points of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$. 
 \end{enumerate}
 \end{prop}
-
 Despite these desirable properties, 
 \cref{prop:monoto_policymirrordescent}
 relies on the condition that the Project Step in PMD is solved to

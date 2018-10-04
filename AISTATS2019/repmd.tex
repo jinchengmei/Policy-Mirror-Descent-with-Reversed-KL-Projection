@@ -22,18 +22,14 @@ alternating
 optimization problems to update the policy $\pi_{\theta_{t+1}}$
 at each iteration:
 %
-{\small
 \begin{equation}
 \label{eq:repmd}
 \begin{split}
 &\text{\bf (Project)} \quad  \argmin\limits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }, \\
 &\text{\bf (Lift)} \quad \text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^*  =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho) }} \\
-&\qquad \qquad \qquad \qquad \qquad \quad {{ - \tau \KL(\pi \| \pi_{\theta_t}) + \bm{\tau^{\prime} \cH(\pi)} }}.
+&\qquad \qquad  \qquad \qquad \quad {{ - \tau \KL(\pi \| \pi_{\theta_t}) + \bm{\tau^{\prime} \cH(\pi)} }}.
 \end{split}
 \end{equation}
-}
-%
-
 The idea of optimizing the reverse direction of KL divergence has proved
 to be effective in previous work,
 such as reward augmented maximum likelihood \citep{norouzi2016reward}
@@ -64,10 +60,10 @@ then
 	\end{equation*}
 	where
 	{\small
-	\begin{equation}
+	\begin{equation*}
 	\label{eq:SR}
 	\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
-	\end{equation}
+	\end{equation*}
 	}
 	\item {\bf (Fixed Points)} If the Project Step is optimized by gradient descent, then the fixed points of REPMD are the 
 	stationary points of $\SR(\pi_\theta)$. 
@@ -107,7 +103,6 @@ has an analytic solution,
 	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
 \end{equation}
 }
-	
 The Project Step in \cref{eq:repmd}, $\min\nolimits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$. To see this, note $\argmin\nolimits_{\pi_\theta \in \Pi}\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \argmin\nolimits_{\pi_\theta \in \Pi} \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* }  - \log \pi_\theta(\rho)$. The next lemma shows that sampling from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ can be done using self-normalized importance sampling \citep{owen2013monte} when it is possible to draw multiple samples from $\refPi$, following the idea of UREX \citep{nachum2017improving}.   
 \begin{lem}
 \label{lem:repmdgradientestimate}
@@ -153,16 +148,14 @@ In fact, by properly adjusting the two temperature parameters $\tau$ and
 $\tau^{\prime}$ in REPMD,
 the resulting surrogate objective $\SR(\pi_\theta)$
 recovers existing performance measures.
-
 \begin{prop}
 \label{prop:sr}
 $\SR(\pi_\theta)$ satisfies the properties:
-\begin{enumerate}[label=(\roman*)]
+\begin{enumerate}
 	\item  $\SR(\pi_\theta) \to \max_{\rho}{r(\rho)}$, as $\tau \to 0, \tau^{\prime} \to 0$.
 	\item $\SR(\pi_\theta) \to \ep_{\rho \sim \pi_\theta}{r(\rho)}$, as $\tau \to \infty, \tau^{\prime} \to 0$. 
 \end{enumerate}	
 \end{prop}
-
 \begin{remk}
 Note that $\text{SR}(\pi_\theta)$ also resembles the 
 ``softmax value function'' in value based RL
@@ -216,13 +209,13 @@ Further investigation on the behavior of $\SR(\pi_\theta)$
 is left for future work.
  
 \begin{figure*}[t]
-\begin{center}
-\includegraphics[width=1.0\linewidth]{./sr_simulation.pdf}
-\end{center}
+\centering
+\includegraphics[width=0.8\linewidth]{./sr_simulation.pdf} \vspace{-0.3cm} 
 \caption{
 Simulation results for the true reward $\pi_\theta^\top r$ and $\SR(\pi_\theta)$
 with different values of $\tau$ in a bandit setting with 10,000 actions. Each action is represented by a feature $\omega\in \mathbb{R}$. Let $\Omega = \left( \omega_1, \dots, \omega_{10,000} \right)$ be the feature vector. The policy $\pi_\theta$ is parameterized by a weight scalar $\theta\in \mathbb{R}$ and defined by $\text{softmax}(\Omega^{\top}\theta)$. True reward landscape shows $\pi_\theta^\top r$ as a function of $\theta$. The rest figures show \SR($\pi_\theta$) as a function of $\theta$ with different values of $\tau$.}
 \label{fig:srsimulation}
+\vspace{-0.2cm}
 \end{figure*}
 
 
