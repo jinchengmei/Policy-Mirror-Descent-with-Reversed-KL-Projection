@@ -107,6 +107,8 @@ global optimality.
 It is usually not practical to achieve such a stringent requirement
 when $\pi_\theta$ is not convex in $\theta$,
 limiting the applicability of \cref{prop:monoto_policymirrordescent}.
+Furthermore, optimizing the Project Step by gradient descent requires drawing samples from
+$\pi_\theta$, which is known to be problematic because of the high variance of the gradient estimator \citep{greensmith2004variance}. 
 
 Another shortcoming with this naive strategy is 
 that PMD typically gets trapped in poor local optima.
