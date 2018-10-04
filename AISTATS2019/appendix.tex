@@ -178,6 +178,17 @@ Recall that in \cref{alg:repmd} the project step is performed by SGD. In our imp
 
 \section{Details of PMAC Learning}
 \label{sec:implementationPMAC}
+
+Recall that in \cref{subsec:repmd_value}, the losses for training soft state-value function, soft Q-function and policy are as follows,
+\begin{align}
+\label{eq:trainV}
+L (\phi) &= \E_{s\sim \gD} \left[ \frac{1}{2} \left( \parV(s) -  \left[ \parQ(s,a ) - \tau' \log \bar{\pi}(a|s) \right] \right)^2 \right], \\
+\label{eq:trainQ}
+L(\psi) &= \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parV(s') \right] \right)^2 \right], \\
+\label{eq:trainpi}
+L(\theta)  &= \E_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\}  \bigg\Vert\, \parPi(\cdot | s) \right) \right].
+\end{align}
+
 To increase the stability of the training, we include a target state value network $\parTargetV$, where $\bar{\phi}$ is an exponentially moving average of the value network weights $\phi$. 
 Different from \cref{eq:trainQ}, the soft Q-function parameters $\psi$ is then trained to minimize the soft Bellman error using the target state value network,
 \begin{equation}
@@ -219,7 +230,7 @@ Pseudocode for PMAC is presented in \cref{alg:rmac}. The major difference betwee
 			\STATE Set $\refPi = \parPi$
 			\FOR { $i=1,\dots,M$ }
 			\STATE Sample a mini-batch of data $\{ (s_j, a_j, r_j, s'_j) \}_{j=1}^B$ from $\gD$
-			\STATE Compute gradient $\nabla_\theta L(\theta), \nabla_\phi L(\phi), \nabla_{\psi_1} L(\psi_1),  \nabla_{\psi_2} L(\psi_2)$according to \cref{eq:trainQ,eq:trainpi,eq:trainV}
+			\STATE Compute gradient $\nabla_\theta L(\theta), \nabla_\phi L(\phi), \nabla_{\psi_1} L(\psi_1),  \nabla_{\psi_2} L(\psi_2)$ according to \cref{eq:trainQ,eq:trainpi,eq:trainV}
 			\STATE Update parameters $\theta, \phi, \psi_1, \psi_2$ by gradient descent
 			\STATE Update $\bar{\phi}$ by $\alpha \phi + (1-\alpha) \bar{\phi}$
 			\ENDFOR
