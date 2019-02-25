@@ -1,0 +1,66 @@
+\if0
+
+\begin{align}
+    x =& \prod_{i=1}^n \sum_{j=1}^n j_i + \prod_{i=1}^n \sum_{j=1}^n i_j + \prod_{i=1}^n \sum_{j=1}^n j_i + \prod_{i=1}^n \sum_{j=1}^n i_j + \nonumber\\
+    + & \prod_{i=1}^n \sum_{j=1}^n j_i
+\end{align}
+
+If a line is just slightly longer than the column width, you may use the {\tt resizebox} environment on that equation. The result looks better and doesn't interfere with the paragraph's line spacing: %
+\begin{equation}
+\resizebox{.91\linewidth}{!}{$
+    \displaystyle
+    x = \prod_{i=1}^n \sum_{j=1}^n j_i + \prod_{i=1}^n \sum_{j=1}^n i_j + \prod_{i=1}^n \sum_{j=1}^n j_i + \prod_{i=1}^n \sum_{j=1}^n i_j + \prod_{i=1}^n \sum_{j=1}^n j_i
+$}
+\end{equation}%
+
+\fi
+
+\if0
+
+\section{Tables}
+
+Tables are considered illustrations containing data. Therefore, they should also appear floated to the top (preferably) or bottom of the page, and with the captions below them.
+
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\hline
+Scenario  & $\delta$ & Runtime \\
+\hline
+Paris       & 0.1s  & 13.65ms     \\
+Paris       & 0.2s  & 0.01ms      \\
+New York    & 0.1s  & 92.50ms     \\
+Singapore   & 0.1s  & 33.33ms     \\
+Singapore   & 0.2s  & 23.01ms     \\
+\hline
+\end{tabular}
+\caption{Latex default table}
+\label{tab:plain}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{lrr}  
+\toprule
+Scenario  & $\delta$ (s) & Runtime (ms) \\
+\midrule
+Paris       & 0.1  & 13.65      \\
+            & 0.2  & 0.01       \\
+New York    & 0.1  & 92.50      \\
+Singapore   & 0.1  & 33.33      \\
+            & 0.2  & 23.01      \\
+\bottomrule
+\end{tabular}
+\caption{Booktabs table}
+\label{tab:booktabs}
+\end{table}
+
+If you are using \LaTeX, you should use the {\tt booktabs} package, because it produces better tables than the standard ones. Compare Tables \ref{tab:plain} and~\ref{tab:booktabs}. The latter is clearly more readable for three reasons:
+
+\begin{enumerate}
+    \item The styling is better thanks to using the {\tt booktabs} rulers instead of the default ones.
+    \item Numeric columns are right-aligned, making it easier to compare the numbers. Make sure to also right-align the corresponding headers, and to use the same precision for all numbers.
+    \item We avoid unnecessary repetition, both between lines (no need to repeat the scenario name in this case) as well as in the content (units can be shown in the column header).
+\end{enumerate}
+
+\fi
