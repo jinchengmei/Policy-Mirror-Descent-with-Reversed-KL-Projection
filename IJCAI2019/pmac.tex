@@ -2,9 +2,9 @@
 
 
 %\subsection{Cooperate with Value Function Approximation}
-%\section{Combining REPMD with Value Function Approximation}
+%\section{Combining ECPO with Value Function Approximation}
 \section{An Actor-Critic Extension}
-\label{subsec:repmd_value}
+\label{subsec:ECPO_value}
 
 %\newcommand{\parV}{V_{\phi}}
 %\newcommand{\parTargetV}{V_{\bar{\phi}}}
@@ -14,17 +14,17 @@
 %\newcommand{\parQtwo}{Q_{\psi_2}}
 
 
-Finally, we develop a natural extension of REPMD to an actor-critic
+Finally, we develop a natural extension of ECPO to an actor-critic
 formulation by incorporating a value function approximator.
-We refer to this algorithm as Policy Mirror Actor-Critic (PMAC). 
+We refer to this algorithm as Exploratory Conservative Actor-Critic (ECAC). 
 
 It is well known that data efficiency of policy-based methods 
 can be generally improved by adding a value-based critic.
 Given $\refPi$ and an initial state $s$,
-recall that the objective in the Lift Step of REPMD is
+recall that the objective in the Lift Step of ECPO is
 {\small
 \begin{equation*}
-	\gO_{\text{REPMD}}(\pi, s) =   \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi)},
+	\gO_{\text{ECPO}}(\pi, s) =   \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi)},
 \end{equation*}
 }
 where $\rho=  (s_1 = s, a_1, s_2, a_2, \ldots)$.
@@ -35,15 +35,15 @@ First, write
 {\small
 \begin{equation*}
 \begin{split}
- \gO_{\text{REPMD}}(\pi, s) &= \E_{a\sim \pi(\cdot \vert s)} [ r(s,a) + \gO_{\text{REPMD}}(\pi, s') \\
+ \gO_{\text{ECPO}}(\pi, s) &= \E_{a\sim \pi(\cdot \vert s)} [ r(s,a) + \gO_{\text{ECPO}}(\pi, s') \\
  &+ \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) ].
 \end{split}
 \end{equation*}
 }
 
-Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{REPMD}}(\pi, s) $ denote the optimal policy on state $s$. 
+Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{ECPO}}(\pi, s) $ denote the optimal policy on state $s$. 
 %
-Further denote the soft optimal state-value function $\gO_{\text{REPMD}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s), s)$ by $\bar{V}_{\tau,\tau^{\prime}}^*(s)$, and let  $\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) = r(s,a) + \gamma \bar{V}_{\tau,\tau^{\prime}}^*(s')$ be the soft-Q function.
+Further denote the soft optimal state-value function $\gO_{\text{ECPO}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s), s)$ by $\bar{V}_{\tau,\tau^{\prime}}^*(s)$, and let  $\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) = r(s,a) + \gamma \bar{V}_{\tau,\tau^{\prime}}^*(s')$ be the soft-Q function.
 It can then be verified that 
 %
 {\small
@@ -60,7 +60,7 @@ We propose to train a
 soft state-value function $\parV$ parameterized by $\phi$,
 a soft Q-function $\parQ$ parameterized by $\psi$,
 and a policy $\parPi$ parameterized by $\theta$,
-based on \cref{eq:repmd}.
+based on \cref{eq:ECPO}.
 The update rules for these parameters can be derived as follows.
 
 The soft state-value function approximates the soft optimal state-value $\bar{V}_{\tau,\tau^{\prime}}^*$, which can be re-expressed by
@@ -105,7 +105,7 @@ L(\psi) = \E_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(
 }
 
 The policy parameters are updated by performing the Project Step in
-\cref{eq:repmd} with stochastic gradient descent,
+\cref{eq:ECPO} with stochastic gradient descent,
 %
 {\small
 \begin{equation}
@@ -121,4 +121,4 @@ Finally,
 we also use a target state-value network \citep{lillicrap2015continuous}
 and the trick of maintaining two soft-Q functions
 \citep{haarnoja2018soft,fujimoto2018addressing}.
-Implementation details for PMAC are given in \cref{sec:implementationPMAC}. 
+Implementation details for ECAC are given in the Appendix.%\cref{sec:implementationECAC}. 

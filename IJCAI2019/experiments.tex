@@ -2,16 +2,16 @@
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the main proposed methods, REPMD and PMAC,
+We evaluate the main proposed methods, ECPO and ECAC,
 on a number of benchmark tasks against strong baseline methods.
-Additional implementation details are provided in \cref{subsec:implementation}. 
+Implementation details are provided in the Appendix. % \cref{subsec:implementation}. 
 
 \begin{figure*}[t]
 \begin{center}
-\includegraphics[width=0.75\linewidth]{./bandit_algorithmic_results.pdf}
+\includegraphics[width=0.7\linewidth]{./bandit_algorithmic_results.pdf}
 \end{center}
 \caption{
-Results of MENT (red), UREX (green), and REPMD (blue) on synthetic bandit
+Results of MENT (red), UREX (green), and ECPO (blue) on synthetic bandit
 problem and algorithmic tasks.
 Plots show average reward with standard error during training.
 Synthetic bandit results averaged over 5 runs.
@@ -25,7 +25,7 @@ X-axis is number of sampled trajectories.
 \subsection{Settings}
 \label{subsec:tasks}
 
-We first investigate the performance of REPMD on a synthetic bandit problem
+We first investigate the performance of ECPO on a synthetic bandit problem
 and the algorithmic task suite from the OpenAI gym \citep{brockman2016openai}.
 The synthetic multi-armed bandit problem has 10,000 distinct actions,
 where
@@ -39,24 +39,24 @@ library, in rough order of difficulty:
 Copy, DuplicatedInput, RepeatCopy, Reverse, and ReversedAddition
 \citep{brockman2016openai}.
 %
-Second, we test the second PMAC approach on continuous-control benchmarks
+Second, we test the second ECAC approach on continuous-control benchmarks
 from OpenAI Gym, utilizing the Mujoco environment
 \citep{brockman2016openai,todorov2012mujoco};
 including Hopper, Walker2d, HalfCheetah, Ant and Humanoid.
-The details of the algorithmic and Mujoco tasks are provided in
-\cref{subsec:benchmarks}. 
+The details of the algorithmic and Mujoco tasks are provided in the Appendix.
+%\cref{subsec:benchmarks}. 
 
 Note that only cumulative rewards are available in both the
 synthetic bandit and algorithmic tasks.
 Therefore, value-based RL algorithms can not be applied in this setting.
-This restriction compels us to compare REPMD against
+This restriction compels us to compare ECPO against
 REINFORCE with entropy regularization (MENT) \citep{williams1992simple},
 and under-appreciated reward exploration (UREX) \citep{nachum2017improving}.
 To the best of our knowledge,
 these
 are the state-of-the-art policy-based algorithms for these algorithmic tasks. 
 %
-For the continuous control tasks, we compare the second PMAC approach
+For the continuous control tasks, we compare the second ECAC approach
 to deep deterministic policy gradient (DDPG) \citep{lillicrap2015continuous},
 an efficient off-policy deep RL methods;
 twin delayed deep deterministic policy gradient algorithm (TD3)
@@ -79,9 +79,9 @@ as shown in \citep{haarnoja2018soft,fujimoto2018addressing}.
 
 The results on synthetic bandit problem and algorithmic tasks are reported 
 in \cref{fig:results}. 
-It is clear that REPMD substantially outperforms the baseline methods
+It is clear that ECPO substantially outperforms the baseline methods
 on these tasks.
-REPMD appears able to consistently achieve a higher score and
+ECPO appears able to consistently achieve a higher score and
 learn substantially faster than UREX.
 We also find the performance of UREX is unstable.
 On the difficult tasks, including RepeatCopy, Reverse and ReversedAddition,
@@ -96,20 +96,20 @@ The results reported in \citep{nachum2017improving} are averaged over
 while our results are averaged over 25 random training runs
 (5 runs $\times$ 5 random seed for neural network initialization). 
 }
-Note that the performance of REPMD is sill significantly better than
+Note that the performance of ECPO is sill significantly better than
 UREX even compared to the results reported in \citet{nachum2017improving}. 
 
 \begin{figure*}[t]
 \begin{center}
-\includegraphics[width=0.8\linewidth]{./mujoco-results.pdf}
+\includegraphics[width=0.7\linewidth]{./mujoco-results.pdf}
 \end{center}
 \caption{
-Learning curves of DDPG (red), TD3 (yellow), SAC (green) and PMAC (blue) on
+Learning curves of DDPG (red), TD3 (yellow), SAC (green) and ECAC (blue) on
 Mujoco tasks (with SAC+R (gray) added on Humanoid).
 Plots show mean reward with standard error during training,
 averaged over five different instances with different random seeds.
 X-axis is millions of environment steps.
-%We observe that PMAC is consistently able to match and, in many cases,
+%We observe that ECAC is consistently able to match and, in many cases,
 %the performance of the baseline algorithms across all tasks,
 %both in terms of final performance and sample efficiency;
 %the sole exception being SAC+R on Humanoid.
@@ -125,27 +125,23 @@ results are averaged over five different instances
 with different random seeds.
 The solid curves corresponds to the mean and the shaded region to the
 standard errors over the five trials.
-To ensure a fair comparison with PMAC, we implemented the double-Q
+\if
+To ensure a fair comparison with ECAC, we implemented the double-Q
 but not the reparameterization trick for SAC 
 (see equation (11)-(13) in \citep{haarnoja2018soft}).
 This difference explains the discrepancy between the results we see here
 and those reported in \citep{haarnoja2018soft}.
-We observe that without the reparameterization trick SAC cannot make
-any progress in the hardest problem Humanoid.
+\fi
+We observe that the reparameterization trick dramatically improve the performance of SAC. 
 Therefore, to gain further clarity, 
 we also report the result of SAC with the reparameterization trick,
-denoted SAC+R,
-on Humanoid using the author's GitHub implementation.
-The results show that PMAC matches or, in many cases, surpasses all other
+denoted SAC+R.
+%on Humanoid using the author's GitHub implementation.
+The results show that ECAC matches or, in many cases, surpasses all other
 baseline algorithms in both final performance and sample efficiency across
 tasks, except compared to SAC+R in Humanoid.
-In Humanoid, although SAC+R outperforms PMAC,
+In Humanoid, although SAC+R outperforms ECAC,
 its final performance is still comparable with SAC+R.
-Note that the reparameterization trick that benefits SAC
-could also be applied in PMAC;
-we have yet to add this modification and
-will add this to PMAC in future work.
-
 
 %\begin{wrapfigure}{R}{0.5\textwidth}
 %\label{fig:ablation}
@@ -160,30 +156,30 @@ will add this to PMAC in future work.
 
 The comparative evaluations provided in the previous sections suggest 
 that our proposed algorithms 
-%based on the policy optimization method \ref{eq:repmd} 
+%based on the policy optimization method \ref{eq:ECPO} 
 outperform conventional RL methods on a number of challenging benchmarks.
 In this section, we further investigate how each novel component of
-\cref{eq:repmd} improves learning performance,
+\cref{eq:ECPO} improves learning performance,
 by performing an ablation study on ReversedAddition and Ant.
 
 %\piccaption[]{Ablation Study.\label{fig:ablation}}
 %\parpic[r]{\includegraphics[width=0.35\linewidth]{ablation.pdf}}
 
-\paragraph{Importance of entropy regularizer.} The main difference between the objective in \cref{eq:repmd} and the PMD
+\paragraph{Importance of entropy regularizer.} The main difference between the objective in \cref{eq:ECPO} and the PMD
 objective \cref{eq:pmd} is the entropy regularizer.
-We demonstrate the importance of this choice by presenting the results of REPMD and PMAC without the extra entropy regularizer, i.e. $\tau'=0$.
+We demonstrate the importance of this choice by presenting the results of ECPO and ECAC without the extra entropy regularizer, i.e. $\tau'=0$.
 
-\paragraph{Importance of KL divergence projection.} Another important difference between \cref{eq:repmd} with other RL methods
+\paragraph{Importance of KL divergence projection.} Another important difference between \cref{eq:ECPO} with other RL methods
 is to use a Project Step to update the policy,
 rather than one SGD.
 To show the importance of the Project Step,
-we test REPMD and PMAC without projection,
+we test ECPO and ECAC without projection,
 which only performs one step of gradient update at each iteration of training. 
 
 \paragraph{Importance of direction of KL divergence.} We choose PMD \cref{eq:pmd} as another baseline
 to prove the effectiveness of using the \emph{mean seeking}
 direction of KL divergence in the project step.
-Similar to REPMD, we add a separate temperature parameter $\tau' > 0$
+Similar to ECPO, we add a separate temperature parameter $\tau' > 0$
 to the original objective function in \cref{eq:pmd}
 to encourage policy exploration,
 which gives
@@ -192,16 +188,16 @@ We name it PMD+entropy.
 The corresponding algorithms in the actor-critic setting,
 named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \begin{center}
-\includegraphics[width=0.5\linewidth]{./ablation-results.pdf}
+\includegraphics[width=0.9\linewidth]{./ablation-results.pdf}
 \end{center}
-\caption{Ablation Study of REPMD and PMAC %with designed baselines
+\caption{Ablation Study of ECPO and ECAC %with designed baselines
 on ReversedAddition and Ant. }
 \label{fig:ablation}
-\end{figure*}
+\end{figure}
 
 The results are presented in \cref{fig:ablation},
-which clearly indicate all of the three major components of \cref{eq:repmd}
+which clearly indicate all of the three major components of \cref{eq:ECPO}
 are helpful for achieving better performance. 
 

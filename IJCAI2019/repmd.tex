@@ -1,30 +1,29 @@
 
 
 %\subsection{Reversed Entropy Policy Mirror Descent}
-\section{Reversed Entropy Policy Mirror Descent}
-\label{subsec:repmd}
+\section{Exploratory Conservative Policy Optimization}
+\label{subsec:ECPO}
 
-We now introduce two modifications to PMD that overcome 
+We now propose two modifications to PMD that overcome 
 its aforementioned deficiencies.
 These two modifications lead to our main proposed algorithm,
-Reversed Entropy Policy Mirror Descent (REPMD),
-which retains desirable theoretical properties while achieving
-vastly superior performance to PMD in practice.
-%(We consider some additional refinements to REPMD in the next section.)
+Exploratory Conservative Policy Optimization (ECPO),
+which retains desirable theoretical properties while achieving superior performance to PMD in practice.
+%(We consider some additional refinements to ECPO in the next section.)
 
 The first modification is to add an additional entropy regularizer
 to the Lift Step,
 to improve the exploration behavior. %of the algorithm. 
 The second modification is to use a reversed, \emph{mean seeking} direction
 of the KL divergence in the Project Step.
-In particular, the REPMD algorithm solves the following 
+In particular, the ECPO algorithm solves the following 
 alternating
 optimization problems to update the policy $\pi_{\theta_{t+1}}$
 at each iteration:
 %
 {\small
 \begin{equation}
-\label{eq:repmd}
+\label{eq:ECPO}
 \begin{split}
 &\text{\bf (Project)} \quad  \argmin\limits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }, \\
 &\text{\bf (Lift)} \quad \text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^*  =  \argmax\limits_{\pi \in \Delta}{ \ep\limits_{\rho \sim \pi}{  r(\rho) }} \\
@@ -41,64 +40,11 @@ and UREX \citep{nachum2017improving}.
 Its \emph{mean seeking} behavior further encourages exploration by the
 algorithm.
 As we will see in \cref{sec:experiments},
-REPMD outperforms PMD significantly in experimental evaluations.
-
-\cref{thm:monotonically_increasing_sr_property}
-shows that REPMD still enjoys similar desirable properties to PMD
-in the non-convex setting,
-but with respect to a surrogate reward $\SR(\pi_\theta)$,
-which we analyze further below.
-
-\begin{thm}
-\label{thm:monotonically_increasing_sr_property}
-Let $\pi_{\theta_{t}}$ denote the policy at step $t$ of the update
-sequence.
-REPMD satisfies the following properties for an arbitrary parametrization of $\pi$.
-\begin{enumerate}
-	\item {\bf (Monotonic Improvement)} 
-	%The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
-	If the Project Step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta )$ can be globally solved,
-then 
-	\begin{equation*}
-	\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat)\ge 0,
-	\end{equation*}
-	where
-	{\small
-	\begin{equation}
-	\label{eq:SR}
-	\SR(\pi_\theta) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
-	\end{equation}
-	}
-	\item {\bf (Fixed Points)} If the Project Step is optimized by gradient descent, then the fixed points of REPMD are the 
-	stationary points of $\SR(\pi_\theta)$. 
-\end{enumerate}
-%Theorem \ref{thm:monotonically_increasing_sr_property} guarantees the monotonic improvement on $\text{SR}(\pi)$, thus implies that 
-%the fixed points of REPMD have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. \todor[]{Why?}
-\end{thm}
-
-A key question is the feasibility of solving the
-Project Step to global optimality.
-It is obvious that when $\pi(\theta) = \theta \in \Delta$
-the Project Step is a convex optimization problem,
-hence can be solved optimally.
-Furthermore, as shown in \cref{prop:solvableprojection}, 
-for a one-layer-softmax neural network $\pi$,
-the Project Step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$
-can also still be solved to global optimality,
-affording a significant computational advantage over PMD.
-
-\begin{prop}
-\label{prop:solvableprojection}
-Assume $\pi_\theta(s) = \softmax(\phi_s^{\top}\theta)$.
-Given any $\refPi$,
-the Projection Step
-$\min\nolimits_{\theta \in \mathbb{R}^d}{\KL(\refPi \| \pi_\theta)}$
-is a convex optimization problem in $\theta$.
-\end{prop}
+ECPO outperforms PMD significantly in experimental evaluations.
 
 \subsection{Learning Algorithms}
 
-We now provide REPMD learning algorithms.
+We now provide practical learning algorithms for \cref{eq:ECPO}.
 Despite its non-convexity, the Lift Step
 has an analytic solution,
 {\small
@@ -106,11 +52,12 @@ has an analytic solution,
 	\label{eq:pitautauprime}
 	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
 \end{equation}
-}
-	
-The Project Step in \cref{eq:repmd}, $\min\nolimits_{\pi_\theta \in \Pi}{\KL(\bm{ \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta }) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$. To see this, note $\argmin\nolimits_{\pi_\theta \in \Pi}\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \argmin\nolimits_{\pi_\theta \in \Pi} \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* }  - \log \pi_\theta(\rho)$. The next lemma shows that sampling from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ can be done using self-normalized importance sampling \citep{owen2013monte} when it is possible to draw multiple samples from $\refPi$, following the idea of UREX \citep{nachum2017improving}.   
+}	
+ where we choose $\pi_{\theta_t}$ as the reference policy $\refPi$. The Project Step in \cref{eq:ECPO}, $\min\nolimits_{\pi_\theta \in \Pi}{\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta ) }$, can be optimized via stochastic gradient descent, given that one can sample trajectories from $\bar{\pi}_{\tau,\tau^{\prime}}^*$. %To see this, note  that
+%$$\argmin\nolimits_{\pi_\theta \in \Pi}\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) = \argmin\nolimits_{\pi_\theta \in \Pi} \ep_{\rho \sim \bar{\pi}_{\tau,\tau^{\prime}}^* }  - \log \pi_\theta(\rho)$$. 
+The next lemma shows that sampling from $\bar{\pi}_{\tau,\tau^{\prime}}^*$ can be done using self-normalized importance sampling \citep{owen2013monte} when it is possible to draw multiple samples from $\refPi$, following the idea of UREX \citep{nachum2017improving}.   
 \begin{lem}
-\label{lem:repmdgradientestimate}
+\label{lem:ECPOgradientestimate}
 Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}$. Given $K$ \emph{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, we have the following unbiased gradient estimator,
 {\small
 \begin{equation}
@@ -119,10 +66,10 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 \end{equation}
 }
 \end{lem}
-Derivation for the analytic solution of the Lift Step and above Lemma as well as other implementation details can be found in \cref{appx:repmd-learning}.
+Pesudeocode of the learning algorithm is presented in \cref{alg:ECPO}. Derivation for the analytic solution of the Lift Step and above Lemma as well as other implementation details can be found in the Appendix.% \cref{appx:ECPO-learning}.
 
 \begin{algorithm}[t]
-	\caption{\label{alg:repmd}  The REPMD algorithm}
+	\caption{\label{alg:ECPO}  The ECPO algorithm}
 	\begin{algorithmic}[1]
 		\INPUT temperature parameters $\tau$ and $\tau'$, number of samples for computing gradient $K$
 		\STATE Random initialized $\pi_{\theta}$
@@ -137,19 +84,112 @@ Derivation for the analytic solution of the Lift Step and above Lemma as well as
 	\end{algorithmic}
 \end{algorithm}
 
+
+\subsection{Analysis of ECPO}
+We now present the theoretical analysis of ECPO. Our first result shows that, with the additional entropy regularizer to the Lift Step $\tau' > 0$, the policy $\bar{\pi}_{\tau,\tau^{\prime}}^*$ still enjoys sublinear regret by particularly designed choice of $\tau$ and $\tau'$, when the policy class is the simplex. 
+
+\begin{thm}
+When the policy class is the simplex, by choosing $\tau'=1/\sqrt{T}$ and $\tau + \tau' = \sqrt{T} / \sqrt{2\log N}$ we have,
+\begin{equation*}
+    \sum\nolimits_{t=1}^{T}{\pi^* r} - \sum\nolimits_{t=1}^{T}{\pi_t r} \le C\sqrt{T\log N}.
+\end{equation*}
+where $\pi^*$ is the optimal policy, $\pi_{t}$ is defined by \cref{eq:pitautauprime} with $\pi_{t-1}$ as the reference policy. 
+%\begin{equation*}
+ %   \pi_{t+1} = \frac{\pi_t \cdot \exp\left\{ \frac{r - \tau^\prime \log{\pi_t}}{\tau + \tau^\prime} \right\}}{ \pi_t^\top \exp\left\{ \frac{r - \tau^\prime \log{\pi_t}}{\tau + \tau^\prime} \right\} }
+%\end{equation*}
+\end{thm}
+
+Our second result shows that ECPO still enjoys similar desirable properties (\cref{prop:monoto_policymirrordescent}) to PMD
+in the non-convex setting, with respect to the surrogate reward $\SR(\pi_\theta)$.
+%which we analyze further below.
+
+\begin{thm}
+\label{thm:monotonically_increasing_sr_property}
+Let $\pi_{\theta_{t}}$ denote the policy at step $t$ of the update
+sequence.
+ECPO satisfies the following properties for an arbitrary parametrization of $\pi$.
+\begin{enumerate}
+	\item {\bf (Monotonic Improvement)} 
+	%The sequence of policies learned by TRPO is guaranteed to be monotonically improved:
+	If the Project Step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta )$ can be globally solved,
+then 
+	\begin{equation*}
+	\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat)\ge 0,
+	\end{equation*}
+	where
+	{\small
+	\begin{equation}
+	\label{eq:SR}
+	\SR(\pi) \triangleq (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi(\rho)} }{\tau + \tau^{\prime}} \right\} }}.
+	\end{equation}
+	}
+	\item {\bf (Fixed Points)} If the Project Step is optimized by gradient descent, then the fixed points of ECPO are the 
+	stationary points of $\SR(\pi_\theta)$. 
+\end{enumerate}
+%Theorem \ref{thm:monotonically_increasing_sr_property} guarantees the monotonic improvement on $\text{SR}(\pi)$, thus implies that 
+%the fixed points of ECPO have a correspondence with the stationary point of $\text{SR}(\pi_\theta)$. \todor[]{Why?}
+\end{thm}
+\noindent \cref{thm:monotonically_increasing_sr_property} only establishes
+desirable properties for ECPO with respect to $\SR(\pi_\theta)$,
+but not necessarily to $\ep_{\rho\sim \pi_\theta}{r(\rho)}$. However, we can provide
+theoretical and empirical evidence that
+$\SR(\pi_\theta)$ is a reasonable surrogate 
+that can provide good guidance for learning.
+In fact, by properly adjusting the two temperature parameters $\tau$ and
+$\tau^{\prime}$,
+the resulting surrogate objective $\SR(\pi_\theta)$
+recovers existing performance measures.
+
+\begin{lem}
+\label{lem:sr}
+Let $\hat{r}=r-\tau' \log\pi$, $\hat{r}_\infty = \Vert \hat{r} \Vert_\infty$ and $\eta = \tau+\tau'$. For any policy $\pi$ and $\tau\geq 0$, $\tau'\geq 0$, we have
+\begin{align*}
+\pi\cdot r + \tau' \cH(\pi) \leq \SR(\pi) \leq  \pi\cdot \hat{r} + \frac{1}{2\eta} \ep_{\rho\sim \pi}{\left[\left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right]}
+\end{align*}
+Furthermore, 
+\begin{enumerate}[label=(\roman*)]
+	\item  $\SR(\pi) \to \max_{\rho}{r(\rho)}$, as $\tau \to 0, \tau^{\prime} \to 0$.
+	\item $\SR(\pi) \to \ep_{\rho \sim \pi}{r(\rho)}$, as $\tau \to \infty, \tau^{\prime} \to 0$. 
+\end{enumerate}
+\end{lem}
+
+A key question is the feasibility of solving the
+Project Step to global optimality.
+%It is obvious that when $\pi(\theta) = \theta \in \Delta$
+%the Project Step is a convex optimization problem,
+%hence can be solved optimally.
+As shown in \cref{prop:solvableprojection}, 
+for a one-layer-softmax neural network policy,
+the Project Step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$
+can also still be solved to global optimality,
+affording a significant computational advantage over PMD.
+
+\begin{prop}
+\label{prop:solvableprojection}
+Assume $\pi_\theta(s) = \softmax(\phi_s^{\top}\theta)$.
+Given any $\refPi$,
+the Projection Step
+$\min\nolimits_{\theta \in \mathbb{R}^d}{\KL(\refPi \| \pi_\theta)}$
+is a convex optimization problem in $\theta$.
+\end{prop}
+
+
 %\subsubsection{Behavior of $\SR(\pi)$}
-\subsection{Behavior of $\SR(\pi_\theta)$}
+%\subsection{Property of $\SR(\pi)$}
+\if
 \label{subsec:sr}
 
+%\subsection{Behavior of $\SR(\pi_\theta)$}
+
 \cref{thm:monotonically_increasing_sr_property} only establishes
-desirable properties for REPMD with respect to $\SR(\pi_\theta)$,
+desirable properties for ECPO with respect to $\SR(\pi_\theta)$,
 but not necessarily $r(\rho)$.
 In this section we present theoretical and empirical evidence that
 $\SR(\pi_\theta)$ is a reasonable surrogate 
 that can provide good guidance for learning,
 even when targeting desirable behavior with respect to $r(\rho)$.
 In fact, by properly adjusting the two temperature parameters $\tau$ and
-$\tau^{\prime}$ in REPMD,
+$\tau^{\prime}$ in ECPO,
 the resulting surrogate objective $\SR(\pi_\theta)$
 recovers existing performance measures.
 
@@ -223,3 +263,5 @@ Simulation results for the true reward $\pi_\theta^\top r$ and $\SR(\pi_\theta)$
 with different values of $\tau$ in a bandit setting with 10,000 actions. Each action is represented by a feature $\omega\in \mathbb{R}$. Let $\Omega = \left( \omega_1, \dots, \omega_{10,000} \right)$ be the feature vector. The policy $\pi_\theta$ is parameterized by a weight scalar $\theta\in \mathbb{R}$ and defined by $\text{softmax}(\Omega^{\top}\theta)$. True reward landscape shows $\pi_\theta^\top r$ as a function of $\theta$. The rest figures show \SR($\pi_\theta$) as a function of $\theta$ with different values of $\tau$.}
 \label{fig:srsimulation}
 \end{figure*}
+\fi
+

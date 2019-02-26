@@ -6,11 +6,10 @@
 \newcommand{\real}{\mathbb{R}}
 
 
-We begin with the development of the Policy Mirror Descent (PMD) strategy,
-which will form the basis for our subsequent algorithms and their analyses.
-As mentioned in the introduction, our analysis of this and subsequent methods
-focuses on the \emph{non-convex} setting.
-
+We first introduce the Policy Mirror Descent (PMD) strategy,
+which will form the basis for our proposed algorithms.
+%As mentioned in the introduction, our analysis of this and subsequent methods
+%focuses on the \emph{non-convex} setting.
 Consider the following local optimization problem:
 given a \emph{reference policy} $\refPi$ (usually the current policy), 
 maximize the proximal regularized expected reward,
@@ -24,21 +23,20 @@ using relative entropy as the regularizer:
 Relative entropy regularization has been widely investigated in
 online learning and optimization
 \citep{nemirovskii1983problem,beck2003mirror},
-primarily as a component of the mirror descent algorithm.
-Observe that when $\refPi$ is the uniform distribution,
-\cref{eq:max_expected_reward_plus_relative_entropy}
-reduces to entropy regularized expected reward.
-It is important to note that,
-since we are interested in the non-convex setting
-and only assume that
-$\pi$ is parametrized as a smooth
-function of $\theta \in \real^d$,
+primarily as a component of the mirror descent algorithm. This regularization makes the policy update in a
+conservative fashion, by searching policies within the neighbours of the current policy. 
+%Observe that when $\refPi$ is the uniform distribution,
+%\cref{eq:max_expected_reward_plus_relative_entropy}
+%reduces to entropy regularized expected reward.
+In practice
+$\pi_\theta$ is usually parametrized as a smooth
+function of $\theta \in \real^d$ and
 $\Pi$ is generally a non-convex subset of the simplex.
 Therefore, 
 \cref{eq:max_expected_reward_plus_relative_entropy}
 is a difficult constrained optimization problem.
 
-A useful way to decompose this optimization
+One useful way to decompose this optimization
 is to consider an alternating lift-and-project procedure
 that isolates the different computational challenges.
 %
@@ -68,10 +66,9 @@ Given a \emph{reference policy} $\refPi$,
 \end{equation*}
 }
 \end{prop}
-
 Note that this result holds even for the non-convex setting.
 %
-The reformulation \cref{eq:pmd} immediately leads to our PMD algorithm:
+The reformulation \cref{eq:pmd} immediately leads to the PMD algorithm:
 Lift the current policy $\pi_{\theta_t}$ to $\bar{\pi}_\tau^*$,
 then perform multiple steps of gradient descent in the Project Step
 to update $\pi_{\theta_{t+1}}$.%

@@ -49,12 +49,12 @@ that are highly nonlinear in their underlying parameters.
 This gulf between theory and practice is
 a barrier to wider adoption of model-free policy gradient methods.
 
-In this paper, we focus on a setting where the policy can be
-a \emph{non-convex} function of its parameters.
-We begin by considering the entropy-regularized expected reward objective,
+In this paper, %we focus on a setting where the policy can be
+%a \emph{non-convex} function of its parameters.
+we consider the entropy-regularized expected reward objective,
 which has recently re-emerged as a foundation for state-of-the-art RL methods
 \citep{williams1991function,fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement}. 
-Our first contribution is to reformulate the maximization of 
+We first reformulate the maximization of 
 this objective as a lift-and-project procedure,
 following the lines of Mirror Descent
 \citep{nemirovskii1983problem,beck2003mirror}.
@@ -70,8 +70,8 @@ Second, the proposed reformulation has practical algorithmic consequences,
 suggesting, for example,
 that multiple gradient descent updates should be performed
 in the projection step.
-These considerations lead to our first practical algorithm,
-Policy Mirror Descent (PMD),
+These considerations lead to the %our first practical algorithm,
+Policy Mirror Descent (PMD) algorithm,
 which first lifts the policy to the entire policy-simplex,
 ignoring the constraint induced by its parametrization,
 then approximately solves the projection step by multiple
@@ -81,8 +81,8 @@ gradient descent updates to the policy in the parameter space.
 %
 
 We then investigate
-additional modifications to mitigate the potential deficiencies of PMD.
-The main algorithm we propose, Reversed Entropy PMD (REPMD),
+additional modifications to mitigate the potential deficiencies of CPO.
+The main algorithm we propose, Exploratory Conservative Policy Optimization (ECPO),
 incorporates both an entropy and relative entropy regularizer,
 and uses the mean seeking direction of KL divergence for projection.
 The benefit of this approach is twofold.
@@ -93,9 +93,7 @@ second,
 this specific problem can now be efficiently solved to global optimality
 in certain non-trivial \emph{non-convex} scenarios,
 such as one-layer-softmax networks.
-Similar guarantees can be proved for REPMD,
-which additionally incorporates entropy regularization,
-with respect to a surrogate objective $\SR(\pi)$.
+We prove monotonic guarantees for ECPO with respect to a surrogate objective $\SR(\pi)$.
 We further study the properties of $\SR(\pi)$ and provide theoretical
 and empirical evidence that $\SR$ 
 can effectively guide the search for good policies.
@@ -141,4 +139,4 @@ Without loss of generality, we also assume that the state transition function
 is deterministic, and the discount factor $\gamma = 1$.
 %This same simplification is also assumed in \citet{nachum2017improving}. 
 Results for the case of a stochastic state transition function are presented
-in \cref{sec:stochasticsetting}.
+in the Appendix. %\cref{sec:stochasticsetting}.

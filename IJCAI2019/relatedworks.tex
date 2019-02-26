@@ -38,16 +38,16 @@ instead of directly minimizing the KL divergence with gradient descent.
 %
 Although one might also attempt to interpret ``one-step'' methods
 in terms of lift-and-project,
-these approaches would obliviously still differ from REPMD,
+these approaches would obliviously still differ from ECPO,
 given that we use different directions of the KL divergence
 for the Lift and Project steps respectively. 
-
+\if
 Regarding the optimization objective,
 several existing methods have considered related approaches,
 either by considering (relative) entropy regularization during policy search,
 or directly using KL divergence as the target objective. 
 As noted in \cref{subsec:revisitTRPO},
-REPMD resembles policy gradient methods that maximize expected reward
+ECPO resembles policy gradient methods that maximize expected reward
 with an additional entropy regularizer
 \citep{williams1991function,fox2015taming,nachum2017bridging}.
 Using KL divergence (or Bregman divergences more generally)
@@ -66,6 +66,7 @@ Instead of KL divergence, Reward-Weighted Regression (RWR) uses
 a log of the correlation between $\pi^*_\tau$ and $\pi_\theta$,
 which is then approximated similar to a cross entropy loss
 \citep{peters2007reinforcement,wierstra2008episodic}.
+\fi
 
 TRPO and PPO also have a similar formulation to
 \cref{eq:max_expected_reward_plus_relative_entropy},
@@ -78,18 +79,18 @@ which encourages exploration but also complicates the optimization;
 as shown in \cref{sec:experiments},
 UREX is significantly less efficient than the method proposed here.
 
-Trust PCL adopts the same objective defined in \cref{eq:repmd},
+Trust PCL adopts the same objective defined in \cref{eq:ECPO},
 including both entropy and relative entropy regularization
 \citep{nachum2017trust}.
 However, the policy update strategy is substantially different:
-while REPMD uses KL projection, Trust PCL
+while ECPO uses KL projection, Trust PCL
 minimizes a path inconsistency error (inherited from PCL)
 between the value and policy along observed trajectories
 \citep{nachum2017bridging}.
 Although policy optimization by minimizing path inconsistency error
 can efficiently utilize off-policy data, this approach loses the 
 desirable monotonic improvement guarantee.
-
+\if
 In terms of existing theoretical analyses, 
 similar monotonic improvement guarantee exists for TRPO, but only for an
 impractical formulation.%
@@ -107,10 +108,10 @@ can be solved globally.
 SAC obtains a similar result with respect to the optimal achievable
 Q-values, again relying on an assumption that a non-convex optimization
 problem can be solved globally.
-We have shown that similar results hold in the case of PMD/REPMD,
+We have shown that similar results hold in the case of PMD/ECPO,
 but here we have also established something stronger:
 when the projection step cannot be efficiently solved to global optimality,
-we have shown that PMD/REPMD still preserve stationary points in 
+we have shown that PMD/ECPO still preserve stationary points in 
 their respective, principled objectives.
 MPO and SAC have no such guarantee, as far as we are aware. 
-
+\fi
