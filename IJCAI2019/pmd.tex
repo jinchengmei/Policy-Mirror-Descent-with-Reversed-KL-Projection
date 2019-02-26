@@ -77,13 +77,13 @@ to update $\pi_{\theta_{t+1}}$.%
 To estimate this gradient one would need to use self-normalized importance
 sampling \cite{owen2013monte}.
 We omit the details here since PMD is not our main algorithm;
-similar techniques can be found in the implementation of REPMD. 
+similar techniques can be found in the implementation of ECPO. 
 % in cref-tbd.
 }
 %Note that vanilla gradient descent methods for TRPO can be interpreted as performing only one step gradient descent for the project step. \todor[]{Is it correct?} 
 
 When $\Pi$ is a convex set, one can show that PMD asymptotically converges to the optimal policy \citep{nemirovskii1983problem,beck2003mirror}. 
-The next proposition shows that despite the non-convexity of $\Pi$,
+The next proposition shows that for general $\Pi$,
 PMD still enjoys desirable properties.
 
 \begin{prop}

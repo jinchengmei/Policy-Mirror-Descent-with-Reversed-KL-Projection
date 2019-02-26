@@ -4,7 +4,7 @@
 
 We evaluate the main proposed methods, ECPO and ECAC,
 on a number of benchmark tasks against strong baseline methods.
-Implementation details are provided in the Appendix. % \cref{subsec:implementation}. 
+Implementation details are provided in \cref{subsec:implementation}. 
 
 \begin{figure*}[t]
 \begin{center}
@@ -43,7 +43,7 @@ Second, we test the second ECAC approach on continuous-control benchmarks
 from OpenAI Gym, utilizing the Mujoco environment
 \citep{brockman2016openai,todorov2012mujoco};
 including Hopper, Walker2d, HalfCheetah, Ant and Humanoid.
-The details of the algorithmic and Mujoco tasks are provided in the Appendix.
+The details of the algorithmic and Mujoco tasks are provided in \cref{sec:appendix}.
 %\cref{subsec:benchmarks}. 
 
 Note that only cumulative rewards are available in both the
@@ -51,18 +51,14 @@ synthetic bandit and algorithmic tasks.
 Therefore, value-based RL algorithms can not be applied in this setting.
 This restriction compels us to compare ECPO against
 REINFORCE with entropy regularization (MENT) \citep{williams1992simple},
-and under-appreciated reward exploration (UREX) \citep{nachum2017improving}.
-To the best of our knowledge,
-these
-are the state-of-the-art policy-based algorithms for these algorithmic tasks. 
+and under-appreciated reward exploration (UREX) \citep{nachum2017improving}, which are state-of-the-art policy-based algorithms for the algorithmic tasks.
 %
 For the continuous control tasks, we compare the second ECAC approach
 to deep deterministic policy gradient (DDPG) \citep{lillicrap2015continuous},
 an efficient off-policy deep RL methods;
 twin delayed deep deterministic policy gradient algorithm (TD3)
 \citep{fujimoto2018addressing},
-a recent extension to DDPG by applying the double Q-learning trick
-to address over-estimation problem when function approximations are adopted;
+a recent extension to DDPG by using double Q-learning;
 and Soft-Actor-Critic (SAC) \citep{haarnoja2018soft},
 a recent state-of-the-art off-policy algorithm on a number of benchmarks.
 All of these algorithms are implemented in \emph{rlkit}.%
@@ -71,17 +67,15 @@ All of these algorithms are implemented in \emph{rlkit}.%
 https://github.com/vitchyr/rlkit
 } 
 We do not include TRPO and PPO in these experiments,
-as their performance is dominated by SAC and TD3,
+as their performances are dominated by SAC and TD3,
 as shown in \citep{haarnoja2018soft,fujimoto2018addressing}. 
-
 
 \subsection{Comparative Evaluation}
 
 The results on synthetic bandit problem and algorithmic tasks are reported 
 in \cref{fig:results}. 
-It is clear that ECPO substantially outperforms the baseline methods
-on these tasks.
-ECPO appears able to consistently achieve a higher score and
+ECPO substantially outperforms the baseline methods.
+ECPO is able to consistently achieve a higher score and
 learn substantially faster than UREX.
 We also find the performance of UREX is unstable.
 On the difficult tasks, including RepeatCopy, Reverse and ReversedAddition,
@@ -117,7 +111,7 @@ X-axis is millions of environment steps.
 \label{fig:result-mujoco} 
 \end{figure*}
 
-\cref{fig:result-mujoco} presents the results on the 
+\cref{fig:result-mujoco} presents the 
 continuous-control benchmarks, reporting the total mean returns
 on evaluation rollouts obtained by the algorithms during training.
 These
@@ -192,8 +186,7 @@ named PMD-AC and PMD-AC+entropy, are also implemented for comparison.
 \begin{center}
 \includegraphics[width=0.9\linewidth]{./ablation-results.pdf}
 \end{center}
-\caption{Ablation Study of ECPO and ECAC %with designed baselines
-on ReversedAddition and Ant. }
+\caption{Ablation Study of ECPO and ECAC. }
 \label{fig:ablation}
 \end{figure}
 

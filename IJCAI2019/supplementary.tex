@@ -3,16 +3,18 @@
 % If your paper is accepted, change the options for the package
 % aistats2019 as follows:
 %
-%\usepackage[accepted]{aistats2019}
+%\usepackage{ijcai19}
 %
 % This option will print headings for the title of your paper and
 % headings for the authors names, plus a copyright note at the end of
 % the first column of the first page.
 
 % If you set papersize explicitly, activate the following three lines:
-%\special{papersize = 8.5in, 11in}
+\special{papersize = 8.5in, 11in}
 %\setlength{\pdfpageheight}{11in}
 %\setlength{\pdfpagewidth}{8.5in}
+
+\usepackage[top=1.0in,bottom=1.0in,left=1.0in,right=1.0in]{geometry}
 
 % If you use natbib package, activate the following three lines:
 %\usepackage[round]{natbib}
@@ -34,9 +36,10 @@
 \usepackage[capitalize]{cleveref}
 \crefname{prop}{Proposition}{Propositions}
 \crefname{thm}{Theorem}{Theorems}
+\crefname{lem}{Lemma}{Lemmas}
 
 \usepackage{xr}
-\externaldocument{sample_paper}
+\externaldocument{ijcai19}
 
 %\usepackage{zref-xr}
 %\zxrsetup{toltxlabel}
@@ -63,10 +66,10 @@
 %
 %\runningauthor{Surname 1, Surname 2, Surname 3, ...., Surname n}
 
-\setcounter{equation}{7}
-\setcounter{thm}{1}
-\setcounter{lem}{1}
-\setcounter{prop}{4}
+\setcounter{equation}{11}
+\setcounter{thm}{2}
+\setcounter{lem}{2}
+\setcounter{prop}{3}
 \setcounter{remk}{1}
 
 \setcounter{algorithm}{1}
@@ -75,7 +78,7 @@
 
 \onecolumn
 
-\title{Supplementary Material}
+\title{Appendix of ``On Principled Exploration in Policy Optimization''}
 \date{}
 \maketitle
 
@@ -83,7 +86,8 @@
 \input{appendix}
 
 %\bibliographystyle{apalike}
-\bibliography{aistats2019_conference}
+\bibliographystyle{named}
+\bibliography{ijcai19}
 
 
 \end{document}

@@ -33,19 +33,35 @@ at each iteration:
 }
 %
 
-The idea of optimizing the reverse direction of KL divergence has proved
-to be effective in previous work,
-such as reward augmented maximum likelihood \citep{norouzi2016reward}
-and UREX \citep{nachum2017improving}.
-Its \emph{mean seeking} behavior further encourages exploration by the
-algorithm.
+The effects of minimizing different orientations of KL divergence are
+well known \citep{kevin2012machine}. And it has proved
+to be effective in previous work \citep{norouzi2016reward,nachum2017improving}.
+In particular, minimizing $\KL(\pi_{\theta}\|q)$
+usually underestimates the support of $q$,
+since the objective is infinite if $q = 0$ and $\pi_{\theta} > 0$.
+Thus, $\pi_\theta$ is driven to $0$ wherever $q=0$.
+The problem is that when $q$ changes, $\pi_\theta$ can have zero mass
+on trajectories that have non-zero probability under the new $q$,
+hence $\pi_\theta$ will never capture this part of $q$,
+leading to mode collapse.
+By contrast, minimizing $\KL(q\|\pi_{\theta})$ 
+is zero-avoiding in $\pi_{\theta}$,
+since if $q > 0$ we must ensure $\pi_{\theta} > 0$.
+Note that by \cref{eq:pitautauprime}:
+(a) the $q$ in our method is nonzero everywhere,
+(b) we further add entropy in \cref{eq:ECPO} to avoid $q$ prematurely converging
+to a deterministic policy, 
+(c) $\KL(q\|\pi_{\theta})$ is zero-avoiding for minimization over
+$\pi_{\theta}$.
+These ensure that the proposed method does not exhibit the same mode-seeking 
+behavior as MD.
 As we will see in \cref{sec:experiments},
 ECPO outperforms PMD significantly in experimental evaluations.
 
 \subsection{Learning Algorithms}
 
 We now provide practical learning algorithms for \cref{eq:ECPO}.
-Despite its non-convexity, the Lift Step
+The Lift Step
 has an analytic solution,
 {\small
 \begin{equation}
@@ -66,7 +82,7 @@ Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \t
 \end{equation}
 }
 \end{lem}
-Pesudeocode of the learning algorithm is presented in \cref{alg:ECPO}. Derivation for the analytic solution of the Lift Step and above Lemma as well as other implementation details can be found in the Appendix.% \cref{appx:ECPO-learning}.
+Pesudeocode of the learning algorithm is presented in \cref{alg:ECPO}. Derivation for the analytic solution of the Lift Step and above Lemma as well as other implementation details can be found in \cref{appx:ECPO-learning}.
 
 \begin{algorithm}[t]
 	\caption{\label{alg:ECPO}  The ECPO algorithm}
@@ -86,21 +102,22 @@ Pesudeocode of the learning algorithm is presented in \cref{alg:ECPO}. Derivatio
 
 
 \subsection{Analysis of ECPO}
-We now present the theoretical analysis of ECPO. Our first result shows that, with the additional entropy regularizer to the Lift Step $\tau' > 0$, the policy $\bar{\pi}_{\tau,\tau^{\prime}}^*$ still enjoys sublinear regret by particularly designed choice of $\tau$ and $\tau'$, when the policy class is the simplex. 
+We now present the theoretical analysis of ECPO. Our first result shows that, with the additional entropy regularizer to the Lift Step $\tau' > 0$, the policy $\bar{\pi}_{\tau,\tau^{\prime}}^*$ still enjoys sublinear regret by particularly designed choice of $\tau$ and $\tau'$, when the policy class is the probabilistic simplex. 
 
 \begin{thm}
-When the policy class is the simplex, by choosing $\tau'=1/\sqrt{T}$ and $\tau + \tau' = \sqrt{T} / \sqrt{2\log N}$ we have,
+\label{thm:sublinear_regret_simplex}
+When the policy class is the simplex, by choosing $\tau'=1/\sqrt{T\log{n}}$, and $\tau + \tau' = \sqrt{T} / \sqrt{2\log n}$, (or $\tau'=1/\sqrt{t\log{n}}$, and $\tau + \tau' = \sqrt{t} / \sqrt{2\log n}$), we have,
 \begin{equation*}
-    \sum\nolimits_{t=1}^{T}{\pi^* r} - \sum\nolimits_{t=1}^{T}{\pi_t r} \le C\sqrt{T\log N}.
+    \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi^*(\rho) r(\rho)}} - \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi_t(\rho) r(\rho)}} \le 4\sqrt{T\log n}.
 \end{equation*}
-where $\pi^*$ is the optimal policy, $\pi_{t}$ is defined by \cref{eq:pitautauprime} with $\pi_{t-1}$ as the reference policy. 
+where $\pi^*$ is the optimal policy, $\pi_{t}$ is defined by \cref{eq:pitautauprime} with $\pi_{t-1}$ as the reference policy, and $n$ is the total action/trajectory number.
 %\begin{equation*}
  %   \pi_{t+1} = \frac{\pi_t \cdot \exp\left\{ \frac{r - \tau^\prime \log{\pi_t}}{\tau + \tau^\prime} \right\}}{ \pi_t^\top \exp\left\{ \frac{r - \tau^\prime \log{\pi_t}}{\tau + \tau^\prime} \right\} }
 %\end{equation*}
 \end{thm}
 
 Our second result shows that ECPO still enjoys similar desirable properties (\cref{prop:monoto_policymirrordescent}) to PMD
-in the non-convex setting, with respect to the surrogate reward $\SR(\pi_\theta)$.
+in general settings, with respect to the surrogate reward $\SR(\pi_\theta)$.
 %which we analyze further below.
 
 \begin{thm}
@@ -144,7 +161,7 @@ recovers existing performance measures.
 \label{lem:sr}
 Let $\hat{r}=r-\tau' \log\pi$, $\hat{r}_\infty = \Vert \hat{r} \Vert_\infty$ and $\eta = \tau+\tau'$. For any policy $\pi$ and $\tau\geq 0$, $\tau'\geq 0$, we have
 \begin{align*}
-\pi\cdot r + \tau' \cH(\pi) \leq \SR(\pi) \leq  \pi\cdot \hat{r} + \frac{1}{2\eta} \ep_{\rho\sim \pi}{\left[\left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right]}
+\pi\cdot r + \tau' \cH(\pi) \leq \SR(\pi) \leq  \pi\cdot \hat{r} + \frac{1}{2\eta} \ep_{\rho\sim \pi}{\left[\left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right]}.
 \end{align*}
 Furthermore, 
 \begin{enumerate}[label=(\roman*)]
@@ -162,7 +179,7 @@ As shown in \cref{prop:solvableprojection},
 for a one-layer-softmax neural network policy,
 the Project Step $\KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)$
 can also still be solved to global optimality,
-affording a significant computational advantage over PMD.
+affording computational advantages over PMD.
 
 \begin{prop}
 \label{prop:solvableprojection}

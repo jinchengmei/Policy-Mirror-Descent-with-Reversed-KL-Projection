@@ -7,8 +7,7 @@ Deep reinforcement learning (RL) has recently
 been shown to be remarkably effective in solving
 challenging sequential decision making problems
 \citep{schulman2015trust,mnih2015human,silver2016mastering}.
-A central method of deep RL is \emph{policy optimization}
-(aka\ policy gradient),
+A central method of deep RL is \emph{policy optimization},
 which is based on formulating the problem
 as the optimization of a stochastic objective (expected return)
 with respect to the underlying policy parameters
@@ -58,22 +57,15 @@ We first reformulate the maximization of
 this objective as a lift-and-project procedure,
 following the lines of Mirror Descent
 \citep{nemirovskii1983problem,beck2003mirror}.
-Such a reformulation achieves two things.
-First, %this approach 
-it is easier to analyze policy optimization
-in the parameter space:
-using this reformulation we can establish a monotonic improvement guarantee
-with a fairly simple proof,
-even in a non-convex setting.
-We also study the fixed point properties of this setup.
-Second, the proposed reformulation has practical algorithmic consequences,
+Using this reformulation we establish a monotonic improvement guarantee and study the fixed point properties of this setup.
+The reformulation also has practical algorithmic consequences,
 suggesting, for example,
 that multiple gradient descent updates should be performed
 in the projection step.
 These considerations lead to the %our first practical algorithm,
 Policy Mirror Descent (PMD) algorithm,
 which first lifts the policy to the entire policy-simplex,
-ignoring the constraint induced by its parametrization,
+ignoring the constraint of parametrization,
 then approximately solves the projection step by multiple
 gradient descent updates to the policy in the parameter space. 
 %
@@ -81,32 +73,27 @@ gradient descent updates to the policy in the parameter space.
 %
 
 We then investigate
-additional modifications to mitigate the potential deficiencies of CPO.
+additional improvements to mitigate the potential deficiencies of PMD.
 The main algorithm we propose, Exploratory Conservative Policy Optimization (ECPO),
 incorporates both an entropy and relative entropy regularizer,
 and uses the mean seeking direction of KL divergence for projection.
-The benefit of this approach is twofold.
-First, 
-using just the mean seeking direction of KL divergence for the projection step
-helps avoids poor local optima;
-second,
-this specific problem can now be efficiently solved to global optimality
-in certain non-trivial \emph{non-convex} scenarios,
+Using the mean seeking KL divergence for the projection step
+helps avoids poor deterministic policies. And this specific problem can be efficiently solved to global optimality
+in certain non-convex cases,
 such as one-layer-softmax networks.
-We prove monotonic guarantees for ECPO with respect to a surrogate objective $\SR(\pi)$.
+The additional entropic exploration is principled in the following sense.
+Firstly, in the simplex setting, the algorithm enjoys finite time sublinear regret.
+Secondly, we prove monotonic guarantees for ECPO with respect to a surrogate objective $\SR(\pi)$.
 We further study the properties of $\SR(\pi)$ and provide theoretical
 and empirical evidence that $\SR$ 
-can effectively guide the search for good policies.
-Finally, we also show how this algorithm can be extended 
-with a value function approximator,
+can effectively guide good policy search.
+Finally, we also extend this algorithm using value function approximations,
 and develop an actor-critic version that is effective in practice.
-
-
 
 \subsection{Notation and Problem Setting}
 \label{subsec:notations_and_settings}
 
-We consider finite horizon
+We consider episodic
 settings with finite state and action spaces. 
 The behavior of an agent is modelled by a policy $\pi(a|s)$
 that specifies a probability distribution over a finite set of actions
@@ -138,5 +125,5 @@ to refer to the probability simplex over all possible trajectories.
 Without loss of generality, we also assume that the state transition function
 is deterministic, and the discount factor $\gamma = 1$.
 %This same simplification is also assumed in \citet{nachum2017improving}. 
-Results for the case of a stochastic state transition function are presented
-in the Appendix. %\cref{sec:stochasticsetting}.
+All theoretical results for the general case of a stochastic environment are presented
+in \cref{sec:appendix}. %\cref{sec:stochasticsetting}.

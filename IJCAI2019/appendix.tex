@@ -1,3 +1,5 @@
+\def\rvpi{{\boldsymbol{\pi}}}
+\def\rvr{{\mathbf{r}}}
 
 \section{Proofs} % for \cref{sec:reversed_emtropy_policy_mirror_descent}}
 
@@ -6,21 +8,28 @@
 \subsection{Proof of \cref{prop:mirrordescent_projection}}
 
 \begin{proof}
-	Note that $-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) = - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} = \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi}$. Note the fact that $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
+Note that
+\begin{equation*}
+\begin{split}
+	-\tau \KL(\pi_\theta \| \bar{\pi}_\tau^*) &= - \tau \sum_{\rho}{ \pi_\theta(\rho) \log \pi_\theta(\rho) } + \tau \sum_{\rho}{ \pi_\theta(\rho) (\log \refPi(\rho) + r(\rho) / \tau ) }  - Z_{\refPi} \\
+	&= \ep_{\rho \sim \pi_\theta}{  r(\rho)  - \tau \KL(\pi_\theta \| \refPi) } - Z_{\refPi},
+\end{split}
+\end{equation*}
+where $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\rho) / \tau \right\} } }$ is indenpendent of $\pi_\theta$ given the reference policy $\refPi$.
 \end{proof}
 
 \subsection{Proof of \cref{prop:monoto_policymirrordescent}}
 \label{appsec:monoto_policymirrordescent}
 
 \begin{proof}
-	{\bf (Monotonic Improvement)} By the definition of $\pi_{\theta_{t+1}}$, note that $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$. Then we have,
+	{\bf (Monotonic Improvement)} By the definition of $\pi_{\theta_{t+1}}$, $\KL(\pi_{\theta_{t+1}} \| \bar{\pi}_\tau^*)  = \min_{\pi_\theta \in \Pi}{ \KL(\pi_\theta \| \bar{\pi}_\tau^*)} \leq \KL(\pi_{\theta_{t}} \| \bar{\pi}_\tau^*)$.
 	{\small
 	\begin{equation*}
 	\begin{split}
 		&\ep_{\rho \sim \pi_{\theta_{t+1}}}{  r(\rho)} - \ep_{\rho \sim \pi_{\theta_{t}}}{  r(\rho)} = \tau \left[ \sum\limits_{\rho}{\pi_{\theta_{t+1}}(\rho) \cdot \frac{r(\rho)}{\tau}} - \sum\limits_{\rho}{\pi_{\theta_{t}}(\rho) \cdot \frac{r(\rho)}{\tau}} \right] \\
 		&= \tau \sum\limits_{\rho}{\left[ \pi_{\theta_{t+1}}(\rho) \log\left\{ \frac{ \pi_{\theta_{t}}(\rho) \exp\left\{\frac{r(\rho)}{\tau}\right\} }{ \sum\limits_{\rho^\prime}{ \pi_{\theta_{t}}(\rho^\prime) \exp\left\{\frac{r(\rho^\prime)}{\tau}\right\} } } \right\} - \pi_{\theta_{t+1}}(\rho) \log{ \pi_{\theta_{t}}(\rho)} - \pi_{\theta_{t}}(\rho) \log\left\{ \frac{ \pi_{\theta_{t}}(\rho) \exp\left\{\frac{r(\rho)}{\tau}\right\} }{ \sum\limits_{\rho^\prime}{ \pi_{\theta_{t}}(\rho^\prime) \exp\left\{\frac{r(\rho^\prime)}{\tau}\right\} } } \right\} + \pi_{\theta_{t}}(\rho) \log{ \pi_{\theta_{t}}(\rho) } \right]} \\
 		&= \tau \sum\limits_{\rho}{\left[ \pi_{\theta_{t+1}}(\rho) \log{ \bar{\pi}_\tau^*(\rho) } - \pi_{\theta_{t+1}}(\rho) \log{ \pi_{\theta_{t}}(\rho)} - \pi_{\theta_{t}}(\rho) \log{ \bar{\pi}_\tau^*(\rho) } + \pi_{\theta_{t}}(\rho) \log{ \pi_{\theta_{t}}(\rho) } \right]} \\
-		&= \tau \left[ \KL(\pi_{\theta_{t+1}} \Vert \bar{\pi}_\tau^*) - \KL(\pi_{\theta_{t}} \Vert \bar{\pi}_\tau^*) + \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \right] \ge \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \ge 0.
+		&= \tau \left[ \KL(\pi_{\theta_t} \Vert \bar{\pi}_\tau^*) - \KL(\pi_{\theta_{t+1}} \Vert \bar{\pi}_\tau^*) + \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \right] \ge \tau \KL(\pi_{\theta_{t+1}} \| \pi_{\theta_{t}}) \ge 0.
 	\end{split}
 	\end{equation*}
 	}
@@ -67,16 +76,124 @@
 	Comparing \cref{eq:equivalence_stationary_fixed_point} with \cref{eq:stationary_point_of_expected_reward}, we have the fixed point condition of PMD is the same as the definition of the stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$.
 \end{proof}
 
+\subsection{Proof of \cref{thm:sublinear_regret_simplex}}
+
+In the probabilistic simplex, the policy update is as follows,
+
+\begin{equation*}
+    \pi_{t+1}\left( \rho \right) = \frac{\pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\}}{ \sum\limits_{\rho}{ \pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\} } }.
+\end{equation*}
+
+We firstly prove two useful lemmas. For conciseness, we use vector notations.
+
+\begin{lem}
+\label{lem:kl_t_tp1_bound}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_t \middle\| \rvpi_{t+1} \right)} \le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t}.
+\end{split}
+\end{equation*}
+\end{lem}
+\begin{proof}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_t \middle\| \rvpi_{t+1} \right)} &= \rvpi_t^\top \log{\rvpi_t} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} - \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_{t+1}} \\
+    &\le \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 - \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_{t+1}} \\
+    &= \left( \rvpi_t - \rvpi_{t+1} \right)^\top \left( \log{\rvpi_t} - \log{\rvpi_{t+1}} \right) - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
+    &= \frac{1}{\tau + \tau^\prime} \left( \rvpi_{t+1} - \rvpi_t \right)^\top \rvr + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1 \cdot \left\| \rvr \right\|_\infty - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1  - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t}. \qedhere
+\end{split}
+\end{equation*}
+\end{proof}
+
+\begin{lem}
+\label{lem:kl_tp1_t_bound}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} \le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right).
+\end{split}
+\end{equation*}
+\end{lem}
+\begin{proof}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} &= \rvpi_{t+1}^\top \log{\rvpi_{t+1}} - \rvpi_t^\top \log{\rvpi_t} - \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_t} \\
+    &\le \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_{t+1}} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 - \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_t} \\
+    &= \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \left( \log{\rvpi_{t+1}} - \log{\rvpi_t} \right) - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
+    &= \frac{1}{\tau + \tau^\prime} \left( \rvpi_{t+1} - \rvpi_t \right)^\top \rvr + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1 \cdot \left\| \rvr \right\|_\infty - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1  - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t}.
+\end{split}
+\end{equation*}
+Therefore,
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
+    &= \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} + \rvpi_t^\top \log{\rvpi_t} \right). 
+\end{split}
+\end{equation*}
+Rearranging,
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right). \qedhere
+\end{split}
+\end{equation*}
+\end{proof}
+
+Now we prove \cref{thm:sublinear_regret_simplex},
+\begin{proof}
+According to \cref{lem:kl_t_tp1_bound},
+\begin{equation*}
+\begin{split}
+    \left( \rvpi - \rvpi_t \right)^\top \rvr &= \left( \rvpi - \rvpi_t \right)^\top \left[ \left(\tau + \tau^\prime\right) \left( \log{\rvpi_{t+1}} - \log{\rvpi_t} \right) + \tau^\prime \log{\rvpi_t} \right] \\
+    &= \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} + \KL{\left( \rvpi_t \middle\| \rvpi_{t+1} \right)}  \right] + \tau^\prime \left( \rvpi - \rvpi_t \right)^\top \log{\rvpi_t} \\
+    &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} + \tau^\prime \left( \rvpi - \rvpi_{t+1} \right)^\top \log{\rvpi_t}.
+\end{split}
+\end{equation*}
+According to \cref{lem:kl_tp1_t_bound},
+\begin{equation*}
+\begin{split}
+    \left( \rvpi - \rvpi_{t+1} \right)^\top \log{\rvpi_t} &= - \KL{\left( \rvpi \middle\| \rvpi_t \right)} + \rvpi^\top \log{\rvpi} + \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} \\
+    &\le \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} \\
+    &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right) + \log{n}.
+\end{split}
+\end{equation*}
+Combining the above,
+\begin{equation*}
+\begin{split}
+    \left( \rvpi - \rvpi_t \right)^\top \rvr &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} \\
+    &\quad + \frac{\tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{{\tau^\prime}^2}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right) + \tau^\prime \log{n}.
+\end{split}
+\end{equation*}
+Summing up from $t = 1$ to $T$, and choosing $\tau + \tau^\prime = \frac{\sqrt{T}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{T \log{n}}}$,
+\begin{equation*}
+\begin{split}
+    \sum\limits_{t=1}^{T}{\left( \rvpi - \rvpi_t \right)^\top \rvr } &\le \left(\tau + \tau^\prime\right) \KL{\left( \rvpi \middle\| \rvpi_1 \right)} + \frac{T}{2\left(\tau + \tau^\prime\right)} \\
+    &\quad + \frac{T \tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} - \frac{{\tau^\prime}^2}{\tau} \rvpi_{T+1}^\top \log{\rvpi_{T+1}} + T \tau^\prime \log{n} \\
+    &\le \sqrt{2T \log{n}} + \frac{1}{\frac{\sqrt{T}}{\sqrt{2 \log{n}}} - \frac{1}{\sqrt{T\log{n}}}} \left( \frac{1}{\sqrt{2}}+ \frac{1}{T} \right) + \sqrt{T \log{n}},
+\end{split}
+\end{equation*}
+by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$, $ - \rvpi_{T+1}^\top \log{\rvpi_{T+1}} \le \log{n}$. Note that choosing $\tau + \tau^\prime = \frac{\sqrt{t}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{t \log{n}}}$ will lead to the same result.
+\end{proof}
+
+
+
+
+
+
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
 \begin{proof}
 	{\bf (Monotonic Improvement)} Using $\KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}}) = \min_{\pi_\theta \in \Pi}{ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta)} \le \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat)$ and Jensen's inequality,
 	\begin{equation*}
 	\begin{split}
-	&\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat) = (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
-	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
-	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
-	\ge& (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
-	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } = \tau \left[ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat) - \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}})\right] \ge 0.
+	\SR(\pi_{\theta_{t+1}}) - \SR(\pithetat) &= (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
+	&= (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{  \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
+	&= (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
+	&\ge (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
+	&= \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } = \tau \left[ \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pithetat) - \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta_{t+1}})\right] \ge 0.
 	\end{split}
 	\end{equation*}
 	
@@ -89,25 +206,25 @@
 		\iff - \sum\limits_{\rho}{ \frac{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_\theta(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_\theta(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } &= 0. \qquad (\tau > 0)
 	\end{split}
 	\end{equation}
-	On the other hand, the fixed point of REPMD indicates at some iteration $t$,
+	On the other hand, the fixed point of ECPO indicates at some iteration $t$,
 	\begin{equation}
-	\label{eq:fixed_point_of_REPMD_iter}
+	\label{eq:fixed_point_of_ECPO_iter}
 	\begin{split}
 		&\pi_{\theta_t} = \pi_{\theta_{t+1}}, \\
-		\text{where } &\pi_{\theta_t} \xrightarrow{\text{Lift Step}} \bar{\pi}_{\tau,\tau^{\prime}}^* \xrightarrow{\text{Project Step}} \pi_{\theta_{t+1}} \text{ in \cref{eq:repmd}},
+		\text{where } &\pi_{\theta_t} \xrightarrow{\text{Lift Step}} \bar{\pi}_{\tau,\tau^{\prime}}^* \xrightarrow{\text{Project Step}} \pi_{\theta_{t+1}} \text{ in \cref{eq:ECPO}},
 	\end{split}
 	\end{equation}
 	which means $\pi_{\theta_t}$ is the solution of the Project Step,
 	\begin{equation}
-	\label{eq:solution_of_project_step_repmd}
+	\label{eq:solution_of_project_step_ECPO}
 	\begin{split}
 		\left. \frac{d \KL( \bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_{\theta}) }{d \theta} \right\vert_{\theta = \theta_t} &= 0 \\
 		\iff - \left. \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0 \\
-		\iff - \left. \sum\limits_{\rho}{ \frac{ \pi_{\theta_t}(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_{\theta_t}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_{\theta_t}(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_{\theta_t}(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0 \\
-		\text{(by Lift Step in \cref{eq:fixed_point_of_REPMD_iter})} &
+		\iff - \left. \sum\limits_{\rho}{ \frac{ \pi_{\theta_t}(\rho) \exp\left\{ \frac{r(\rho) - \tau^\prime \log{\pi_{\theta_t}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{  \sum_{\rho^\prime}{ \pi_{\theta_t}(\rho^\prime) \exp\left\{ \frac{r(\rho^\prime) - \tau^\prime \log{\pi_{\theta_t}(\rho^\prime)} }{\tau + \tau^{\prime}} \right\} } } \cdot \frac{1}{ \pi_\theta(\rho)} \cdot \frac{d \pi_{\theta}(\rho)}{d \theta} } \right\vert_{\theta = \theta_t} &= 0. \\
+		\text{(by Lift Step in \cref{eq:fixed_point_of_ECPO_iter})} &
 	\end{split}
 	\end{equation}
-	Comparing \cref{eq:solution_of_project_step_repmd} with \cref{eq:stationary_point_of_sr}, we have the fixed point condition of REPMD is the same as the definition of the stationary point of $\SR(\pi_{\theta})$.
+	Comparing \cref{eq:solution_of_project_step_ECPO} with \cref{eq:stationary_point_of_sr}, we have the fixed point condition of ECPO is the same as the definition of the stationary point of $\SR(\pi_{\theta})$.
 \end{proof}
 
 \subsection{Proof of \cref{prop:solvableprojection}}
@@ -119,43 +236,69 @@
 	 Thus $\KL(\refPi \| \pi_{\theta})$ is convex in $\theta$.
 \end{proof}
 
-\subsection{Proof of \cref{prop:sr}}
+\subsection{Proof of \cref{lem:sr}}
 \begin{proof}
-	To prove (i), note that as $\tau \to 0$, $\SR(\pi_\theta) \to \tau^{\prime} \log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) }{ \tau^{\prime} } \right\} }}$, the standard softmax value. Taking limit on $\tau'$ gives the hardmax value $\max_{\rho}{r(\rho)}$ as $\tau^{\prime} \to 0$.
+According to the definition of $\SR$,
+\begin{align*}
+	\SR(\pi) &= \max_{\pi' \in \Delta}{  \pi' \cdot r - \tau \KL(\pi' \Vert \pi) + \tau' \cH(\pi') } \\
+	&= \eta \log \sum\limits_{\rho}{ \pi(\rho) \cdot \exp \left\{ \frac{\hat{r}(\rho)}{\eta}\right\} }.
+\end{align*}
+
+The lower bound is trivial by directly plugging $\pi$ into the optimization problem. For the upper bound,
+\begin{align*}
+	\exp \left\{ \frac{\hat{r}(\rho)}{\eta} \right\} &= \exp \left\{ \frac{\hat{r}_\infty}{\eta} \right\} \exp\left\{ \frac{\hat{r}(\rho) - \hat{r}_\infty }{\eta}\right\} \\
+	&\leq \exp \left\{ \frac{\hat{r}_\infty}{\eta} \right\} \left( 1 + \frac{1}{\eta} \left( \hat{r}(\rho) - \hat{r}_\infty \right) + \frac{1}{2\eta^2} \left(\hat{r}(\rho) - \hat{r}_\rho \right)^2\right),
+\end{align*}
+where the inequality follows by $e^x \leq 1+x+ \frac{x^2}{2}$ for $x\leq 0$. Therefore,
+
+\begin{align*}
+	\sum\limits_{\rho} \pi(\rho) \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} &\leq \exp\left\{\frac{\hat{r}(\rho)}{\eta}\right\}  \sum_\rho \pi(\rho) \left( 1 + \frac{1}{\eta} \left( \hat{r}(\rho) - \hat{r}_\infty \right) + \frac{1}{2\eta^2} \left(\hat{r}(\rho) - \hat{r}_\rho \right)^2\right) \\
+	&=  \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} \left( 1 + \frac{1}{\eta} \pi \cdot\left( \hat{r}-\hat{r}_\infty \right) + \frac{1}{2\eta^2} \pi\cdot \left(  \hat{r} - \hat{r}_\infty \right)^2 \right) \\
+	&\leq \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} \exp \left\{ \frac{1}{\eta} \pi \cdot\left( \hat{r}-\hat{r}_\infty \right) + \frac{1}{2\eta^2} \pi\cdot \left(  \hat{r} - \hat{r}_\infty \right)^2 \right\} \\
+	&= \exp \left\{ \frac{1}{\eta} \pi\cdot \hat{r} + \frac{1}{2\eta^2} \pi\cdot \left( \hat{r} - \hat{r}_\infty \right)^2 \right\},
+\end{align*}
+where the second inequality follows by $1+x \leq e^x$. Therefore,
+\begin{align*}
+\SR(\pi) \leq \pi\cdot \hat{r} + \frac{1}{2\eta} \ep_{\rho\sim \pi}{\left[\left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right]}.
+\end{align*}
+
+To prove (i), note that as $\tau \to 0$, $\SR(\pi_\theta) \to \tau^{\prime} \log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) }{ \tau^{\prime} } \right\} }}$, the standard softmax value. Taking limit on $\tau'$ gives the hardmax value $\max_{\rho}{r(\rho)}$ as $\tau^{\prime} \to 0$.
 	
-	To prove (ii), we have 
-	\begin{align*}
-	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } = {\scalebox{.95} {$\lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} } } }$ } }\\
-	&= \sum_{\rho}{ \pi_\theta(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } = \ep_{\rho \sim \pi_\theta}{r(\rho)} + \tau^{\prime} \mathcal{H}(\pi_\theta)
-	\end{align*}
+To prove (ii), we have ,
+\begin{align*}
+	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } \\
+	&= {\lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } } } }\\
+	&= \sum_{\rho}{ \pi_\theta(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } \\
+	&= \ep_{\rho \sim \pi_\theta}{r(\rho)} + \tau^{\prime} \mathcal{H}(\pi_\theta).
+\end{align*}
 	As $\tau^{\prime} \to 0$, $\SR(\pi_\theta) \to \ep_{\rho \sim \pi_\theta}{r(\rho)}$.
 \end{proof}
 
-\section{Details of REPMD Learning}
-\label{appx:repmd-learning}
+\section{Details of ECPO Learning}
+\label{appx:ECPO-learning}
 
-This section provides some of the details of learning algorithms for REPMD.
+This section provides some of the details of learning algorithms for ECPO.
 We first show the derivation of the analytic solution of the Lift Step.
 \begin{lem}
 	\label{lem:opt_pi_ref}
-	The lift step of \cref{eq:repmd} has the following closed form expression:
+	The lift step of \cref{eq:ECPO} has the following closed form expression:
 	\begin{equation}
 	\label{eq:pitautauprime1}
 	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
 	\end{equation}
 \end{lem}
 \begin{proof}
-	Rewrite the objective function defined in \cref{eq:repmd},
+	Rewrite the objective function defined in \cref{eq:ECPO},
 	\begin{equation}
 	\ep\limits_{\rho \sim \pi} r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi) = \ep\limits_{\rho \sim \pi} [r(\rho) + \tau \log \refPi(\rho)] + (\tau+\tau^{\prime}) \cH(\pi),
 	\end{equation}
-	which is an entropy regularized reshaped reward objective. The optimal policy of this objective can be obtained by directly applying Lemma 4 of \citet{nachum2017bridging}, i.e.
+	which is an entropy regularized reshaped reward objective. The optimal policy of this objective can be obtained by directly applying Lemma 4 of \citet{nachum2017bridging}, i.e.,
 	\begin{equation}
 	\label{pi_bar_star_tau_tauprime_prop_form}
 	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho)\propto \exp\left\{ \frac{r(\rho)+\tau \log \refPi(\rho)}{\tau+\tau^{\prime}} \right\} = \refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho)}{\tau+\tau^{\prime}} \right\}. \qedhere
 	\end{equation}
 \end{proof}
-The next lemma provides the derivation of the gradient estimation of REPMD (Lemma \ref{lem:repmdgradientestimate}). 
+The next lemma provides the derivation of the gradient estimation of ECPO (Lemma \ref{lem:ECPOgradientestimate}). 
 \begin{proof}
 	Note that
 	\begin{equation*}
@@ -166,7 +309,7 @@ The next lemma provides the derivation of the gradient estimation of REPMD (Lemm
 	Therefore, taking gradient on both sides,
 	\begin{equation}
 	\begin{split}
-	&\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) \approx -\frac{1}{K}\sum_{k=1}^K \frac{\bar{\pi}_{\tau,\tau^{\prime}}^* (\rho_k)}{\refPi(\rho_k)} \nabla_{\theta} \log \pi_\theta(\rho_k)\\ 
+	\nabla_{\theta} \KL(\bar{\pi}_{\tau,\tau^{\prime}}^* \| \pi_\theta) &\approx -\frac{1}{K}\sum_{k=1}^K \frac{\bar{\pi}_{\tau,\tau^{\prime}}^* (\rho_k)}{\refPi(\rho_k)} \nabla_{\theta} \log \pi_\theta(\rho_k)\\ 
 	&= -\frac{1}{K}\sum_{k=1}^K \frac{ \refPi(\rho_k) \exp\left\{ \frac{r(\rho_k)-\tau^{\prime} \log \refPi(\rho_k) }{ \tau+\tau^{\prime}} \right\} }{\refPi(\rho_k)  \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} }  } \nabla_{\theta} \log \pi_\theta(\rho_k) \qquad \text{by \cref{eq:pitautauprime1} }  \\
 	&\approx -\frac{1}{K}\sum_{k=1}^K \frac{\exp \{\omega_k\}} {\frac{1}{K} \sum_{j=1}^K \exp \{\omega_j\}} \nabla_{\theta} \log \pi_\theta(\rho_k) \\
 	&=  -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} } \qedhere.
@@ -174,12 +317,12 @@ The next lemma provides the derivation of the gradient estimation of REPMD (Lemm
 	\end{equation}
 \end{proof}
 
-Recall that in \cref{alg:repmd} the project step is performed by SGD. In our implementation, the end condition of SGD is controlled by two parameters: $\epsilon > 0$ and $\text{F\_STEP}\in \{0,1 \}$. First, SGD halts if the change of the KL divergence is below or equal to $\epsilon$. Second, $\text{F\_STEP}$ decides the maximum number of SGD steps. If $\text{F\_STEP}=1$, the maximum number is $\sqrt{t}$ at iteration $t$; while if $\text{F\_STEP}=0$, there is no restriction on the maximum number of gradient steps, and stopping condition only depends on $\epsilon$.
+Recall that in \cref{alg:ECPO} the project step is performed by SGD. In our implementation, the end condition of SGD is controlled by two parameters: $\epsilon > 0$ and $\text{F\_STEP}\in \{0,1 \}$. First, SGD halts if the change of the KL divergence is below or equal to $\epsilon$. Second, $\text{F\_STEP}$ decides the maximum number of SGD steps. If $\text{F\_STEP}=1$, the maximum number is $\sqrt{t}$ at iteration $t$; while if $\text{F\_STEP}=0$, there is no restriction on the maximum number of gradient steps, and stopping condition only depends on $\epsilon$.
 
-\section{Details of PMAC Learning}
-\label{sec:implementationPMAC}
+\section{Details of ECAC Learning}
+\label{sec:implementationECAC}
 
-Recall that in \cref{subsec:repmd_value}, the losses for training soft state-value function, soft Q-function and policy are as follows,
+Recall that in \cref{subsec:ECPO_value}, the losses for training soft state-value function, soft Q-function and policy are as follows,
 \begin{align}
 \label{eq:trainV}
 L (\phi) &= \E_{s\sim \gD} \left[ \frac{1}{2} \left( \parV(s) -  \left[ \parQ(s,a ) - \tau' \log \bar{\pi}(a|s) \right] \right)^2 \right], \\
@@ -208,16 +351,16 @@ The gradient of \cref{eq:trainpi} is,
 \begin{proof}
 Let $\pi(a \vert s) =  \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\}$, then we have,
 \begin{align*}
-\nabla_\theta L(\theta) = & \nabla_\theta  \E_{s \sim \gD} \left[\sum_a  \pi(a|s) \log \pi(a|s) - \pi(a|s) \log \pi_\theta(a|s) \right]\\
-= & \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
-= & \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \refPi(a|s) \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
-= & \nabla_\theta \E_{s \sim \gD} \left[ \E_{a\sim \refPi}\left[ - \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right]   \right] 
+	\nabla_\theta L(\theta) &= \nabla_\theta  \E_{s \sim \gD} \left[\sum_a  \pi(a|s) \log \pi(a|s) - \pi(a|s) \log \pi_\theta(a|s) \right]\\
+	&= \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \exp\left\{ \frac{\parQ(s,a) + \tau \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
+	&= \nabla_\theta \E_{s \sim \gD} \left[ -\sum_a \refPi(a|s) \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right] \\ 
+	&= \nabla_\theta \E_{s \sim \gD} \left[ \E_{a\sim \refPi}\left[ - \exp\left\{ \frac{\parQ(s,a) - \tau' \log \refPi(a|s) - \parV(s)}{\tau+\tau'} \right\} \log \parPi(a |s) \right]   \right] 
 \end{align*}
 \end{proof}
-Pseudocode for PMAC is presented in \cref{alg:rmac}. The major difference between PMAC and REPMD in the lift step is that instead of sampling $K$ actions as described in \cref{alg:repmd}, PMAC only samples one action to construct $\bar{\pi}_{\tau,\tau^{\prime}}^*$, due to the fact both the soft-Q and state value function approximations are adopted. The value function approximations also make PMAC capable of using off-policy data from a reply buffer. Furthermore, in the project step of PMAC, we use a fixed number of iteration for SGD, which is given by an input parameter of the algorithm.
+Pseudocode for ECAC is presented in \cref{alg:rmac}. The major difference between ECAC and ECAC in the lift step is that instead of sampling $K$ actions as described in \cref{alg:ECPO}, ECAC only samples one action to construct $\bar{\pi}_{\tau,\tau^{\prime}}^*$, due to the fact both the soft-Q and state value function approximations are adopted. The value function approximations also make ECAC capable of using off-policy data from a reply buffer. Furthermore, in the project step of ECAC, we use a fixed number of iteration for SGD, which is given by an input parameter of the algorithm.
 
 \begin{algorithm}[t]
-	\caption{\label{alg:rmac}  The PMAC algorithm}
+	\caption{\label{alg:rmac}  The ECAC algorithm}
 	\begin{algorithmic}[1]
 		\INPUT temperature parameters $\tau$ and $\tau'$, lag on target value network $\alpha$, number of training steps $M$
 		\STATE Initialize $\parPi, \parV, \parTargetV, \parQone, \parQtwo$ and replay buffer $\gD$
@@ -246,28 +389,28 @@ In \cref{subsec:notations_and_settings}, we assume that the state transition fun
 
 Recall in \cref{subsec:notations_and_settings}, the policy probability of trajectory $\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$ is denoted as $\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$. We define transition probability of $\rho$ as $f(\rho) \triangleq \prod_{t=1}^{T-1}{ f(s_{s+1} | s_t, a_t)}$. The total probability of $\rho$ under policy $\pi$ and transition $f$ is then $p_{\pi, f}(\rho) \triangleq \pi(\rho) f(\rho) = \prod_{t=1}^{T-1}{ \pi(a_t | s_t) f(s_{s+1} | s_t, a_t)}$. We use $\Delta_{f} \triangleq \{ \pi | \sum_{\rho}{ p_{\pi, f}(\rho) } = \sum_{\rho}{\pi(\rho) f(\rho)} = 1, \pi(\rho) \ge 0, f(\rho) > 0, \forall \rho \}$ to refer to the probabilistic simplex over all possible trajectories. It is obvious that $p_{\pi, f}(\rho) = \pi(\rho)$ and $\Delta_f = \Delta$ under deterministic transition setting, i.e., $f(\rho) = 1, \forall \rho$.
 
-\subsection{REPMD Optimization Problem}
+\subsection{ECPO Optimization Problem}
 
-The proposed REPMD algorithm solves \cref{eq:repmd} in the deterministic transition setting. In the stochastic setting, the corresponding problem is,
+The proposed ECPO algorithm solves \cref{eq:ECPO} in the deterministic transition setting. In the stochastic setting, the corresponding problem is,
 \begin{equation}
-\label{eq:repmd_stochastic}
+\label{eq:ECPO_stochastic}
 \begin{split}
 \text{\bf (Project Step)} \quad &\argmin\limits_{\pi_\theta \in \Pi}{\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) }, \\
 \text{\bf (Lift Step)}  \quad & \text{where}\ \ \bar{\pi}_{\tau,\tau^{\prime}}^* =  \argmax\limits_{\pi \in \Delta_f}{ \ep\limits_{\rho \sim p_{\pi, f}}{ \left[ r(\rho) - \tau^{\prime} \log{\pi(\rho)} \right] } - \tau \KL(p_{\pi, f} \| p_{\pi_{\theta_t}, f} ) }. 
 \end{split}
 \end{equation}
-which also recovers \cref{eq:repmd} as a special case when $f(\rho) = 1, \forall \rho$.
+which also recovers \cref{eq:ECPO} as a special case when $f(\rho) = 1, \forall \rho$.
 
-Like \cref{eq:repmd}, $\bar{\pi}_{\tau,\tau^{\prime}}^*$ in \cref{eq:repmd_stochastic} also has a closed form expression,
+Like \cref{eq:ECPO}, $\bar{\pi}_{\tau,\tau^{\prime}}^*$ in \cref{eq:ECPO_stochastic} also has a closed form expression,
 \begin{lem}
 \label{lem:opt_pi_ref_stochastic}
-The unconstrained optimal policy of \cref{eq:repmd_stochastic} has the following closed form expression:
+The unconstrained optimal policy of \cref{eq:ECPO_stochastic} has the following closed form expression:
 \begin{equation*}
 	\bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) \triangleq \frac{\refPi(\rho) \exp\left\{ \frac{r(\rho)-\tau^{\prime} \log \refPi(\rho) }{ \tau+\tau^{\prime}} \right\}}{ \sum_{\rho^{\prime}}{\refPi(\rho^{\prime}) f(\rho^{\prime}) \exp\left\{ \frac{r(\rho^{\prime})-\tau^{\prime} \log \refPi(\rho^{\prime})}{ \tau+\tau^{\prime}} \right\} } }.
 \end{equation*}
 \end{lem}
 \begin{proof}
-Rewrite the maximization problem in \cref{eq:repmd_stochastic} as (take $\pi_{\theta_t}$ as the reference policy $\refPi$),
+Rewrite the maximization problem in \cref{eq:ECPO_stochastic} as (take $\pi_{\theta_t}$ as the reference policy $\refPi$),
 \begin{equation*}
 \begin{split}
 	\textmax\limits_{\pi}&{ \sum\limits_{\rho}{ \pi(\rho) f(\rho) \left[ r(\rho)  - \left( \tau + \tau^{\prime} \right) \log{\pi(\rho)} + \tau \log{\bar{\pi}(\rho)} \right]} } \\
@@ -296,7 +439,7 @@ which recovers $\SR(\pi_\theta)$ when $f(\rho) = 1, \forall \rho$. The monotonic
 
 \begin{thm}
 \label{thm:monotonically_increasing_sr_property_stochastic}
-Assume that $\pi_{\theta_{t}}$ is the update sequence of the REPMD algorithm in \cref{eq:repmd_stochastic}, then
+Assume that $\pi_{\theta_{t}}$ is the update sequence of the ECPO algorithm in \cref{eq:ECPO_stochastic}, then
 \begin{equation*}
 	\SR_f(\pi_{\theta_{t+1}}) - \SR_f(\pithetat)\ge 0.
 \end{equation*}
@@ -305,13 +448,13 @@ Assume that $\pi_{\theta_{t}}$ is the update sequence of the REPMD algorithm in 
 	Using $\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pi_{\theta_{t+1}}, f}) = \min_{\pi_\theta \in \Pi}{ \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) } \le \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pithetat, f})$ and Jensen's inequality,
 	\begin{equation*}
 	\begin{split}
-	&\SR_f(\pi_{\theta_{t+1}}) - \SR_f(\pithetat) = (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
-	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
-	=& (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
-	\ge& (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
-	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } \\
-	=& \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \frac{ \pi_{\theta_{t+1}}(\rho) f(\rho) }{ \pithetat(\rho) f(\rho)} } } \\
-	=& \tau \left[ \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pithetat, f}) - \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pi_{\theta_{t+1}}, f}) \right] \ge 0. \qedhere
+	\SR_f(\pi_{\theta_{t+1}}) - \SR_f(\pithetat) &= (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_{\theta_{t+1}}(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } } \\
+	&= (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \frac{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\}  }{ \sum\limits_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } }  } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
+	&= (\tau + \tau^{\prime}) \log{ \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) } \cdot \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } \\
+	&\ge (\tau + \tau^{\prime}) \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \exp\left\{ \frac{\tau \log{\pi_{\theta_{t+1}}(\rho)} - \tau \log{\pithetat(\rho)} }{\tau + \tau^{\prime}} \right\} } } \\
+	&= \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \frac{\pi_{\theta_{t+1}}(\rho)}{\pithetat(\rho)} } } \\
+	&= \tau \sum\limits_{\rho}{ \bar{\pi}_{\tau,\tau^{\prime}}^*(\rho) f(\rho) \cdot \log{ \frac{ \pi_{\theta_{t+1}}(\rho) f(\rho) }{ \pithetat(\rho) f(\rho)} } } \\
+	&= \tau \left[ \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pithetat, f}) - \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f} \| p_{\pi_{\theta_{t+1}}, f}) \right] \ge 0. \qedhere
 	\end{split}
 	\end{equation*}
 \end{proof}
@@ -331,15 +474,16 @@ To prove (i), note that as $\tau \to 0$, $\SR_f(\pi_\theta) \to \tau^{\prime} \l
 To prove (ii), we have 
 \begin{align*}
 	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } \\
-	=& \lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \} } } } \\
-	=& \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } = \ep\limits_{\rho \sim p_{\pi_\theta, f}}{r(\rho)} -  \tau^{\prime} \cdot \ep\limits_{\rho \sim p_{\pi_\theta, f}}{  \log{\pi_\theta(\rho)} }
+	&= \lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } } } \\
+	&= \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } \\
+	&= \ep\limits_{\rho \sim p_{\pi_\theta, f}}{r(\rho)} -  \tau^{\prime} \cdot \ep\limits_{\rho \sim p_{\pi_\theta, f}}{  \log{\pi_\theta(\rho)} }
 \end{align*}
 As $\tau^{\prime} \to 0$, $\SR_f(\pi_\theta) \to \ep_{\rho \sim p_{\pi_\theta, f}}{r(\rho)}$.
 \end{proof}
 
 \subsection{Learning}
 
-The REPMD learning process is intact under the stochastic transition setting. Similar with \cref{eq:importance_sampling_kl}, we can estimate the KL divergence in the projection step of \cref{eq:repmd_stochastic} by drawing $K$ \textit{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from $p_{\refPi, f}$, i.e., the mixture of $\refPi$ and $f$, which is exactly the process of sampling from $\refPi$ and interacting with the environment,
+The ECPO learning process is intact under the stochastic transition setting. Similar with \cref{eq:importance_sampling_kl}, we can estimate the KL divergence in the projection step of \cref{eq:ECPO_stochastic} by drawing $K$ \textit{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from $p_{\refPi, f}$, i.e., the mixture of $\refPi$ and $f$, which is exactly the process of sampling from $\refPi$ and interacting with the environment,
 \begin{equation}
 \label{eq:importance_sampling_kl_stochastic}
 \begin{split}
@@ -351,17 +495,17 @@ The REPMD learning process is intact under the stochastic transition setting. Si
 We can then approximate the gradient of $\KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} )$ by averaging these $K$ samples according to \cref{eq:importance_sampling_kl_stochastic}. 
 
 \begin{thm}
-\label{thm:repmdgradientestimate_stochastic}
+\label{thm:ECPOgradientestimate_stochastic}
 Let $\omega_k = \frac{r(\rho_k) - \tau^{\prime} \log{\refPi(\rho_k)} }{\tau + \tau^{\prime}}$. Given $K$ \emph{i.i.d.} samples $\{\rho_1, \dots, \rho_K\}$ from the \emph{reference policy} $\refPi$, we have the following unbiased gradient estimator,
 \begin{equation}
 	\nabla_{\theta} \KL(p_{\bar{\pi}_{\tau,\tau^{\prime}}^*, f}  \| p_{\pi_\theta, f} ) \approx -\sum\limits_{k=1}^K{ \frac{ \exp\left\{ \omega_k \right\} }{ \sum_{j=1}^K{ \exp\left\{ \omega_j \right\}}} \nabla_{\theta} \log{\pi_\theta(\rho_k)} },
 \end{equation}
 \end{thm}
 \begin{proof}
-See the proof of Lemma \ref{lem:repmdgradientestimate}.
+See the proof of Lemma \ref{lem:ECPOgradientestimate}.
 \end{proof}
 
-Similar argument could be applied for PMAC learning objectives. 
+Similar argument could be applied for ECAC learning objectives. 
 
 \section{Experiments Details}
 \label{appendix-experiments}
@@ -401,9 +545,9 @@ Humanoid & 17  \\ [1ex] % [1ex] adds vertical space
 
 \subsection{Implementation Details}
 \label{subsec:implementation}
-For the synthetic bandit problem, we parameterize the policy by a weight vector $\theta\in  \mathbb{R}^{20}$. Let $\Omega = \left( \omega_1, \dots, \omega_{10,000} \right)$ be the feature matrix. The policy is defined by $\text{softmax}(\Omega^{\top}\theta)$. The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-bandit}. 
+For the synthetic bandit problem, we parameterize the policy by a weight vector $\theta\in  \mathbb{R}^{20}$. Let $\Omega = \left( \omega_1, \dots, \omega_{10,000} \right)$ be the feature matrix. The policy is defined by $\text{softmax}(\Omega^{\top}\theta)$. The ECPO parameters used in \cref{fig:results} are summarized in \cref{table:paras-bandit}. 
 \begin{table}[ht]
-\caption{REPMD Hyperparameters in Synthetic Bandit} % title of Table
+\caption{ECPO Hyperparameters in Synthetic Bandit} % title of Table
 \centering 
 \begin{tabular}{l l} 
 \hline
@@ -429,10 +573,10 @@ Parameter & Values \\ [0.5ex] % inserts table
 %\ \ \ \ learning rate & 0.005 \\
 %\hline %inserts single line
 
-For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256 \citep{hochreiter1997long}. In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to \cref{eq:gradient_estimator}, which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks (See \cref{appx:repmd-learning}). The REPMD parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
+For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256 \citep{hochreiter1997long}. In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to \cref{eq:gradient_estimator}, which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks (See \cref{appx:ECPO-learning}). The ECPO parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
 
 \begin{table}[ht]
-\caption{REPMD Hyperparameters in Algorithmic Tasks} % title of Table
+\caption{ECPO Hyperparameters in Algorithmic Tasks} % title of Table
 \centering 
 \begin{tabular}{l l l l l l} 
 \hline
@@ -460,10 +604,10 @@ For the algorithmic tasks, policy is parameterized by a recurrent neural network
 %\ \ \ \ clip norm & 10 & 10 & 10 & 10 & 40\\
 %\hline
 
-We use standard gaussian policy for all experimented algorithms in the mujoco tasks. Two layer fully-connected feed-forward neural networks with hidden dimension 300 and ReLU nonlinearity are applied to parameterize policy, soft state value, and soft-Q value. We batch size 256 for all algorithms on all tasks. The lag parameter $\alpha$ of PMAC for target value network update is 0.01, and the number of training steps is set as $M = 100$ in all tasks. The other domain-dependent PMAC parameters are summarized in \cref{table:paras-mujoco}.
+We use standard gaussian policy for all experimented algorithms in the mujoco tasks. Two layer fully-connected feed-forward neural networks with hidden dimension 300 and ReLU nonlinearity are applied to parameterize policy, soft state value, and soft-Q value. We batch size 256 for all algorithms on all tasks. The lag parameter $\alpha$ of ECAC for target value network update is 0.01, and the number of training steps is set as $M = 100$ in all tasks. The other domain-dependent ECAC parameters are summarized in \cref{table:paras-mujoco}.
 
 \begin{table}[ht]
-\caption{REPMD Hyperparameters in Mujoco Tasks} % title of Table
+\caption{ECAC Hyperparameters in Mujoco Tasks} % title of Table
 \centering 
 \begin{tabular}{l l l l l l} 
 \hline
@@ -480,11 +624,11 @@ We use standard gaussian policy for all experimented algorithms in the mujoco ta
 \label{table:paras-mujoco} % is used to refer this table in the text
 \end{table}
 
-%As shown in \cref{alg:repmd}, the policy is updated by performing KL divergence projection using stochastic gradient descent (SGD). In our experiments, the end condition of SGD is controlled by two parameters: $\epsilon > 0$ and $\text{F\_STEP}\in \{0,1 \}$. First, SGD halts if the change of the KL divergence is below or equal to $\epsilon$. Second, $\text{F\_STEP}$ decides the maximum number of SGD steps. If $\text{F\_STEP}=1$, the maximum number is $\sqrt{t}$ at iteration $t$; while if $\text{F\_STEP}=0$, there is no restriction on the maximum number of gradient steps, and stopping condition of SGD only depends on $\epsilon$.
+%As shown in \cref{alg:ECPO}, the policy is updated by performing KL divergence projection using stochastic gradient descent (SGD). In our experiments, the end condition of SGD is controlled by two parameters: $\epsilon > 0$ and $\text{F\_STEP}\in \{0,1 \}$. First, SGD halts if the change of the KL divergence is below or equal to $\epsilon$. Second, $\text{F\_STEP}$ decides the maximum number of SGD steps. If $\text{F\_STEP}=1$, the maximum number is $\sqrt{t}$ at iteration $t$; while if $\text{F\_STEP}=0$, there is no restriction on the maximum number of gradient steps, and stopping condition of SGD only depends on $\epsilon$.
 
-%For the synthetic bandit problem, we explore the following main hyper-parameters: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; entropy regularizer of UREX and MENT $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; relative entropy regularizer of REPMD $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stop condition of SGD in REPMD. The entropy regularizer $\tau'$ of REPMD is set to 0.
+%For the synthetic bandit problem, we explore the following main hyper-parameters: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; entropy regularizer of UREX and MENT $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; relative entropy regularizer of ECPO $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stop condition of SGD in ECPO. The entropy regularizer $\tau'$ of ECPO is set to 0.
 
-%For the algorithmic tasks, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to (\ref{eq:gradient_estimator}), which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. The following main hyper-parameters are explored: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; relative entropy regularizer of REPMD $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; entropy regularizer of REPMD $\tau'\in \{0, 0.01, 0.005, 0.001\}$; gradient clipped norm for training LSTM $c\in \{1, 10, 40, 100\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stopping condition of SGD in REPMD. Parameters of UREX are set according to the ones reported in \citet{nachum2017improving}. Implementations of all algorithm are based on the open source code by the author of UREX \footnote{\url{https://github.com/tensorflow/models/tree/master/research/pcl_rl}}.
+%For the algorithmic tasks, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to (\ref{eq:gradient_estimator}), which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. The following main hyper-parameters are explored: learning rate $\eta \in \{0.1, 0.01, 0.001\}$; relative entropy regularizer of ECPO $\tau\in \{1.0, 0.5, 0.1, 0.05\}$; entropy regularizer of ECPO $\tau'\in \{0, 0.01, 0.005, 0.001\}$; gradient clipped norm for training LSTM $c\in \{1, 10, 40, 100\}$; $\epsilon\in \{0.01, 0.005, 0.001\}$ and $\text{F\_STEP}\in \{0,1\}$ for the stopping condition of SGD in ECPO. Parameters of UREX are set according to the ones reported in \citet{nachum2017improving}. Implementations of all algorithm are based on the open source code by the author of UREX \footnote{\url{https://github.com/tensorflow/models/tree/master/research/pcl_rl}}.
 
 
 

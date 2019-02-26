@@ -79,12 +79,12 @@ which encourages exploration but also complicates the optimization;
 as shown in \cref{sec:experiments},
 UREX is significantly less efficient than the method proposed here.
 
-Trust PCL adopts the same objective defined in \cref{eq:ECPO},
+Trust-PCL adopts the same objective \cref{eq:ECPO},
 including both entropy and relative entropy regularization
 \citep{nachum2017trust}.
-However, the policy update strategy is substantially different:
-while ECPO uses KL projection, Trust PCL
-minimizes a path inconsistency error (inherited from PCL)
+However, the policy update is substantially different:
+while ECPO uses KL projection, Trust-PCL
+minimizes a path inconsistency error
 between the value and policy along observed trajectories
 \citep{nachum2017bridging}.
 Although policy optimization by minimizing path inconsistency error
