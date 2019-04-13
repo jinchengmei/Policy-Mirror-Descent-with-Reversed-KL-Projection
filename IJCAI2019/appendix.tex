@@ -184,11 +184,11 @@ by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$, $ - \rvpi_{T+1}^\t
 
 \begin{thm}
 \label{thm:sublinear_regret_convex_subset}
-When the policy class $\Pi$ is a convex subset of the probabilistic simplex, by choosing $\tau'=1/\sqrt{T\log{n}}$, and $\tau + \tau' = \sqrt{T} / \sqrt{2\log n}$, (or $\tau'=1/\sqrt{t\log{n}}$, and $\tau + \tau' = \sqrt{t} / \sqrt{2\log n}$), we have,
+When the policy class $\Pi$ is a convex subset of the probabilistic simplex, by choosing $\tau'=1/\sqrt{T\log{n}}$, and $\tau + \tau' = \sqrt{T} / \sqrt{2\log n}$, (or $\tau'=1/\sqrt{t\log{n}}$, and $\tau + \tau' = \sqrt{t} / \sqrt{2\log n}$), $\forall \rvpi \in \Pi$,
 \begin{equation*}
-    \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi^*(\rho) r(\rho)}} - \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi_t(\rho) r(\rho)}} \le 4\sqrt{T\log n}.
+    \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi(\rho) r(\rho)}} - \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi_t(\rho) r(\rho)}} \le 4\sqrt{T\log n}.
 \end{equation*}
-where $\pi^*$ is the optimal policy, $n$ is the total action/trajectory number, and $\pi_{t}$ is defined as,
+where $n$ is the total action/trajectory number, and $\pi_{t}$ is defined as,
 \begin{align*}
     \bar{\pi}_{t+1}\left( \rho \right) &= \frac{\pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\}}{ \sum\limits_{\rho}{ \pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\} } }, \quad \forall \rho, \\
     \rvpi_{t+1} &= \argmin\limits_{\rvpi \in \Pi}{ \KL\left( \bar{\rvpi}_{t+1} \middle\| \rvpi \right) }.
@@ -278,7 +278,7 @@ Rearranging,
 
 Now we prove \cref{thm:sublinear_regret_convex_subset},
 \begin{proof}
-According to \cref{lem:kl_difference_non_positive} and \cref{lem:kl_t_bar_tp1_bound},
+According to \cref{lem:kl_difference_non_positive} and \cref{lem:kl_t_bar_tp1_bound}, $\forall \rvpi \in \Pi$,
 \begin{equation*}
 \begin{split}
     \left( \rvpi - \rvpi_t \right)^\top \rvr &= \left( \rvpi - \rvpi_t \right)^\top \left[ \left(\tau + \tau^\prime\right) \left( \log{\bar{\rvpi}_{t+1}} - \log{\rvpi_t} \right) + \tau^\prime \log{\rvpi_t} \right] \\
