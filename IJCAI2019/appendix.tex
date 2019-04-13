@@ -1,5 +1,6 @@
 \def\rvpi{{\boldsymbol{\pi}}}
 \def\rvr{{\mathbf{r}}}
+\def\rvone{{\mathbf{1}}}
 
 \section{Proofs} % for \cref{sec:reversed_emtropy_policy_mirror_descent}}
 
@@ -179,9 +180,138 @@ Summing up from $t = 1$ to $T$, and choosing $\tau + \tau^\prime = \frac{\sqrt{T
 by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$, $ - \rvpi_{T+1}^\top \log{\rvpi_{T+1}} \le \log{n}$. Note that choosing $\tau + \tau^\prime = \frac{\sqrt{t}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{t \log{n}}}$ will lead to the same result.
 \end{proof}
 
+\subsection{Proof of \cref{thm:sublinear_regret_convex_subset}}
 
+\begin{thm}
+\label{thm:sublinear_regret_convex_subset}
+When the policy class $\Pi$ is a convex subset of the probabilistic simplex, by choosing $\tau'=1/\sqrt{T\log{n}}$, and $\tau + \tau' = \sqrt{T} / \sqrt{2\log n}$, (or $\tau'=1/\sqrt{t\log{n}}$, and $\tau + \tau' = \sqrt{t} / \sqrt{2\log n}$), we have,
+\begin{equation*}
+    \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi^*(\rho) r(\rho)}} - \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi_t(\rho) r(\rho)}} \le 4\sqrt{T\log n}.
+\end{equation*}
+where $\pi^*$ is the optimal policy, $n$ is the total action/trajectory number, and $\pi_{t}$ is defined as,
+\begin{align*}
+    \bar{\pi}_{t+1}\left( \rho \right) &= \frac{\pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\}}{ \sum\limits_{\rho}{ \pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\} } }, \quad \forall \rho, \\
+    \rvpi_{t+1} &= \argmin\limits_{\rvpi \in \Pi}{ \KL\left( \bar{\rvpi}_{t+1} \middle\| \rvpi \right) }.
+\end{align*}
+\end{thm}
 
+We firstly prove three useful lemmas. For conciseness, we use vector notations.
 
+\begin{lem}
+\label{lem:kl_difference_non_positive}
+$\forall \rvpi \in \Pi$, $\KL\left( \rvpi \middle\| \rvpi_{t+1} \right) \le \KL\left( \rvpi \middle\| \bar{\rvpi}_{t+1} \right)$, $\forall t \ge 0$.
+\end{lem}
+\begin{proof}
+Since the KL divergence is convex, and $\Pi$ is convex, according to the first order optimality condition,
+\begin{equation*}
+\begin{split}
+    \left( - \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} \right)^\top \left( \rvpi_{t+1} - \rvpi \right) &= \rvpi^\top \left( \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} - \rvone \right) \\
+    &\le 0.
+\end{split}
+\end{equation*}
+On the other hand, by $\log{x} \le x - 1$, $\forall x \in \sR$,
+\begin{equation*}
+\begin{split}
+    \KL\left( \rvpi \middle\| \rvpi_{t+1} \right) - \KL\left( \rvpi \middle\| \bar{\rvpi}_{t+1} \right) &= \rvpi^\top \left( \log{\bar{\rvpi}_{t+1}} - \log{\rvpi_{t+1}} \right) \\
+    &\le \rvpi^\top \left( \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} - \rvone \right). \qedhere
+\end{split}
+\end{equation*}
+\end{proof}
+
+\begin{lem}
+\label{lem:kl_t_bar_tp1_bound}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_t \middle\| \bar{\rvpi}_{t+1} \right)} \le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t}.
+\end{split}
+\end{equation*}
+\end{lem}
+\begin{proof}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \rvpi_t \middle\| \bar{\rvpi}_{t+1} \right)} &= \rvpi_t^\top \log{\rvpi_t} - \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}} - \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\bar{\rvpi}_{t+1}} \\
+    &\le \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 - \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\bar{\rvpi}_{t+1}} \\
+    &= \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \left( \log{\rvpi_t} - \log{\bar{\rvpi}_{t+1}} \right) - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 \\
+    &= \frac{1}{\tau + \tau^\prime} \left( \bar{\rvpi}_{t+1} - \rvpi_t \right)^\top \rvr + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \bar{\rvpi}_{t+1} - \rvpi_t \right\|_1 \cdot \left\| \rvr \right\|_\infty - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \bar{\rvpi}_{t+1} - \rvpi_t \right\|_1  - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t}. \qedhere
+\end{split}
+\end{equation*}
+\end{proof}
+
+\begin{lem}
+\label{lem:kl_bar_tp1_t_bound}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} \le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \log{n}.
+\end{split}
+\end{equation*}
+\end{lem}
+\begin{proof}
+\begin{equation*}
+\begin{split}
+    \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} &= \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}} - \rvpi_t^\top \log{\rvpi_t} - \left( \bar{\rvpi}_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_t} \\
+    &\le \left( \bar{\rvpi}_{t+1} - \rvpi_t  \right)^\top \log{\bar{\rvpi}_{t+1}} - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 - \left( \bar{\rvpi}_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_t} \\
+    &= \left( \bar{\rvpi}_{t+1} - \rvpi_t  \right)^\top \left( \log{\bar{\rvpi}_{t+1}} - \log{\rvpi_t} \right) - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 \\
+    &= \frac{1}{\tau + \tau^\prime} \left( \bar{\rvpi}_{t+1} - \rvpi_t \right)^\top \rvr + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \bar{\rvpi}_{t+1} - \rvpi_t \right\|_1 \cdot \left\| \rvr \right\|_\infty - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{\tau + \tau^\prime} \left\| \bar{\rvpi}_{t+1} - \rvpi_t \right\|_1  - \frac{1}{2} \left\| \rvpi_t - \bar{\rvpi}_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} \\
+    &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t}.
+\end{split}
+\end{equation*}
+Therefore,
+\begin{equation*}
+\begin{split}
+    \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} \\
+    &= \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} - \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}} + \rvpi_t^\top \log{\rvpi_t} \right). 
+\end{split}
+\end{equation*}
+Rearranging,
+\begin{equation*}
+\begin{split}
+    \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}}  \right) \\
+    &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \log{n}. \qedhere
+\end{split}
+\end{equation*}
+\end{proof}
+
+Now we prove \cref{thm:sublinear_regret_convex_subset},
+\begin{proof}
+According to \cref{lem:kl_difference_non_positive} and \cref{lem:kl_t_bar_tp1_bound},
+\begin{equation*}
+\begin{split}
+    \left( \rvpi - \rvpi_t \right)^\top \rvr &= \left( \rvpi - \rvpi_t \right)^\top \left[ \left(\tau + \tau^\prime\right) \left( \log{\bar{\rvpi}_{t+1}} - \log{\rvpi_t} \right) + \tau^\prime \log{\rvpi_t} \right] \\
+    &= \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \bar{\rvpi}_{t+1} \right)} + \KL{\left( \rvpi_t \middle\| \bar{\rvpi}_{t+1} \right)}  \right] + \tau^\prime \left( \rvpi - \rvpi_t \right)^\top \log{\rvpi_t} \\
+    &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} + \KL{\left( \rvpi_t \middle\| \bar{\rvpi}_{t+1} \right)}  \right] + \tau^\prime \left( \rvpi - \rvpi_t \right)^\top \log{\rvpi_t} \\
+    &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} + \tau^\prime \left( \rvpi - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t}.
+\end{split}
+\end{equation*}
+According to \cref{lem:kl_bar_tp1_t_bound},
+\begin{equation*}
+\begin{split}
+    \left( \rvpi - \bar{\rvpi}_{t+1} \right)^\top \log{\rvpi_t} &= - \KL{\left( \rvpi \middle\| \rvpi_t \right)} + \rvpi^\top \log{\rvpi} + \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} - \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}} \\
+    &\le \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} - \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}} \\
+    &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau + \tau^\prime}{\tau} \log{n}.
+\end{split}
+\end{equation*}
+Combining the above,
+\begin{equation*}
+\begin{split}
+    \left( \rvpi - \rvpi_t \right)^\top \rvr &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} \\
+    &\quad + \frac{\tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime \left( \tau + \tau^\prime \right)}{\tau} \log{n}.
+\end{split}
+\end{equation*}
+Summing up from $t = 1$ to $T$, and choosing $\tau + \tau^\prime = \frac{\sqrt{T}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{T \log{n}}}$,
+\begin{equation*}
+\begin{split}
+    \sum\limits_{t=1}^{T}{\left( \rvpi - \rvpi_t \right)^\top \rvr } &\le \left(\tau + \tau^\prime\right) \KL{\left( \rvpi \middle\| \rvpi_1 \right)} + \frac{T}{2\left(\tau + \tau^\prime\right)} \\
+    &\quad + \frac{T \tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{T \tau^\prime \left( \tau + \tau^\prime \right)}{\tau} \log{n} \\
+    &\le \sqrt{2T \log{n}} + \frac{1}{\frac{\sqrt{T}}{\sqrt{2 \log{n}}} - \frac{1}{\sqrt{T\log{n}}}} \left( \frac{1}{\sqrt{2}} + 1 \right) + \sqrt{T \log{n}},
+\end{split}
+\end{equation*}
+by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$. Note that choosing $\tau + \tau^\prime = \frac{\sqrt{t}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{t \log{n}}}$ will lead to the same result.
+\end{proof}
 
 
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
