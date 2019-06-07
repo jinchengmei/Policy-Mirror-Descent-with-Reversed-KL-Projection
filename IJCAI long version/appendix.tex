@@ -73,125 +73,15 @@ where $Z_{\refPi} \triangleq \tau \log{ \sum_{\rho}{\refPi(\rho) \exp\left\{ r(\
 	Comparing \cref{eq:equivalence_stationary_fixed_point} with \cref{eq:stationary_point_of_expected_reward}, we have the fixed point condition of PMD is the same as the definition of the stationary point of $\oep_{\rho \sim \pi_\theta}{  r(\rho)}$.
 \end{proof}
 
-\subsection{Proof of \cref{thm:sublinear_regret_simplex}}
-
-In the probabilistic simplex, the policy update is as follows,
-
-\begin{equation*}
-    \pi_{t+1}\left( \rho \right) = \frac{\pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\}}{ \sum\limits_{\rho}{ \pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\} } }.
-\end{equation*}
-
-We firstly prove two useful lemmas. For conciseness, we use vector notations.
-
-\begin{lem}
-\label{lem:kl_t_tp1_bound}
-\begin{equation*}
-\begin{split}
-    \KL{\left( \rvpi_t \middle\| \rvpi_{t+1} \right)} \le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t}.
-\end{split}
-\end{equation*}
-\end{lem}
-\begin{proof}
-\begin{equation*}
-\begin{split}
-    \KL{\left( \rvpi_t \middle\| \rvpi_{t+1} \right)} &= \rvpi_t^\top \log{\rvpi_t} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} - \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_{t+1}} \\
-    &\le \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 - \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_{t+1}} \\
-    &= \left( \rvpi_t - \rvpi_{t+1} \right)^\top \left( \log{\rvpi_t} - \log{\rvpi_{t+1}} \right) - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
-    &= \frac{1}{\tau + \tau^\prime} \left( \rvpi_{t+1} - \rvpi_t \right)^\top \rvr + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
-    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1 \cdot \left\| \rvr \right\|_\infty - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
-    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1  - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
-    &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t}. \qedhere
-\end{split}
-\end{equation*}
-\end{proof}
-
-\begin{lem}
-\label{lem:kl_tp1_t_bound}
-\begin{equation*}
-\begin{split}
-    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} \le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right).
-\end{split}
-\end{equation*}
-\end{lem}
-\begin{proof}
-\begin{equation*}
-\begin{split}
-    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} &= \rvpi_{t+1}^\top \log{\rvpi_{t+1}} - \rvpi_t^\top \log{\rvpi_t} - \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_t} \\
-    &\le \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_{t+1}} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 - \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \log{\rvpi_t} \\
-    &= \left( \rvpi_{t+1} - \rvpi_t  \right)^\top \left( \log{\rvpi_{t+1}} - \log{\rvpi_t} \right) - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
-    &= \frac{1}{\tau + \tau^\prime} \left( \rvpi_{t+1} - \rvpi_t \right)^\top \rvr + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 \\
-    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1 \cdot \left\| \rvr \right\|_\infty - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
-    &\le \frac{1}{\tau + \tau^\prime} \left\| \rvpi_{t+1} - \rvpi_t \right\|_1  - \frac{1}{2} \left\| \rvpi_t - \rvpi_{t+1} \right\|_1^2 + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
-    &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t}.
-\end{split}
-\end{equation*}
-Therefore,
-\begin{equation*}
-\begin{split}
-    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \rvpi_t - \rvpi_{t+1} \right)^\top \log{\rvpi_t} \\
-    &= \frac{1}{2\left(\tau + \tau^\prime\right)^2} + \frac{\tau^\prime}{\tau + \tau^\prime} \left( \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} + \rvpi_t^\top \log{\rvpi_t} \right). 
-\end{split}
-\end{equation*}
-Rearranging,
-\begin{equation*}
-\begin{split}
-    \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right). \qedhere
-\end{split}
-\end{equation*}
-\end{proof}
-
-Now we prove \cref{thm:sublinear_regret_simplex},
-\begin{proof}
-According to \cref{lem:kl_t_tp1_bound},
-\begin{equation*}
-\begin{split}
-    \left( \rvpi - \rvpi_t \right)^\top \rvr &= \left( \rvpi - \rvpi_t \right)^\top \left[ \left(\tau + \tau^\prime\right) \left( \log{\rvpi_{t+1}} - \log{\rvpi_t} \right) + \tau^\prime \log{\rvpi_t} \right] \\
-    &= \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} + \KL{\left( \rvpi_t \middle\| \rvpi_{t+1} \right)}  \right] + \tau^\prime \left( \rvpi - \rvpi_t \right)^\top \log{\rvpi_t} \\
-    &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} + \tau^\prime \left( \rvpi - \rvpi_{t+1} \right)^\top \log{\rvpi_t}.
-\end{split}
-\end{equation*}
-According to \cref{lem:kl_tp1_t_bound},
-\begin{equation*}
-\begin{split}
-    \left( \rvpi - \rvpi_{t+1} \right)^\top \log{\rvpi_t} &= - \KL{\left( \rvpi \middle\| \rvpi_t \right)} + \rvpi^\top \log{\rvpi} + \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} \\
-    &\le \KL{\left( \rvpi_{t+1} \middle\| \rvpi_t \right)} - \rvpi_{t+1}^\top \log{\rvpi_{t+1}} \\
-    &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right) + \log{n}.
-\end{split}
-\end{equation*}
-Combining the above,
-\begin{equation*}
-\begin{split}
-    \left( \rvpi - \rvpi_t \right)^\top \rvr &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} \\
-    &\quad + \frac{\tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{{\tau^\prime}^2}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \rvpi_{t+1}^\top \log{\rvpi_{t+1}}  \right) + \tau^\prime \log{n}.
-\end{split}
-\end{equation*}
-Summing up from $t = 1$ to $T$, and choosing $\tau + \tau^\prime = \frac{\sqrt{T}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{T \log{n}}}$,
-\begin{equation*}
-\begin{split}
-    \sum\limits_{t=1}^{T}{\left( \rvpi - \rvpi_t \right)^\top \rvr } &\le \left(\tau + \tau^\prime\right) \KL{\left( \rvpi \middle\| \rvpi_1 \right)} + \frac{T}{2\left(\tau + \tau^\prime\right)} \\
-    &\quad + \frac{T \tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} - \frac{{\tau^\prime}^2}{\tau} \rvpi_{T+1}^\top \log{\rvpi_{T+1}} + T \tau^\prime \log{n} \\
-    &\le \sqrt{2T \log{n}} + \frac{1}{\frac{\sqrt{T}}{\sqrt{2 \log{n}}} - \frac{1}{\sqrt{T\log{n}}}} \left( \frac{1}{\sqrt{2}}+ \frac{1}{T} \right) + \sqrt{T \log{n}},
-\end{split}
-\end{equation*}
-by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$, $ - \rvpi_{T+1}^\top \log{\rvpi_{T+1}} \le \log{n}$. Note that choosing $\tau + \tau^\prime = \frac{\sqrt{t}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{t \log{n}}}$ will lead to the same result.
-\end{proof}
-
 \subsection{Proof of \cref{thm:sublinear_regret_convex_subset}}
 
-\begin{thm}
-\label{thm:sublinear_regret_convex_subset}
-When the policy class $\Pi$ is a convex subset of the probabilistic simplex, by choosing $\tau'=1/\sqrt{T\log{n}}$, and $\tau + \tau' = \sqrt{T} / \sqrt{2\log n}$, (or $\tau'=1/\sqrt{t\log{n}}$, and $\tau + \tau' = \sqrt{t} / \sqrt{2\log n}$), $\forall \rvpi \in \Pi$,
-\begin{equation*}
-    \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi(\rho) r(\rho)}} - \sum\limits_{t=1}^{T}{ \sum\limits_{\rho}{ \pi_t(\rho) r(\rho)}} \le 4\sqrt{T\log n}.
-\end{equation*}
-where $n$ is the total action/trajectory number, and $\pi_{t}$ is defined as,
+Suppose $\Pi$ is a convex subset of the probabilistic simplex, the policy update is as follows,
 \begin{align*}
     \bar{\pi}_{t+1}\left( \rho \right) &= \frac{\pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\}}{ \sum\limits_{\rho}{ \pi_t\left( \rho \right) \cdot \exp\left\{ \frac{r\left( \rho \right) - \tau^\prime \log{\pi_t\left( \rho \right)}}{\tau + \tau^\prime} \right\} } }, \quad \forall \rho, \\
     \rvpi_{t+1} &= \argmin\limits_{\rvpi \in \Pi}{ \KL\left( \bar{\rvpi}_{t+1} \middle\| \rvpi \right) }.
 \end{align*}
-\end{thm}
 
-We firstly prove three useful lemmas. For conciseness, we use vector notations.
+We firstly prove several useful lemmas. For conciseness, we use vector notations.
 
 \begin{lem}
 \label{lem:kl_difference_non_positive}
@@ -201,17 +91,16 @@ $\forall \rvpi \in \Pi$, $\KL\left( \rvpi \middle\| \rvpi_{t+1} \right) \le \KL\
 Since the KL divergence is convex, and $\Pi$ is convex, according to the first order optimality condition,
 \begin{equation*}
 \begin{split}
-    \left( - \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} \right)^\top \left( \rvpi_{t+1} - \rvpi \right) &= \rvpi^\top \left( \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} - \rvone \right) \\
-    &\le 0.
+    \left( - \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} \right)^\top \left( \rvpi_{t+1} - \rvpi \right) = \rvpi^\top \left( \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} - \rvone \right) \le 0.
 \end{split}
 \end{equation*}
 On the other hand, by $\log{x} \le x - 1$, $\forall x \in \sR$,
 \begin{equation*}
 \begin{split}
-    \KL\left( \rvpi \middle\| \rvpi_{t+1} \right) - \KL\left( \rvpi \middle\| \bar{\rvpi}_{t+1} \right) &= \rvpi^\top \left( \log{\bar{\rvpi}_{t+1}} - \log{\rvpi_{t+1}} \right) \\
-    &\le \rvpi^\top \left( \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} - \rvone \right). \qedhere
+    \KL\left( \rvpi \middle\| \rvpi_{t+1} \right) - \KL\left( \rvpi \middle\| \bar{\rvpi}_{t+1} \right) = \rvpi^\top \left( \log{\bar{\rvpi}_{t+1}} - \log{\rvpi_{t+1}} \right) \le \rvpi^\top \left( \frac{\bar{\rvpi}_{t+1}}{\rvpi_{t+1}} - \rvone \right).
 \end{split}
 \end{equation*}
+Combining the two inequalities above completes the proof.
 \end{proof}
 
 \begin{lem}
@@ -223,6 +112,7 @@ On the other hand, by $\log{x} \le x - 1$, $\forall x \in \sR$,
 \end{equation*}
 \end{lem}
 \begin{proof}
+By the $\ell_1$ norm strongly convex property of the negative entropy, the assumption that $\left\| \rvr \right\|_\infty \le 1$ without loss of generality, and $a x - b x^2 \le \frac{a^2}{4 b}$, $\forall a, b > 0$, we have,
 \begin{equation*}
 \begin{split}
     \KL{\left( \rvpi_t \middle\| \bar{\rvpi}_{t+1} \right)} &= \rvpi_t^\top \log{\rvpi_t} - \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}} - \left( \rvpi_t - \bar{\rvpi}_{t+1} \right)^\top \log{\bar{\rvpi}_{t+1}} \\
@@ -266,8 +156,7 @@ Therefore,
 Rearranging,
 \begin{equation*}
 \begin{split}
-    \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}}  \right) \\
-    &\le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \log{n}. \qedhere
+    \KL{\left( \bar{\rvpi}_{t+1} \middle\| \rvpi_t \right)} \le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \left( \rvpi_t^\top \log{\rvpi_t} -  \bar{\rvpi}_{t+1}^\top \log{\bar{\rvpi}_{t+1}}  \right) \le \frac{1}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{\tau} \log{n}. \qedhere
 \end{split}
 \end{equation*}
 \end{proof}
@@ -294,21 +183,18 @@ According to \cref{lem:kl_bar_tp1_t_bound},
 Combining the above,
 \begin{equation*}
 \begin{split}
-    \left( \rvpi - \rvpi_t \right)^\top \rvr &\le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} \\
-    &\quad + \frac{\tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime \left( \tau + \tau^\prime \right)}{\tau} \log{n}.
+    \left( \rvpi - \rvpi_t \right)^\top \rvr \le \left(\tau + \tau^\prime\right) \left[ \KL{\left( \rvpi \middle\| \rvpi_t \right)} - \KL{\left( \rvpi \middle\| \rvpi_{t+1} \right)} \right] + \frac{1}{2\left(\tau + \tau^\prime\right)} + \frac{\tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{\tau^\prime \left( \tau + \tau^\prime \right)}{\tau} \log{n}.
 \end{split}
 \end{equation*}
 Summing up from $t = 1$ to $T$, and choosing $\tau + \tau^\prime = \frac{\sqrt{T}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{T \log{n}}}$,
 \begin{equation*}
 \begin{split}
-    \sum\limits_{t=1}^{T}{\left( \rvpi - \rvpi_t \right)^\top \rvr } &\le \left(\tau + \tau^\prime\right) \KL{\left( \rvpi \middle\| \rvpi_1 \right)} + \frac{T}{2\left(\tau + \tau^\prime\right)} \\
-    &\quad + \frac{T \tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{T \tau^\prime \left( \tau + \tau^\prime \right)}{\tau} \log{n} \\
+    \sum\limits_{t=1}^{T}{\left( \rvpi - \rvpi_t \right)^\top \rvr } &\le \left(\tau + \tau^\prime\right) \KL{\left( \rvpi \middle\| \rvpi_1 \right)} + \frac{T}{2\left(\tau + \tau^\prime\right)} + \frac{T \tau^\prime}{2\tau \left(\tau + \tau^\prime\right)} + \frac{T \tau^\prime \left( \tau + \tau^\prime \right)}{\tau} \log{n} \\
     &\le \sqrt{2T \log{n}} + \frac{1}{\frac{\sqrt{T}}{\sqrt{2 \log{n}}} - \frac{1}{\sqrt{T\log{n}}}} \left( \frac{1}{\sqrt{2}} + 1 \right) + \sqrt{T \log{n}},
 \end{split}
 \end{equation*}
 by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$. Note that choosing $\tau + \tau^\prime = \frac{\sqrt{t}}{\sqrt{2 \log{n}}}$, $\tau^\prime = \frac{1}{\sqrt{t \log{n}}}$ will lead to the same result.
 \end{proof}
-
 
 \subsection{Proof of \cref{thm:monotonically_increasing_sr_property}}
 \begin{proof}
@@ -366,34 +252,33 @@ by $\KL{\left( \rvpi \middle\| \rvpi_1 \right)} \le \log{n}$. Note that choosing
 \begin{proof}
 According to the definition of $\SR$,
 \begin{align*}
-	\SR(\pi) &= \max_{\pi' \in \Delta}{  \pi' \cdot r - \tau \KL(\pi' \Vert \pi) + \tau' \cH(\pi') } \\
+	\SR(\pi) &= \max_{\pi^\prime \in \Delta}{  \ep\limits_{\rho \sim \pi^\prime }{ r(\rho) } - \tau \KL(\pi' \Vert \pi) + \tau' \cH(\pi') } \\
 	&= \eta \log \sum\limits_{\rho}{ \pi(\rho) \cdot \exp \left\{ \frac{\hat{r}(\rho)}{\eta}\right\} }.
 \end{align*}
 
 The lower bound is trivial by directly plugging $\pi$ into the optimization problem. For the upper bound,
 \begin{align*}
 	\exp \left\{ \frac{\hat{r}(\rho)}{\eta} \right\} &= \exp \left\{ \frac{\hat{r}_\infty}{\eta} \right\} \exp\left\{ \frac{\hat{r}(\rho) - \hat{r}_\infty }{\eta}\right\} \\
-	&\leq \exp \left\{ \frac{\hat{r}_\infty}{\eta} \right\} \left( 1 + \frac{1}{\eta} \left( \hat{r}(\rho) - \hat{r}_\infty \right) + \frac{1}{2\eta^2} \left(\hat{r}(\rho) - \hat{r}_\rho \right)^2\right),
+	&\leq \exp \left\{ \frac{\hat{r}_\infty}{\eta} \right\} \left( 1 + \frac{1}{\eta} \left( \hat{r}(\rho) - \hat{r}_\infty \right) + \frac{1}{2\eta^2} \left(\hat{r}(\rho) - \hat{r}_\infty \right)^2\right),
 \end{align*}
 where the inequality follows by $e^x \leq 1+x+ \frac{x^2}{2}$ for $x\leq 0$. Therefore,
 
 \begin{align*}
-	\sum\limits_{\rho} \pi(\rho) \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} &\leq \exp\left\{\frac{\hat{r}(\rho)}{\eta}\right\}  \sum_\rho \pi(\rho) \left( 1 + \frac{1}{\eta} \left( \hat{r}(\rho) - \hat{r}_\infty \right) + \frac{1}{2\eta^2} \left(\hat{r}(\rho) - \hat{r}_\rho \right)^2\right) \\
-	&=  \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} \left( 1 + \frac{1}{\eta} \pi \cdot\left( \hat{r}-\hat{r}_\infty \right) + \frac{1}{2\eta^2} \pi\cdot \left(  \hat{r} - \hat{r}_\infty \right)^2 \right) \\
-	&\leq \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} \exp \left\{ \frac{1}{\eta} \pi \cdot\left( \hat{r}-\hat{r}_\infty \right) + \frac{1}{2\eta^2} \pi\cdot \left(  \hat{r} - \hat{r}_\infty \right)^2 \right\} \\
-	&= \exp \left\{ \frac{1}{\eta} \pi\cdot \hat{r} + \frac{1}{2\eta^2} \pi\cdot \left( \hat{r} - \hat{r}_\infty \right)^2 \right\},
+	\sum\limits_{\rho} \pi(\rho) \exp\left\{ \frac{\hat{r}(\rho)}{\eta}\right\} &\leq \exp\left\{\frac{\hat{r}_\infty}{\eta}\right\}  \sum_\rho \pi(\rho) \left( 1 + \frac{1}{\eta} \left( \hat{r}(\rho) - \hat{r}_\infty \right) + \frac{1}{2\eta^2} \left(\hat{r}(\rho) - \hat{r}_\infty \right)^2\right) \\
+	&=  \exp\left\{ \frac{\hat{r}_\infty}{\eta}\right\} \left( 1 + \frac{1}{\eta} \sum\limits_{\rho} \pi(\rho){ \left( \hat{r}(\rho) -\hat{r}_\infty \right) } + \frac{1}{2\eta^2} \sum\limits_{\rho} \pi(\rho) \left(  \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right) \\
+	&\leq \exp\left\{ \frac{\hat{r}_\infty}{\eta}\right\} \exp \left\{ \frac{1}{\eta} \sum\limits_{\rho} \pi(\rho) \left( \hat{r}(\rho)-\hat{r}_\infty \right) + \frac{1}{2\eta^2} \sum\limits_{\rho} \pi(\rho) \left(  \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right\} \\
+	&= \exp \left\{ \frac{1}{\eta} \sum\limits_{\rho} \pi(\rho) \hat{r}(\rho) + \frac{1}{2\eta^2} \sum\limits_{\rho} \pi(\rho) \left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right\},
 \end{align*}
 where the second inequality follows by $1+x \leq e^x$. Therefore,
 \begin{align*}
-\SR(\pi) \leq \pi\cdot \hat{r} + \frac{1}{2\eta} \ep_{\rho\sim \pi}{\left[\left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right]}.
+\SR(\pi) \leq \ep\limits_{\rho \sim \pi}{\hat{r}(\rho)} + \frac{1}{2\eta} \ep_{\rho\sim \pi}{\left[\left( \hat{r}(\rho) - \hat{r}_\infty \right)^2 \right]}.
 \end{align*}
 
 To prove (i), note that as $\tau \to 0$, $\SR(\pi_\theta) \to \tau^{\prime} \log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) }{ \tau^{\prime} } \right\} }}$, the standard softmax value. Taking limit on $\tau'$ gives the hardmax value $\max_{\rho}{r(\rho)}$ as $\tau^{\prime} \to 0$.
 	
 To prove (ii), we have ,
 \begin{align*}
-	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } \\
-	&= {\lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } } } }\\
+	\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } &= {\lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } } } }\\
 	&= \sum_{\rho}{ \pi_\theta(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } \\
 	&= \ep_{\rho \sim \pi_\theta}{r(\rho)} + \tau^{\prime} \mathcal{H}(\pi_\theta).
 \end{align*}
@@ -599,8 +484,7 @@ To prove (i), note that as $\tau \to 0$, $\SR_f(\pi_\theta) \to \tau^{\prime} \l
 	
 To prove (ii), we have 
 \begin{align*}
-	&\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } \\
-	&= \lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } } } \\
+	\lim\limits_{\tau \to \infty}{ (\tau + \tau^{\prime})\log{ \sum_{\rho}{ f(\rho) \exp\left\{ \frac{r(\rho) + \tau \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} }} } &= \lim\limits_{\tau \to \infty}{ \frac{ \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} \left( r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right) } }{  \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \exp\left\{ \frac{r(\rho) - \tau^{\prime} \log{\pi_\theta(\rho)} }{\tau + \tau^{\prime}} \right\} } } } \\
 	&= \sum_{\rho}{ \pi_\theta(\rho) f(\rho) \left[ r(\rho) - \tau^{\prime}\log{\pi_\theta(\rho)} \right] } \\
 	&= \ep\limits_{\rho \sim p_{\pi_\theta, f}}{r(\rho)} -  \tau^{\prime} \cdot \ep\limits_{\rho \sim p_{\pi_\theta, f}}{  \log{\pi_\theta(\rho)} }
 \end{align*}
@@ -699,7 +583,9 @@ Parameter & Values \\ [0.5ex] % inserts table
 %\ \ \ \ learning rate & 0.005 \\
 %\hline %inserts single line
 
-For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256 \citep{hochreiter1997long}. In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to \cref{eq:gradient_estimator}, which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks (See \cref{appx:ECPO-learning}). The ECPO parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
+For the algorithmic tasks, policy is parameterized by a recurrent neural network with LSTM cells of hidden dimension 256.
+%\citep{hochreiter1997long}
+In all algorithms, $N$ distinct environments are used to generate samples. On each environment, $K$ random trajectories are sampled using the agent's policy to estimate gradient according to \cref{eq:gradient_estimator}, which gives the batch size $N\times K$ in total. We apply the same batch training setting as in UREX \citep{nachum2017improving}, where $N=40$ and $K=10$. F\_STEP of REMPD is set to 1 in all tasks (See \cref{appx:ECPO-learning}). The ECPO parameters used in \cref{fig:results} are summarized in \cref{table:paras-algorithmic}. 
 
 \begin{table}[ht]
 \caption{ECPO Hyperparameters in Algorithmic Tasks} % title of Table

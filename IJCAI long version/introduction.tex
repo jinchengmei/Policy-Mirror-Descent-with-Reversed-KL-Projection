@@ -1,0 +1,125 @@
+
+\section{Introduction}
+\label{sec:intro}
+
+
+Deep reinforcement learning (RL) has recently shown to be remarkably effective in solving
+challenging sequential decision making problems
+\citep{schulman2015trust,mnih2015human,silver2016mastering}.
+A central method of deep RL is \emph{policy optimization},
+which is based on formulating the problem
+as the optimization of a stochastic objective (expected return)
+with respect to the underlying policy parameters
+\citep{williams1991function,williams1992simple,sutton1998reinforcement}.
+Unlike standard optimization,
+stochastic optimization requires the objective and gradient to be 
+\emph{estimated} from data,
+typically gathered from a process depending on current parameters, 
+simultaneously with parameter updates.
+Such an interaction between estimation and updating
+complicates the optimization process,
+and often necessitates the introduction of variance reduction methods,
+leading to algorithms with subtle hyperparameter sensitivity.
+Joint estimation and updating can also create poor local optima
+whenever sampling neglect of some region
+can lead to further entrenchment of a current solution.
+For example, a non-exploring policy might fail to sample from high
+reward trajectories,
+preventing any further improvement since no useful signal is observed.
+In practice, it is well known that successful application of deep RL techniques
+requires a combination of extensive hyperparameter tuning,
+and a large, if not impractical, number of sampled trajectories.
+It remains a major challenge to develop methods that can reliably
+perform policy improvement while maintaining sufficient exploration
+and avoiding poor local optima, yet do so quickly.
+
+Several ideas for improving policy optimization have been proposed, 
+generally focusing on the goals of improving stability and data efficiency
+\citep{peters2010relative,van2015learning,fox2015taming,schulman2015trust,montgomery2016guided,nachum2017bridging,nachum2017trust,tangkaratt2017guide,abdolmaleki2018maximum,haarnoja2018soft}. 
+Unfortunately, a notable gap remains between empirically successful methods 
+and their underlying theoretical support.
+Current analyses typically assume a simplified setting that either ignores the 
+policy parametrization or only considers linear models.
+These assumptions are hard to justify when current practice relies on 
+complex function approximators, such as deep neural networks,
+that are highly nonlinear in their underlying parameters.
+This gulf between theory and practice is
+a barrier to wider adoption of model-free policy gradient methods.
+
+In this paper, %we focus on a setting where the policy can be
+%a \emph{non-convex} function of its parameters.
+we consider the maximum entropy expected reward objective,
+which has recently re-emerged as a foundation for state-of-the-art RL methods
+\citep{fox2015taming,schulman2017equivalence,nachum2017bridging,haarnoja2017reinforcement,neu2017unified,levine2018reinforcement,deisenroth2013survey,daniel2012hierarchical}. 
+We first reformulate the maximization of 
+this objective as a lift-and-project procedure,
+following the lines of Mirror Descent
+\citep{nemirovskii1983problem,beck2003mirror}.
+Using this reformulation we establish a monotonic improvement guarantee and  the fixed point properties of this setup.
+The reformulation also has practical algorithmic consequences,
+suggesting that multiple gradient updates should be performed
+in the projection.
+These considerations lead to the %our first practical algorithm,
+Policy Mirror Descent (PMD) algorithm,
+which first lifts the policy to the simplex,
+ignoring the constraint of parametrization,
+then approximately solves the projection by multiple
+gradient updates to the policy in the parameter space. 
+%
+% TODO: We should conclude something about this algorithm here
+%
+
+We then investigate
+additional improvements to mitigate the potential deficiencies of PMD.
+The main algorithm we propose, Exploratory Conservative Policy Optimization (ECPO),
+incorporates both an entropy and relative entropy regularizer,
+and uses the mean seeking KL divergence for projection, which
+helps avoids poor deterministic policies. The projection can be efficiently solved to global optimality
+in certain non-convex cases,
+such as one-layer-softmax networks.
+The entropy exploration is principled.
+Firstly, in the convex subset setting, the algorithm enjoys sublinear regret.
+Secondly, we prove monotonic guarantees for ECPO with respect to a surrogate objective $\SR(\pi)$.
+We further study the properties of $\SR(\pi)$ and provide theoretical
+and empirical evidence that $\SR$ 
+can effectively guide good policy search.
+Finally, we also extend this algorithm using value function approximations,
+and develop an actor-critic version that is effective in practice.
+
+\subsection{Notation and Problem Setting}
+\label{subsec:notations_and_settings}
+
+We consider episodic
+settings with finite state and action spaces. 
+The agent is modelled by a policy $\pi( \cdot |s)$
+that specifies a probability distribution overs actions
+given state $s$. 
+At each step $t$, the agent takes an action $a_t$ by sampling from
+$\pi( \cdot | s_t)$.
+The environment then returns a reward $r_t = r(s_t, a_t)$ and the next state
+$s_{t+1} = f(s_t, a_t)$,
+where $f$ is the transition not revealed to the agent.
+Given a trajectory, a sequence of states and actions
+$\rho=(s_1, a_1, \dots, a_{T-1}, s_T)$,
+the policy probability and the total reward of $\rho$ are defined as
+$\pi(\rho) = \prod_{t=1}^{T-1} \pi(a_t| s_t)$
+ and $r(\rho) = \sum_{t=1}^{T-1} r(s_t, a_t)$. 
+Given a set of parametrized policy functions $\pi_\theta \in \Pi$,
+policy optimization aims to find the optimal policy $\pi_\theta^*$
+by maximizing the expected reward,
+\begin{equation}
+\label{max_expected_reward}
+\begin{split}
+\pi_\theta^* \in \argmax_{\pi_\theta \in \Pi}{ \ep\limits_{\rho \sim \pi_\theta}{r(\rho)} },
+\end{split}
+\end{equation}
+
+We use
+$\Delta \triangleq \{ \pi | \sum_{\rho}{\pi(\rho)} = 1, \pi(\rho) \ge 0,
+\forall \rho \}$
+to refer to the probability simplex over all trajectories. 
+Without loss of generality, we assume that the state transition
+is deterministic, and the discount factor $\gamma = 1$.
+%This same simplification is also assumed in \citet{nachum2017improving}. 
+All theoretical results for the general stochastic environment are presented
+in the appendix. %\cref{sec:stochasticsetting}.

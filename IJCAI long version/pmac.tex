@@ -22,39 +22,35 @@ It is well known that data efficiency of policy-based methods
 can be generally improved by adding a value-based critic.
 Given $\refPi$ and an initial state $s$,
 recall that the objective in the Lift Step of ECPO is
-{\small
 \begin{equation*}
 	\gO_{\text{ECPO}}(\pi, s) =   \ep\limits_{\rho \sim \pi}{  r(\rho)  - \tau \KL(\pi \| \refPi) + \tau^{\prime} \cH(\pi)},
 \end{equation*}
-}
 where $\rho=  (s_1 = s, a_1, s_2, a_2, \ldots)$.
 To incorporate value function approximation, we need derive 
 the temporal consistency structure for this objective.
 %, which can be done as follows. 
 First, write
-{\small
 \begin{equation*}
 \begin{split}
  \gO_{\text{ECPO}}(\pi, s) &= \sE_{a\sim \pi(\cdot \vert s)} [ r(s,a) + \gO_{\text{ECPO}}(\pi, s') \\
  &+ \tau \log \refPi(a|s) - \left(\tau+ \tau' \right) \log \pi(a|s) ].
 \end{split}
 \end{equation*}
-}
 
 Let $\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s) = \argmax_{\pi} \gO_{\text{ECPO}}(\pi, s) $ denote the optimal policy on state $s$. 
 %
 Further denote the soft optimal state-value function $\gO_{\text{ECPO}}(\bar{\pi}_{\tau,\tau^{\prime}}^* (\cdot|s), s)$ by $\bar{V}_{\tau,\tau^{\prime}}^*(s)$, and let  $\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) = r(s,a) + \gamma \bar{V}_{\tau,\tau^{\prime}}^*(s')$ be the soft-Q function.
 It can then be verified that 
 %
-{\small
 \begin{equation}
+\scalemath{0.85}{
 \begin{split}
 & \bar{V}_{\tau,\tau^{\prime}}^*(s) = (\tau + \tau') \log \sum_a \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) + \tau \log \bar{\pi}(a|s)} {\tau + \tau'} \right\}; \\
 & \bar{\pi}_{\tau,\tau^{\prime}}^* (a|s) = \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) + \tau \log \bar{\pi}(a|s) - \bar{V}_{\tau,\tau^{\prime}}^*(s)}{\tau + \tau'} \right\}.
 \end{split}
+}
 \label{soft-v-and-pi}
 \end{equation}
-}
  
 We propose to train a
 soft state-value function $\parV$ parameterized by $\phi$,
@@ -64,14 +60,13 @@ based on \cref{eq:ECPO}.
 The update rules for these parameters can be derived as follows.
 
 The soft state-value function approximates the soft optimal state-value $\bar{V}_{\tau,\tau^{\prime}}^*$, which can be re-expressed by
-{\small
-\begin{align*}
-\hspace{-0.3cm}
+\begin{equation*}
+\scalemath{0.85}{
 \bar{V}_{\tau,\tau^{\prime}}^*(s) 
 %= & (\tau + \tau') \log \sum_a \refPi(a|s) \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \\ 
-= & (\tau + \tau') \log \sE _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
-\end{align*}
+= (\tau + \tau') \log \sE _ {a\sim \refPi} \left[ \exp \left\{ \frac{\bar{Q}_{\tau,\tau^{\prime}}^*(s,a) - \tau' \log \bar{\pi}(a|s)} {\tau + \tau'} \right\} \right].
 }
+\end{equation*}
 
 This suggests a Monte-Carlo estimate for
 $\bar{V}_{\tau,\tau^{\prime}}^*(s)$:
@@ -97,28 +92,26 @@ using \cref{soft-v-and-pi}.
 However, including a separate function approximator for the state-value
 can help stabilize the training \citep{haarnoja2018soft}. 
 The soft Q-function parameters $\psi$ is then trained to minimize the soft Bellman error using the state-value network,
-{\small
 \begin{equation}
+\scalemath{0.85}{
 \label{eq:trainQ}
 L(\psi) = \sE_{(s,a,s') \sim \gD} \left[ \frac{1}{2} \left( \parQ(s,a) - \left[r(s,a) + \gamma \parV(s') \right] \right)^2 \right].
-\end{equation}
 }
+\end{equation}
 
 The policy parameters are updated by performing the Project Step in
 \cref{eq:ECPO} with stochastic gradient descent,
 %
-{\small
 \begin{equation}
-\hspace{-0.5cm}
+\scalemath{0.7}{
 \label{eq:trainpi}
-L(\theta) = \sE_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\} \middle\Vert \parPi(\cdot |s) \right) \right]
-\end{equation}
+L(\theta) = \sE_{s \sim \gD} \left[ \KL \left( \exp\left\{ \frac{\parQ(s,\cdot) + \tau \log \refPi(\cdot|s) - \parV(s)}{\tau+\tau'} \right\} \middle\Vert \parPi(\cdot |s) \right) \right],
 }
-%
+\end{equation}
 where we approximate $\bar{\pi}_{\tau,\tau^{\prime}}^*$ by the soft-Q and state-value function approximations. 
 
 Finally,
 we also use a target state-value network \citep{lillicrap2015continuous}
 and the trick of maintaining two soft-Q functions
 \citep{haarnoja2018soft,fujimoto2018addressing}.
-Implementation details for ECAC are given in \cref{sec:implementationECAC}. 
+Implementation details for ECAC are given in Appendix. 

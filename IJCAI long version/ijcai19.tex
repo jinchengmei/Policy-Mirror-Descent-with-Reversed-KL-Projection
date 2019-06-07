@@ -18,22 +18,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage[small]{caption}
 \usepackage{graphicx}
+\usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \urlstyle{same}
-
-% If you use natbib package, activate the following three lines:
-%\usepackage[round]{natbib}
-\usepackage[numbers]{natbib}
-\renewcommand{\bibname}{References}
-\renewcommand{\bibsection}{\subsubsection*{\bibname}}
-
-% If you use BibTeX in apalike style, activate the following line:
-\bibliographystyle{apalike}
-
-\input{math_commands.tex}
-
-\usepackage{xr}
-\externaldocument{supplementary}
 
 % the following package is optional:
 %\usepackage{latexsym} 
@@ -58,36 +47,44 @@
 % page charge instructions.
 % Put where the files are available in the appropriate places.
 
-\title{On Principled Exploration in Policy Optimization}
+% If you use natbib package, activate the following three lines:
+%\usepackage[round]{natbib}
+%\usepackage[numbers]{natbib}
+\usepackage{natbib}
+%\renewcommand{\bibname}{References}
+%\renewcommand{\bibsection}{\subsubsection*{\bibname}}
+
+% If you use BibTeX in apalike style, activate the following line:
+%\bibliographystyle{apalike}
+
+\input{math_commands.tex}
+
+\title{On Principled Entropy Exploration in Policy Optimization}
 
 % Single author syntax
-\iffalse
 \author{
     Sarit Kraus
     \affiliations
     Department of Computer Science, Bar-Ilan University, Israel \emails
     pcchair@ijcai19.org
 }
-\fi
 
 % Multiple author syntax (remove the single-author syntax above and the \iffalse ... \fi here)
 % Check the ijcai19-multiauthor.tex file for detailed instructions
 
 \author{
-First Author$^1$
-\and
-Second Author$^2$\and
-Third Author$^{2,3}$\And
-Fourth Author$^4$
+Jincheng Mei$^{1}$\thanks{Equal contribution}\and
+Chenjun Xiao$^{1 *}$\and
+Ruitong Huang$^{2}$\and
+Dale Schuurmans$^1$\And
+Martin M{\" u}ller$^1$
 \affiliations
-$^1$First Affiliation\\
-$^2$Second Affiliation\\
-$^3$Third Affiliation\\
-$^4$Fourth Affiliation
+$^1$University of Alberta\\
+$^2$Borealis AI Lab\\
 \emails
-\{first, second\}@example.com,
-third@other.example.com,
-fourth@example.com
+\{jmei2, chenjun\}@ualberta.ca,
+ruitong.huang@borealisai.com,
+\{daes, mmueller\}@ualberta.ca
 }
 
 
@@ -113,15 +110,17 @@ fourth@example.com
 
 \input{conclusion}
 
-\appendix
+\section*{Acknowledgements}
+Part of the work has been done when the first two authors were interns in Borealis AI Lab. We gratefully acknowledge funding from Canada's Natural Sciences and Engineering Research Council (NSERC).
 
-\section{Appendix}
-\label{sec:appendix}
-
-\url{https://drive.google.com/file/d/1LnefUVaVY1JKiXqM7jUvwfQubjIsOryX/view}
-
-%% The file named.bst is a bibliography style file for BibTeX 0.99c
 \bibliographystyle{named}
 \bibliography{ijcai19}
 
+\onecolumn
+\appendix
+\input{appendix}
+
+
+
 \end{document}
+
